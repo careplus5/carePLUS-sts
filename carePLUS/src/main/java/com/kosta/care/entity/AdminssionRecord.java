@@ -1,5 +1,7 @@
 package com.kosta.care.entity;
 
+import java.sql.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,7 +30,7 @@ public class AdminssionRecord {
 	private Integer jobNum;
 	@Column
 	@CreationTimestamp
-	private String adminssionRecordDate;
+	private Date adminssionRecordDate;
 	@Column
 	private String adminssionRecordContent;
 }

@@ -8,10 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import org.hibernate.annotations.CreationTimestamp;
-
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,10 +16,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class prescriptionDiary extends Prescription{
+public class PrescriptionDiary {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer prescriptionDiaryNum;
+	@Column
+	private Integer prescriptionNum;
 	@Column
 	private Integer patNum;
 	@Column
@@ -35,7 +34,6 @@ public class prescriptionDiary extends Prescription{
 	private String prescriptionDiaryFre2;
 	@Column
 	private String prescriptionDiaryFre3;
-	
 	
 
 	
