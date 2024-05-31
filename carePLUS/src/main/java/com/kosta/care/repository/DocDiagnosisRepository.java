@@ -23,7 +23,6 @@ public class DocDiagnosisRepository {
 		QDoctor doctor = QDoctor.doctor;
 		QPatient patient = QPatient.patient;
 		QDiagnosisDue diagnosisDue = QDiagnosisDue.diagnosisDue;
-		LocalDate today = LocalDate.now();
 		
 		return jpaQueryFactory.select(diagnosisDue)
 					.from(diagnosisDue)

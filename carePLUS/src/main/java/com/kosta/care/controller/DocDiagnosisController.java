@@ -22,7 +22,6 @@ public class DocDiagnosisController {
 	public ResponseEntity<List<DiagnosisDueDto>> diagPatientList(@RequestParam("docNum") Long docNum) {
 		try {
 			List<DiagnosisDueDto> diagDueList = diagnosisDueService.diagDueListByDocNum(docNum);
-			System.out.println(diagDueList);
 			return new ResponseEntity<List<DiagnosisDueDto>>(diagDueList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
