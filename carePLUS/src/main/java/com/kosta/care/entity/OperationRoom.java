@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OperationRoom {
 	@Id
-	private Integer operationRoomNum;
+	private Long operationRoomNum;
 }

@@ -19,15 +19,15 @@ import lombok.NoArgsConstructor;
 public class AdminssionRequest {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer adminssionDueNum;
+	private Long adminssionDueNum;
 	@Column
-	private Integer patNum;
+	private Long patNum;
 	@Column
-	private Integer diagNum;
+	private Long diagNum;
 	@Column
-	private Integer docNum;
+	private Long docNum;
 	@Column
-	private Integer jobNum;
+	private Long jobNum;
 	@Column
 	private String adminssionDuePeriod;
 	@Column

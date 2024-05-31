@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Disease {
 	@Id
-	private Integer diseaseNum;
+	private Long diseaseNum;
 	@Column
 	private String diseaseName;
 }

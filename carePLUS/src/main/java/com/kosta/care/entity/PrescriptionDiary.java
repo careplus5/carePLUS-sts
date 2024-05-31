@@ -19,13 +19,13 @@ import lombok.NoArgsConstructor;
 public class PrescriptionDiary {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer prescriptionDiaryNum;
+	private Long prescriptionDiaryNum;
 	@Column
-	private Integer prescriptionNum;
+	private Long prescriptionNum;
 	@Column
-	private Integer patNum;
+	private Long patNum;
 	@Column
-	private Integer nurNum;
+	private Long nurNum;
 	@Column//내일, 모레꺼도 필요할지도 모르잖아..? 그래서 일단 curdate()같은거안했는데 service에서 하세요
 	private Date prescriptionDiaryDate;
 	@Column

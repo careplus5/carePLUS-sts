@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Beds {
 	@Id
-	private Integer bedsNum;
+	private Long bedsNum;
 	@Column
 	private String bedsCode;
 	@Column

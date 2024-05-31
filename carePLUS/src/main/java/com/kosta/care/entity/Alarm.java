@@ -21,9 +21,9 @@ import lombok.NoArgsConstructor;
 public class Alarm {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer alarmNum;
+	private Long alarmNum;
 	@Column
-	private Integer empNum;
+	private Long empNum;
 	@Column
 	private String alarmTitle;
 	@Column

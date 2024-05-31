@@ -19,11 +19,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Department {
 	@Id
-	private Integer departmentNum;
+	private Long departmentNum;
 	@Column
 	private String departmentName;
 	@Column
-	private Integer jobNum;
+	private Long jobNum;
 	
 	
 }

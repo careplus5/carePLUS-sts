@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Administor {
 	@Id
-	private Integer manNum;
+	private Long manNum;
 	@Column
 	private String manPassword;
 	@Column

@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 public class Notices {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer noticeNum;
+	private Long noticeNum;
 	@Column
 	private String noticeCategory;
 	@Column
@@ -36,6 +36,6 @@ public class Notices {
 	private Date noticeWriteDate;
 	@Column
 	@ColumnDefault("0")
-	private Integer noticeViewCount;
+	private Long noticeViewCount;
 	
 }

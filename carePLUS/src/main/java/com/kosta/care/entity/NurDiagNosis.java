@@ -19,15 +19,15 @@ import lombok.NoArgsConstructor;
 public class NurDiagNosis {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer nurDiagNum;
+	private Long nurDiagNum;
 	@Column
-	private Integer preNum;
+	private Long preNum;
 	@Column
-	private Integer nurNum;
+	private Long nurNum;
 	@Column
-	private Integer patNum;
+	private Long patNum;
 	@Column
-	private Integer jobNum;
+	private Long jobNum;
 	@Column
 	private String nurDiagContent;
 	

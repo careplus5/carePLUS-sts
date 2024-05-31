@@ -21,11 +21,11 @@ import lombok.NoArgsConstructor;
 public class AdmSchecule {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer admScheduleNum;
+	private Long admScheduleNum;
 	@Column
-	private Integer admNum;
+	private Long admNum;
 	@Column
-	private Integer jobNum;
+	private Long jobNum;
 	@Column
 	private String admScheduleType;
 	@Column

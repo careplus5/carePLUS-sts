@@ -21,23 +21,23 @@ import lombok.NoArgsConstructor;
 public class Surgery {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer surgeryNum;
+	private Long surgeryNum;
 	@Column
-	private Integer docNum1;
+	private Long docNum1;
 	@Column
-	private Integer docNum2;
+	private Long docNum2;
 	@Column
-	private Integer docNum3;
+	private Long docNum3;
 	@Column
-	private Integer nurNum1;
+	private Long nurNum1;
 	@Column
-	private Integer nurNum2;
+	private Long nurNum2;
 	@Column
-	private Integer nurNum3;
+	private Long nurNum3;
 	@Column
-	private Integer departmentNum;
+	private Long departmentNum;
 	@Column
-	private Integer patNum;
+	private Long patNum;
 	@Column
 	private String surgeryCaution;
 	@Column

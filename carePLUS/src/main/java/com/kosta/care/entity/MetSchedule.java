@@ -21,11 +21,11 @@ import lombok.NoArgsConstructor;
 public class MetSchedule {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer metScheduleNum;
+	private Long metScheduleNum;
 	@Column
-	private Integer metNum;
+	private Long metNum;
 	@Column
-	private Integer jobNum;
+	private Long jobNum;
 	@Column
 	private String metScheduleType;
 	@Column

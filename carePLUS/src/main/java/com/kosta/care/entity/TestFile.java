@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 public class TestFile {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer testFileNum;
+	private Long testFileNum;
 	@Column
 	private String testFileType;
 	@Column

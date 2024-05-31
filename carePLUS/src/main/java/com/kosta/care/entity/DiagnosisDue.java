@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.kosta.care.dto.DiagnosisDueDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,11 +23,11 @@ import lombok.NoArgsConstructor;
 public class DiagnosisDue {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer diagnosisDueNum;
+	private Long diagnosisDueNum;
 	@Column 
-	private Integer patNum;
+	private Long patNum;
 	@Column
-	private Integer docNum;
+	private Long docNum;
 	@Column
 	private String diagnosisDueState;
 	@Column
@@ -34,4 +36,8 @@ public class DiagnosisDue {
 	private Date diagnosisDueDate;
 	@Column
 	private Date diagnosisDueTime;
+	
+	public DiagnosisDueDto toDiagnosisDueDto() {
+		return new DiagnosisDueDto(diagnosisDueNum, patNum, docNum, diagnosisDueState, diagnosisDueEtc, diagnosisDueDate, diagnosisDueTime);
+	}
 }

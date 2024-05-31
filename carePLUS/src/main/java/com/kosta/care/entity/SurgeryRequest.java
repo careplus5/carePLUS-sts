@@ -21,10 +21,10 @@ import lombok.NoArgsConstructor;
 public class SurgeryRequest {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer surgeryRequestNum;
+	private Long surgeryRequestNum;
 	@Column
-	private Integer patNum;
-	@Column//Integer같기도 한데 그냥 String으로 할게.. 바꾸거나 parseInt.해줘...ㅠ
+	private Long patNum;
+	@Column//Long같기도 한데 그냥 String으로 할게.. 바꾸거나 parseInt.해줘...ㅠ
 	private String surPeriod;
 	@Column
 	private String surReason;

@@ -16,13 +16,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Nurse {
 	@Id
-	private Integer nurId;
+	private Long nurId;
 	@Column
-	private Integer profNum;
+	private Long profNum;
 	@Column
-	private Integer departmentNum;
+	private Long departmentNum;
 	@Column
-	private Integer jobNum;
+	private Long jobNum;
 	@Column
 	private String nurName;
 	@Column

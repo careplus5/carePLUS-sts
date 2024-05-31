@@ -23,11 +23,11 @@ import lombok.NoArgsConstructor;
 public class AdminssionRecord {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer adminssionRecordNum;
+	private Long adminssionRecordNum;
 	@Column
-	private Integer docDiagnosisNum;
+	private Long docDiagnosisNum;
 	@Column
-	private Integer jobNum;
+	private Long jobNum;
 	@Column
 	@CreationTimestamp
 	private Date adminssionRecordDate;

@@ -19,9 +19,9 @@ import lombok.NoArgsConstructor;
 public class FavoriteMedicines {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer FavoriteMedicinesNum;
+	private Long FavoriteMedicinesNum;
 	@Column
-	private Integer medicindeNum;
+	private Long medicindeNum;
 	@Column
-	private Integer docNum;
+	private Long docNum;
 }

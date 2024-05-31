@@ -21,19 +21,19 @@ import lombok.NoArgsConstructor;
 public class Test {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer testNum;
+	private Long testNum;
 	@Column
-	private Integer docDiagnosisNum;
+	private Long docDiagnosisNum;
 	@Column
-	private Integer metNum;
+	private Long metNum;
 	@Column
-	private Integer patNum;
+	private Long patNum;
 	@Column
-	private Integer testRequestNum;
+	private Long testRequestNum;
 	@Column
-	private Integer docNum;
+	private Long docNum;
 	@Column
-	private Integer testFileNum;
+	private Long testFileNum;
 	@Column
 	private String testName;
 	@Column

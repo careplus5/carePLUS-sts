@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Job {
 	@Id
-	private Integer jobNum;
+	private Long jobNum;
 	@Column
 	private String jobName;
 }

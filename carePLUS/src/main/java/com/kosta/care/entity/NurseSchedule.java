@@ -21,11 +21,11 @@ import lombok.NoArgsConstructor;
 public class NurseSchedule {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer nurScheduleNum;
+	private Long nurScheduleNum;
 	@Column
-	private Integer nurNum;
+	private Long nurNum;
 	@Column
-	private Integer jobNum;
+	private Long jobNum;
 	@Column
 	private String nurScheduleType;
 	@Column

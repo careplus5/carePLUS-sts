@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class Profile {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer profileNum;
+	private Long profileNum;
 	@Column
 	private String profileType;
 	@Column
