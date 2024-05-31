@@ -14,31 +14,28 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Nurse {
+public class Doctor {
 	@Id
-	private Integer nurId;
+	private Integer docNum;
 	@Column
 	private Integer profNum;
 	@Column
-	private Integer departmentNum;
+	private Integer departmentId;
 	@Column
 	private Integer jobNum;
 	@Column
-	private String nurName;
+	private String docName;
 	@Column
-	private String nurPassword;
+	private String docPassword;
 	@Column
-	private String nurTel;
+	private String docTel;
 	@Column
-	private String nurPosition;
+	private String docPosition;
 	@Column
-	private String nurEmail;
-	@Column
-	private String nurDepartment1;
-	@Column
-	private String nurDepartment2;
+	private String docEmail;
 	@Column(columnDefinition = "boolean default true")
 	private Boolean isNoticeAlaramOk;
 	@Column(columnDefinition = "boolean default true")
 	private Boolean isBookAlaramOk;
+
 }

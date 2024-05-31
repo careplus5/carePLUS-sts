@@ -8,8 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import org.hibernate.annotations.CreationTimestamp;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,24 +17,27 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class prescriptionDiary extends Prescription{
+@Builder
+public class NurseSchedule {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer prescriptionDiaryNum;
-	@Column
-	private Integer patNum;
+	private Integer nurScheduleNum;
 	@Column
 	private Integer nurNum;
-	@Column//내일, 모레꺼도 필요할지도 모르잖아..? 그래서 일단 curdate()같은거안했는데 service에서 하세요
-	private Date prescriptionDiaryDate;
 	@Column
-	private String prescriptionDiaryFre1;
+	private Integer jobNum;
 	@Column
-	private String prescriptionDiaryFre2;
+	private String nurScheduleType;
 	@Column
-	private String prescriptionDiaryFre3;
-	
-	
-
-	
+	private String nurScheduleTitle;
+	@Column
+	private String nurScheduleContent;
+	@Column
+	private Date nurScheduleStartDate;
+	@Column
+	private Date nurScheduleStartTime;
+	@Column
+	private Date nurScheduleEndDate;
+	@Column
+	private Date nurScheduleEndTime;
 }

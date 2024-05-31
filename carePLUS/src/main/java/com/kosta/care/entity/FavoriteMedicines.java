@@ -2,10 +2,9 @@ package com.kosta.care.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,13 +16,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Department {
+public class FavoriteMedicines {
 	@Id
-	private Integer departmentNum;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer FavoriteMedicinesNum;
 	@Column
-	private String departmentName;
+	private Integer medicindeNum;
 	@Column
-	private Integer jobNum;
-	
-	
+	private Integer docNum;
 }

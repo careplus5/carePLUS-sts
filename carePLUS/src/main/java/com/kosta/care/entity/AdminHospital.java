@@ -14,9 +14,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Nurse {
+public class AdminHospital {
 	@Id
-	private Integer nurId;
+	private Integer admNum;
 	@Column
 	private Integer profNum;
 	@Column
@@ -24,21 +24,20 @@ public class Nurse {
 	@Column
 	private Integer jobNum;
 	@Column
-	private String nurName;
+	private String admName;
 	@Column
-	private String nurPassword;
+	private String admPassword;
 	@Column
-	private String nurTel;
+	private String admTel;
 	@Column
-	private String nurPosition;
+	private String admPosition;
 	@Column
-	private String nurEmail;
+	private String admEmail;
 	@Column
-	private String nurDepartment1;
-	@Column
-	private String nurDepartment2;
+	private String admPlace;
 	@Column(columnDefinition = "boolean default true")
 	private Boolean isNoticeAlaramOk;
 	@Column(columnDefinition = "boolean default true")
 	private Boolean isBookAlaramOk;
+	
 }

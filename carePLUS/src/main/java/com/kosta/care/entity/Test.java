@@ -3,42 +3,54 @@ package com.kosta.care.entity;
 import java.sql.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-
-import org.hibernate.annotations.CreationTimestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@MappedSuperclass
+@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Prescription {
+public class Test {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer prescriptionNum;
+	private Integer testNum;
 	@Column
-	private Integer medicineNum;
+	private Integer docDiagnosisNum;
+	@Column
+	private Integer metNum;
 	@Column
 	private Integer patNum;
 	@Column
+	private Integer testRequestNum;
+	@Column
 	private Integer docNum;
 	@Column
-	private Integer prescriptionDosage;
+	private Integer testFileNum;
 	@Column
-	private Integer prescriptionDosageTimes;
+	private String testName;
 	@Column
-	private Integer prescriptionDosageTotal;
+	private String testPart;
 	@Column
-	private String prescriptionHowTake;
+	private String testResult;
 	@Column
-	@CreationTimestamp
-	private Date prescriptionDate;
+	private Date testDate;
+	@Column
+	private String testNotice;
+	@Column
+	private String testState;
+	@Column
+	private Date testResvDate;
+	@Column
+	private String testOutInspectRecorde;
+	@Column
+	private Date testResvDateTime;
+	
 }

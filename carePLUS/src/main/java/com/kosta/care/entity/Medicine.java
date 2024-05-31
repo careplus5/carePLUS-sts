@@ -2,10 +2,7 @@ package com.kosta.care.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,13 +14,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Department {
+public class Medicine {
 	@Id
-	private Integer departmentNum;
+	private Integer medicineNum;
 	@Column
-	private String departmentName;
+	private String mdeicineEnName;
 	@Column
-	private Integer jobNum;
-	
-	
+	private String medicineKorName;
+	@Column
+	private String medicineStandard;
+	@Column
+	private String medicineIngCode;
+	@Column
+	private String medicineIngEnName;
+	@Column
+	private String medicineIngKorName;
 }
