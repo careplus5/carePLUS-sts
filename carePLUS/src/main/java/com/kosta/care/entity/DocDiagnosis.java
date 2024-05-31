@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DocDiagnosisNum {
+public class DocDiagnosis {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long docDiagnosisNum;
