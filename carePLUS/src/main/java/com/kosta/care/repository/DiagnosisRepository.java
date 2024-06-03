@@ -1,9 +1,7 @@
 package com.kosta.care.repository;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -11,8 +9,6 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.kosta.care.entity.DiagnosisDue;
-import com.kosta.care.entity.Disease;
 import com.kosta.care.entity.QDepartment;
 import com.kosta.care.entity.QDiagnosisDue;
 import com.kosta.care.entity.QDisease;

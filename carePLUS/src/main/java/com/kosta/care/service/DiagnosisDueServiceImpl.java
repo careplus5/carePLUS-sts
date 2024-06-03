@@ -80,7 +80,7 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 	@Override
 	public List<Map<String, Object>> diseaseListByDeptNum(Long docNum) {
 		Optional<Doctor> odoctor = doctorRepository.findById(docNum);
-		List<Tuple> tuples = diagnosisRepository.findDiseaseListByDeptNum(odoctor.get().getDepartmentId());
+		List<Tuple> tuples = diagnosisRepository.findDiseaseListByDeptNum(odoctor.get().getDepartmentNum());
 		List<Map<String, Object>> diseaseList = new ArrayList<>();
 		
 		for(Tuple tuple : tuples) {
