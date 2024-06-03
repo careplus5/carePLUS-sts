@@ -4,6 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+
+import com.kosta.care.dto.EmployeeDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,13 +19,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@DynamicInsert
 public class Doctor {
 	@Id
 	private Long docNum;
 	@Column
 	private Long profNum;
 	@Column
-	private Long departmentId;
+	private Long departmentNum;
 	@Column
 	private Long jobNum;
 	@Column
@@ -33,9 +39,26 @@ public class Doctor {
 	private String docPosition;
 	@Column
 	private String docEmail;
-	@Column(columnDefinition = "boolean default true")
+	@Column
+	@ColumnDefault("true")
 	private Boolean isNoticeAlaramOk;
-	@Column(columnDefinition = "boolean default true")
+	@Column
+	@ColumnDefault("true")
 	private Boolean isBookAlaramOk;
+
+	public EmployeeDto DocToEmployeeDto() {
+		 EmployeeDto emp = EmployeeDto.builder()
+				.empNum(docNum)
+				.profNum(profNum)
+				.departmentNum(departmentNum)
+				.jobNum(jobNum)
+				.empName(docName)
+				.empPassword(docPassword)
+				.empTel(docTel)
+				.empPosition(docPosition)
+				.empEmail(docEmail)
+				.build();
+		 return emp;
+	}
 
 }

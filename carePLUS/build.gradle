@@ -50,6 +50,8 @@ dependencies {
 	// https://mvnrepository.com/artifact/javax.servlet/jstl
 	implementation 'javax.servlet:jstl:1.2'
 	
+	//implementation 'org.springframework.boot:spring-boot-starter-security'
+	
 	//쿼리DSL 추가
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"

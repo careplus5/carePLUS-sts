@@ -20,9 +20,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @DynamicInsert
-public class AdminHospital {
+public class MedicalTechnician {
 	@Id
-	private Long admNum;
+	private Long metNum;
 	@Column
 	private Long profNum;
 	@Column
@@ -30,15 +30,19 @@ public class AdminHospital {
 	@Column
 	private Long jobNum;
 	@Column
-	private String admName;
+	private String metName;
 	@Column
-	private String admPassword;
+	private String metPassword;
 	@Column
-	private String admTel;
+	private String metTel;
 	@Column
-	private String admPosition;
+	private String metJob;
 	@Column
-	private String admEmail;
+	private String metPosition;
+	@Column
+	private String metEmail;
+	@Column
+	private String metDepartment2Name;
 	@Column
 	@ColumnDefault("true")
 	private Boolean isNoticeAlaramOk;
@@ -46,18 +50,20 @@ public class AdminHospital {
 	@ColumnDefault("true")
 	private Boolean isBookAlaramOk;
 	
-	public EmployeeDto AdmToEmployeeDto() {
+	public EmployeeDto MetToEmployeeDto() {
 		EmployeeDto emp = EmployeeDto.builder()
-				.empNum(admNum)
+				.empNum(metNum)
 				.profNum(profNum)
 				.departmentNum(departmentNum)
+				.department2Name(metDepartment2Name)
 				.jobNum(jobNum)
-				.empName(admName)
-				.empPassword(admPassword)
-				.empTel(admTel)
-				.empPosition(admPosition)
-				.empEmail(admEmail)
+				.empName(metName)
+				.empPassword(metPassword)
+				.empTel(metTel)
+				.empPosition(metPosition)
+				.empEmail(metEmail)
 				.build();
 		 return emp;
 	}
+
 }

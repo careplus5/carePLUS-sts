@@ -25,6 +25,6 @@ public class Profile {
 	@Column
 	private String profileDirectory;
 	@Column
-	private String profileSize;
+	private Long profileSize;
 	
 }
