@@ -49,6 +49,8 @@ public class MedicalTechnician implements Employee{
 	@Column
 	@ColumnDefault("true")
 	private Boolean isBookAlaramOk;
+	@Column
+	private String fcmToken ;
 	
 	public EmployeeDto MetToEmployeeDto() {
 		EmployeeDto emp = EmployeeDto.builder()

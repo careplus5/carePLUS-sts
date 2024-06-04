@@ -45,6 +45,8 @@ public class Doctor implements Employee{
 	@Column
 	@ColumnDefault("true")
 	private Boolean isBookAlaramOk;
+	@Column
+	private String fcmToken ;
 
 	public EmployeeDto DocToEmployeeDto() {
 		 EmployeeDto emp = EmployeeDto.builder()

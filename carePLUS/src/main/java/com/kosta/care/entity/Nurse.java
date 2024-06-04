@@ -49,6 +49,8 @@ public class Nurse implements Employee {
 	@Column
 	@ColumnDefault("true")
 	private Boolean isBookAlaramOk;
+	@Column
+	private String fcmToken ;
 	
 	public EmployeeDto NurToEmployeeDto() {
 		 EmployeeDto emp = EmployeeDto.builder()

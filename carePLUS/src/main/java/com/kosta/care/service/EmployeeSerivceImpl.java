@@ -1,10 +1,15 @@
 package com.kosta.care.service;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +27,7 @@ import com.kosta.care.repository.MedicalTechnicianRepository;
 import com.kosta.care.repository.NurseRepository;
 import com.kosta.care.repository.ProfileRepository;
 import com.kosta.care.util.EmployeeUtil;
+import com.kosta.care.util.PageInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -196,4 +202,33 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 		}
 		return employeeDto;
 	}
+	
+//	public List<EmployeeDto> employeeListByPage(PageInfo pageInfo, String type, String word) throws Exception {
+//		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10, Sort.by(Sort.Direction.DESC, "num"));
+//		Page<?> pages = null;
+//		// 목록 조회
+//		if (word == null || word.trim().equals("")) {
+//			pages = doctorRepository.findAll(pageRequest);
+//		} else {
+//			if (type.equals("empNum")) {
+//				pages = boardRepository.findBySubjectContains(word, pageRequest);
+//			} else if (type.equals("jobName")) {
+//				pages = boardRepository.findByContentContains(word, pageRequest);
+//			} else if (type.equals("departmentName")) {
+//				pages = boardRepository.findByMember_Id(word, pageRequest);
+//			}
+//		}
+//		pageInfo.setAllPage(pages.getTotalPages());
+//
+//		Integer startPage = (pageInfo.getCurPage() - 1) / 10 * 10 + 1;
+//		Integer endPage = Math.min(startPage + 10 - 1, pageInfo.getAllPage());
+//		pageInfo.setStartPage(startPage);
+//		pageInfo.setEndPage(endPage);
+//
+//		List<BoardDto> boardDtoList = new ArrayList<>();
+//		for (Board board : pages.getContent()) {
+//			boardDtoList.add(board.toBoardDto());
+//		}
+//		return boardDtoList;
+//	}
 }

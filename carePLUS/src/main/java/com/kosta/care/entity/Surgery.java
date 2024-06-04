@@ -25,10 +25,6 @@ public class Surgery {
 	@Column
 	private Long docNum1;
 	@Column
-	private Long docNum2;
-	@Column
-	private Long docNum3;
-	@Column
 	private Long nurNum1;
 	@Column
 	private Long nurNum2;

@@ -45,6 +45,8 @@ public class AdminHospital implements Employee {
 	@Column
 	@ColumnDefault("true")
 	private Boolean isBookAlaramOk;
+	@Column
+	private String fcmToken ;
 	
 	public EmployeeDto AdmToEmployeeDto() {
 		EmployeeDto emp = EmployeeDto.builder()

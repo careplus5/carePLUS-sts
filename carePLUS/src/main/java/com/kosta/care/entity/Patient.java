@@ -26,14 +26,6 @@ public class Patient {
 	@Column
 	private String patAddress;
 	@Column
-	private String patDetailAddress;
-	@Column
-	private String patTel1;
-	@Column
-	private String patTel2;
-	@Column
-	private String petTel3;
-	@Column
 	private String petTel;
 	@Column
 	private String patHeight;

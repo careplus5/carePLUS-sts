@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,11 +29,13 @@ public class Alarm {
 	@Column
 	private String alarmTitle;
 	@Column
+	private String alarmContent;
+	@Column
 	private Date alarmDate;
 	@Column
-	private Long alarmToken;
-	@Column
+	@ColumnDefault("false")
 	private Boolean alarmCheck;
 	@Column
+	@ColumnDefault("false")
 	private Boolean alarmDelivery;
 }
