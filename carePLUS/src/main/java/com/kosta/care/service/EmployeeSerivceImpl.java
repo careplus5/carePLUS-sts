@@ -11,11 +11,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kosta.care.dto.EmployeeDto;
 import com.kosta.care.entity.AdminHospital;
 import com.kosta.care.entity.Doctor;
+import com.kosta.care.entity.Employee;
 import com.kosta.care.entity.MedicalTechnician;
 import com.kosta.care.entity.Nurse;
 import com.kosta.care.entity.Profile;
 import com.kosta.care.repository.AdminHospitalRepository;
 import com.kosta.care.repository.DoctorRepository;
+import com.kosta.care.repository.EmployeeRepository;
 import com.kosta.care.repository.MedicalTechnicianRepository;
 import com.kosta.care.repository.NurseRepository;
 import com.kosta.care.repository.ProfileRepository;
@@ -35,6 +37,7 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 	private final MedicalTechnicianRepository medicalTechnicianRepository;
 	private final AdminHospitalRepository adminHospitalRepository;
 	private final ProfileRepository profileRepository;
+	private final EmployeeRepository empRepository;
 	@Autowired
 	EmployeeUtil employeeUtil;
 //	@Autowired
@@ -58,7 +61,7 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 		String findJob = jobString.substring(0,2);
 		
 		//넣어 줄 Entity 선택해서 정보 호출
-		Object emp = employeeUtil.chooseEmp(employeeDto);
+		Employee emp = empRepository.identifyJob(Long.toString(employeeDto.getEmpNum()));
 		
 		//중복체크를 위한 Optional생성
 		Optional<?> oemp = Optional.empty();
@@ -174,7 +177,7 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 		}
 		
 		//새로 가져온 emp Entity로 만들어주기
-		Object emp = employeeUtil.chooseEmp(employeeDto);
+		Employee emp = empRepository.identifyJob(Long.toString(employeeDto.getEmpNum()));
 		
 		//맞는 테이블에 저장
 		switch (jobNum+"") {

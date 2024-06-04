@@ -6,4 +6,5 @@ import com.kosta.care.entity.MedicalTechnician;
 
 public interface MedicalTechnicianRepository extends JpaRepository<MedicalTechnician, Long> {
 
+	MedicalTechnician findByMetNum(Long metNum);
 }

@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @DynamicInsert
-public class Nurse {
+public class Nurse implements Employee {
 	@Id
 	private Long nurNum;
 	@Column
@@ -64,6 +64,29 @@ public class Nurse {
 					.empEmail(nurEmail)
 					.build();
 			 return emp;
+	}
+
+	@Override
+	public Long getId() {
+		// TODO Auto-generated method stub
+		return nurNum;
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return nurName;
+	}
+
+	@Override
+	public String getPassword() {
+		// TODO Auto-generated method stub
+		return nurPassword;
+	}
+
+	@Override
+	public void setPassword(String encodePassword) {
+		this.nurPassword=encodePassword;
 	}
 
 }

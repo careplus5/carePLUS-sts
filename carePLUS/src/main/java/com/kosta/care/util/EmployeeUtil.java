@@ -1,61 +1,73 @@
 package com.kosta.care.util;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.kosta.care.dto.EmployeeDto;
 import com.kosta.care.entity.AdminHospital;
 import com.kosta.care.entity.Doctor;
+import com.kosta.care.entity.Employee;
 import com.kosta.care.entity.MedicalTechnician;
 import com.kosta.care.entity.Nurse;
+import com.kosta.care.repository.EmployeeRepository;
 
 @Component
 public class EmployeeUtil {
-	public Object chooseEmp(EmployeeDto employeeDto) throws Exception {
-		Long job = employeeDto.getJobNum();
+	@Autowired
+	private EmployeeRepository empRepository;
+	
+	public Object chooseEmp(Employee emp) throws Exception {
+		Long job = emp.getId();
 		String jobString = job.toString();
 		String findJob = jobString.substring(0,2);
 		switch (findJob) {
-	    case "11": return toDoc(employeeDto);
-	    case "12": return toNur(employeeDto);
-	    case "13": return toAdm(employeeDto);
-	    case "14": return toMet(employeeDto);
+	    case "11": return toDoc(emp);
+	    case "12": return toNur(emp);
+	    // case "13": return toAdm(emp);
+	    // case "14": return toMet(emp);
 	    default: throw new Exception("해당하는 직원 유형이 없습니다");
 	}
 		
 	}
+	
+	
+	
 
-	public Nurse toNur(EmployeeDto employeeDto) {
+	public Nurse toNur(Employee emp) {
+		Nurse nur = empRepository.findByIdForNurse(emp.getId());
 		Nurse nurse = Nurse.builder()
-				.nurNum(employeeDto.getEmpNum())
-				.profNum(employeeDto.getProfNum())
-				.departmentNum(employeeDto.getDepartmentNum())
-				.jobNum(employeeDto.getJobNum())
-				.nurName(employeeDto.getEmpName())
-				.nurPassword(employeeDto.getEmpPassword())
-				.nurTel(employeeDto.getEmpTel())
-				.nurPosition(employeeDto.getEmpPosition())
-				.nurEmail(employeeDto.getEmpEmail())
-				.nurDepartment2Name(employeeDto.getDepartment2Name())
+				.nurNum(nur.getId())
+				.profNum(nur.getProfNum())
+				.departmentNum(nur.getDepartmentNum())
+				.jobNum(nur.getJobNum())
+				.nurName(nur.getNurName())
+				.nurPassword(nur.getNurPassword())
+				.nurTel(nur.getNurTel())
+				.nurPosition(nur.getNurPosition())
+				.nurEmail(nur.getNurEmail())
+				.nurDepartment2Name(nur.getNurDepartment2Name())
 				.build();
 						
 		return nurse;
 	}
 	
-	public Doctor toDoc(EmployeeDto employeeDto) {
+	public Doctor toDoc(Employee emp) {
+		Doctor doc = empRepository.findByIdForDoctor(emp.getId());
 		Doctor doctor = Doctor.builder()
-				.docNum(employeeDto.getEmpNum())
-				.profNum(employeeDto.getProfNum())
-				.departmentNum(employeeDto.getDepartmentNum())
-				.jobNum(employeeDto.getJobNum())
-				.docName(employeeDto.getEmpName())
-				.docPassword(employeeDto.getEmpPassword())
-				.docTel(employeeDto.getEmpTel())
-				.docPosition(employeeDto.getEmpPosition())
-				.docEmail(employeeDto.getEmpEmail())
+				.docNum(doc.getDocNum())
+				.profNum(doc.getProfNum())
+				.departmentNum(doc.getDepartmentNum())
+				.jobNum(doc.getJobNum())
+				.docName(doc.getDocName())
+				.docPassword(doc.getDocPassword())
+				.docTel(doc.getDocTel())
+				.docPosition(doc.getDocPosition())
+				.docEmail(doc.getDocEmail())
 				.build();
 		return doctor;
 	}
 	
+	// 여까지해보자
 	public AdminHospital toAdm(EmployeeDto employeeDto) {
 		AdminHospital adm = AdminHospital.builder()
 				.admNum(employeeDto.getEmpNum())

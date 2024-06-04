@@ -14,11 +14,31 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Administor {
+public class Administor implements Employee {
 	@Id
 	private Long manNum;
 	@Column
 	private String manPassword;
 	@Column
 	private String manEmail;
+	@Override
+	public Long getId() {
+		// TODO Auto-generated method stub
+		return manNum;
+	}
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public String getPassword() {
+		// TODO Auto-generated method stub
+		return manPassword;
+	}
+	@Override
+	public void setPassword(String encodePassword) {
+		this.manPassword=encodePassword;
+		
+	}
 }
