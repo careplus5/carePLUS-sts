@@ -16,7 +16,7 @@ public interface DiagnosisDueService {
 	//부서에 따른 병명리스트 조회
 	List<Map<String, Object>> diseaseListByDeptNum(Long deptNum) throws Exception;
 	//약품리스트 조회
-	List<Medicine> medicineList();
+	List<Medicine> medicineList(String medSearchType, String medSearchKeyword);
 	//즐겨찾기 약품리스트 조회
 	List<Map<String, Object>> favMedicineList(Long docNum);
 	//즐겨찾기 약품 등록

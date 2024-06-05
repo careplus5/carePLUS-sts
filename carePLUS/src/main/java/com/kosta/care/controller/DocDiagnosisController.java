@@ -61,9 +61,10 @@ public class DocDiagnosisController {
 	}
 	
 	@GetMapping("/medicineList")
-	public ResponseEntity<List<Medicine>> medicineList() {
+	public ResponseEntity<List<Medicine>> medicineList(@RequestParam(name="medSearchType", required = false) String medSearchType, 
+													@RequestParam(name="medSearchKeyword", required = false) String medSearchKeyword) {
 		try {
-			List<Medicine> medicineList = diagnosisDueService.medicineList();
+			List<Medicine> medicineList = diagnosisDueService.medicineList(medSearchType, medSearchKeyword);
 			return new ResponseEntity<List<Medicine>>(medicineList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

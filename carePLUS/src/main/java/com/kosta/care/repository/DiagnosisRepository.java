@@ -97,13 +97,13 @@ public class DiagnosisRepository {
 	}
 	
 	//외래진료-약품조회
-	public List<Medicine> findMedicineList() {
-		QMedicine medicine = QMedicine.medicine;
-		
-		return jpaQueryFactory.select(medicine)
-				.from(medicine)
-				.fetch();
-	}
+//	public List<Medicine> findMedicineList() {
+//		QMedicine medicine = QMedicine.medicine;
+//		
+//		return jpaQueryFactory.select(medicine)
+//				.from(medicine)
+//				.fetch();
+//	}
 	
 	//외래진료-즐겨찾기 약품조회
 	public List<Tuple> findFavMedicineListByDocNum(Long docNum) {

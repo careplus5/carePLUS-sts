@@ -17,6 +17,7 @@ import com.kosta.care.repository.DiagnosisDueRepository;
 import com.kosta.care.repository.DiagnosisRepository;
 import com.kosta.care.repository.DoctorRepository;
 import com.kosta.care.repository.FavoriteMedicinesRepository;
+import com.kosta.care.repository.MedicineRepository;
 import com.kosta.care.repository.PatientRepository;
 import com.querydsl.core.Tuple;
 
@@ -31,6 +32,7 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 	private final DoctorRepository doctorRepository;
 	private final DiagnosisRepository diagnosisRepository;
 	private final FavoriteMedicinesRepository favoriteMedicinesRepository;
+	private final MedicineRepository medicineRepository;
 	
 	private final ObjectMapper objectMapper;
 	
@@ -104,8 +106,21 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 	}
 
 	@Override
-	public List<Medicine> medicineList() {
-		List<Medicine> medicineList = diagnosisRepository.findMedicineList();
+	public List<Medicine> medicineList(String medSearchType, String medSearchKeyword) {
+		
+		List<Medicine> medicineList = new ArrayList<>();
+		
+		if(medSearchKeyword == null || medSearchKeyword.trim().equals("")) {
+			medicineList = medicineRepository.findAll();
+		} else {
+			if(medSearchType.equals("medNum")) {
+				medicineList = medicineRepository.findByMedicineNum(medSearchKeyword);
+			} else if(medSearchType.equals("medEnName")) {
+				medicineList = medicineRepository.findByMedicineEnNameContainingIgnoreCase(medSearchKeyword);
+			} else if(medSearchType.equals("medKorName")) {
+				medicineList = medicineRepository.findByMedicineKorNameContainingIgnoreCase(medSearchKeyword);
+			}
+		}
 		
 		if(medicineList.isEmpty()) {
 			return null;
