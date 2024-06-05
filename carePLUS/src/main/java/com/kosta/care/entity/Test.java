@@ -45,12 +45,12 @@ public class Test {
 	@Column
 	private String testNotice;
 	@Column
-	private String testState;
+	private String testStatus;
 	@Column
-	private Date testResvDate;
+	private Date testAppointmentDate;
 	@Column
-	private String testOutInspectRecorde;
+	private String testOutInspectRecord;
 	@Column
-	private Date testResvDateTime;
+	private Date testAppointmentTime;
 	
 }

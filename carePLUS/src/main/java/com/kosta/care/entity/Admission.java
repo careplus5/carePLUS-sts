@@ -18,36 +18,36 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Adminssion {
+public class Admission {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long admNum;
 	@Column
 	private Long docNum;
 	@Column
-	private Long bedsId;
+	private Long bedsNum;
 	@Column
 	private Long patNum;
 	@Column
 	private Long jobNum;
 	@Column
-	private Date adminssionDate;
+	private Date admissionDate;
 	@Column
-	private Date adminssionDueDate;
+	private Date admissionDueDate;
 	@Column
-	private Date adminssionDcDueDate;
+	private Date admissionDcDueDate;
 	@Column
-	private Date adminssionDc;
+	private Date admissionDc;
 	@Column
-	private String adminssionReason;
+	private String admissionReason;
 	@Column
-	private String adminssionHandover;
+	private String admissionHandover;
 	@Column
-	private String adminssionDoctorOpinion;
+	private String admissionDoctorOpinion;
 	@Column
-	private String adminssionState;
+	private String admissionState;
 	@Column
-	private String adminssionType;
+	private String admissionType;
 	
 	
 }

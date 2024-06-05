@@ -28,6 +28,8 @@ public class MedicalTechnician implements Employee{
 	@Column
 	private Long departmentNum;
 	@Column
+	private String departmentName;
+	@Column
 	private Long jobNum;
 	@Column
 	private String metName;

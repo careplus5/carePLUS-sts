@@ -28,6 +28,8 @@ public class Doctor implements Employee{
 	@Column
 	private Long departmentNum;
 	@Column
+	private String departmentName;
+	@Column
 	private Long jobNum;
 	@Column
 	private String docName;

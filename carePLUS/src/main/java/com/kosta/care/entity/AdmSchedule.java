@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AdmSchecule {
+public class AdmSchedule {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long admScheduleNum;

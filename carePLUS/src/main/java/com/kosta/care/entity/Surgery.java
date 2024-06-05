@@ -53,7 +53,7 @@ public class Surgery {
 	@Column
 	private String surgeryAnesthesia;
 	@Column
-	private String surgerAnesthesiaPart;
+	private String surgeryAnesthesiaPart;
 	@Column
 	private String surgeryBloodPack;
 	@Column

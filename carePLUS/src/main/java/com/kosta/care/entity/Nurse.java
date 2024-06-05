@@ -28,6 +28,8 @@ public class Nurse implements Employee {
 	@Column
 	private Long departmentNum;
 	@Column
+	private String departmentName;
+	@Column
 	private Long jobNum;
 	@Column
 	private String nurName;
@@ -40,15 +42,13 @@ public class Nurse implements Employee {
 	@Column
 	private String nurEmail;
 	@Column
-	private String nurDepartment1;
-	@Column
 	private String nurDepartment2Name;
 	@Column
 	@ColumnDefault("true")
-	private Boolean isNoticeAlaramOk;
+	private Boolean isNoticeAlarmOk;
 	@Column
 	@ColumnDefault("true")
-	private Boolean isBookAlaramOk;
+	private Boolean isBookAlarmOk;
 	@Column
 	private String fcmToken ;
 	
