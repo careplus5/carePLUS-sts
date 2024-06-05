@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.kosta.care.dto.AlarmDto;
@@ -35,6 +36,7 @@ public class AlarmServiceImpl implements AlarmService {
 	private final AlarmRepository alarmRepository;
 	private final EmployeeAlarmRepository employeeAlarmRepository;
 	
+	@Override
 	public String sendAlarmByToken(Long empNum, AlarmDto alarmDto) {
 		
 		//empNum로 맞는 Repository를 찾아서 토큰 값 불러오기
@@ -86,6 +88,7 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 	
 	//알림 재발송
+	@Override
 	public List<AlarmDto> sendNotCheckAlarm(Long empNum){
 		//empNum으로 보내줄 대상 Token값 조회
 		String empNumString = empNum.toString();

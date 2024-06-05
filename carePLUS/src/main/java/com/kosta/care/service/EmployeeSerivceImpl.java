@@ -1,15 +1,11 @@
 package com.kosta.care.service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +23,6 @@ import com.kosta.care.repository.MedicalTechnicianRepository;
 import com.kosta.care.repository.NurseRepository;
 import com.kosta.care.repository.ProfileRepository;
 import com.kosta.care.util.EmployeeUtil;
-import com.kosta.care.util.PageInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,8 +41,8 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 	private final EmployeeRepository empRepository;
 	@Autowired
 	EmployeeUtil employeeUtil;
-//	@Autowired
-//	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Override
 	public Long Join(EmployeeDto employeeDto, MultipartFile file) throws Exception {
 		Long profNum = null;
@@ -86,10 +81,10 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 		//중복시 오류메시지
 		if(oemp.isPresent()) throw new Exception("중복된 직원번호 입니다");
 		
-//		//비밀번호 암호화
-//		String rawPassword = employeeDto.getEmpPassword();
-//		String encodePassword = bCryptPasswordEncoder.encode(rawPassword);
-//		employeeDto.setEmpPassword(encodePassword);
+		//비밀번호 암호화
+		String rawPassword = employeeDto.getEmpPassword();
+		String encodePassword = bCryptPasswordEncoder.encode(rawPassword);
+		employeeDto.setEmpPassword(encodePassword);
 		
 
 		//맞는 위치에 save
