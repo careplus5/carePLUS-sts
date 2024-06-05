@@ -2,9 +2,8 @@ package com.kosta.care.service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import com.kosta.care.entity.Disease;
+import com.kosta.care.entity.Medicine;
 
 public interface DiagnosisDueService {
 	
@@ -15,5 +14,11 @@ public interface DiagnosisDueService {
 	//환자상태 업데이트
 	void updateDocDiagnosisState(Long docDiagNum, String newState);
 	//부서에 따른 병명리스트 조회
-	List<Map<String, Object>> diseaseListByDeptNum(Long deptNum);
+	List<Map<String, Object>> diseaseListByDeptNum(Long deptNum) throws Exception;
+	//약품리스트 조회
+	List<Medicine> medicineList();
+	//즐겨찾기 약품리스트 조회
+	List<Map<String, Object>> favMedicineList(Long docNum);
+	//즐겨찾기 약품 등록
+	Boolean addFavMedicine(Long docNum, String medicineNum);
 }

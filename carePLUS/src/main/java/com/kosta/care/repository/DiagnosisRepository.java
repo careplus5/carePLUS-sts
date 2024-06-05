@@ -9,11 +9,15 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.kosta.care.entity.FavoriteMedicines;
+import com.kosta.care.entity.Medicine;
 import com.kosta.care.entity.QDepartment;
 import com.kosta.care.entity.QDiagnosisDue;
 import com.kosta.care.entity.QDisease;
 import com.kosta.care.entity.QDocDiagnosis;
 import com.kosta.care.entity.QDoctor;
+import com.kosta.care.entity.QFavoriteMedicines;
+import com.kosta.care.entity.QMedicine;
 import com.kosta.care.entity.QPatient;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
@@ -78,7 +82,6 @@ public class DiagnosisRepository {
 				.on(disease.departmentNum.eq(department.departmentNum))
 				.where(disease.departmentNum.eq(deptNum))
 				.fetch();
-		
 	}
 	
 	//외래진료-환자상태 변경
@@ -91,6 +94,36 @@ public class DiagnosisRepository {
 					.set(docDiagnosis.docDiagnosisState, newState)
 					.execute();
 				
+	}
+	
+	//외래진료-약품조회
+	public List<Medicine> findMedicineList() {
+		QMedicine medicine = QMedicine.medicine;
+		
+		return jpaQueryFactory.select(medicine)
+				.from(medicine)
+				.fetch();
+	}
+	
+	//외래진료-즐겨찾기 약품조회
+	public List<Tuple> findFavMedicineListByDocNum(Long docNum) {
+		QMedicine medicine = QMedicine.medicine;
+		QFavoriteMedicines favoriteMedicines = QFavoriteMedicines.favoriteMedicines;
+		
+		return jpaQueryFactory.select(favoriteMedicines, medicine.medicineKorName)
+					.from(favoriteMedicines)
+					.join(medicine)
+					.on(favoriteMedicines.medicineNum.eq(medicine.medicineNum))
+					.where(favoriteMedicines.docNum.eq(docNum))
+					.fetch();
+	}
+	
+	public FavoriteMedicines findFavoriteMedicines(Long docNum, String medicineNum) {
+		QFavoriteMedicines favoriteMedicines = QFavoriteMedicines.favoriteMedicines;
+		
+		return jpaQueryFactory.selectFrom(favoriteMedicines)
+						.where(favoriteMedicines.docNum.eq(docNum).and(favoriteMedicines.medicineNum.eq(medicineNum)))
+						.fetchOne();
 	}
 	
 	

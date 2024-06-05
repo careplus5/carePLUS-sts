@@ -127,6 +127,4 @@ public class AlarmServiceImpl implements AlarmService {
 
 	//프론트에서 받은 fcmToken DB에 저장
 //	public void registFcmToken(String fcmToken) {
-//
-//	}
 }

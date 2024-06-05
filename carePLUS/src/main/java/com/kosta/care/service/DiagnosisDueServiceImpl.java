@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -12,9 +11,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.care.entity.DiagnosisDue;
 import com.kosta.care.entity.Disease;
 import com.kosta.care.entity.Doctor;
+import com.kosta.care.entity.FavoriteMedicines;
+import com.kosta.care.entity.Medicine;
 import com.kosta.care.repository.DiagnosisDueRepository;
 import com.kosta.care.repository.DiagnosisRepository;
 import com.kosta.care.repository.DoctorRepository;
+import com.kosta.care.repository.FavoriteMedicinesRepository;
 import com.kosta.care.repository.PatientRepository;
 import com.querydsl.core.Tuple;
 
@@ -28,6 +30,7 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 	private final PatientRepository patientRepository;
 	private final DoctorRepository doctorRepository;
 	private final DiagnosisRepository diagnosisRepository;
+	private final FavoriteMedicinesRepository favoriteMedicinesRepository;
 	
 	private final ObjectMapper objectMapper;
 	
@@ -78,8 +81,10 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 	}
 
 	@Override
-	public List<Map<String, Object>> diseaseListByDeptNum(Long docNum) {
+	public List<Map<String, Object>> diseaseListByDeptNum(Long docNum) throws Exception {
 		Optional<Doctor> odoctor = doctorRepository.findById(docNum);
+		if(odoctor.isEmpty()) throw new Exception("부서번호 없음");
+		
 		List<Tuple> tuples = diagnosisRepository.findDiseaseListByDeptNum(odoctor.get().getDepartmentNum());
 		List<Map<String, Object>> diseaseList = new ArrayList<>();
 		
@@ -96,6 +101,51 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			return null;
 		}
 		return diseaseList;
+	}
+
+	@Override
+	public List<Medicine> medicineList() {
+		List<Medicine> medicineList = diagnosisRepository.findMedicineList();
+		
+		if(medicineList.isEmpty()) {
+			return null;
+		}
+		return medicineList;
+	}
+
+	@Override
+	public List<Map<String, Object>> favMedicineList(Long docNum) {
+		List<Tuple> tuples = diagnosisRepository.findFavMedicineListByDocNum(docNum);
+		List<Map<String, Object>> favMedicineList = new ArrayList<>();
+		
+		for(Tuple tuple : tuples) {
+			FavoriteMedicines favoriteMedicines = tuple.get(0, FavoriteMedicines.class);
+			String medicineKorName = tuple.get(1, String.class);
+
+			Map<String, Object> map = objectMapper.convertValue(favoriteMedicines, Map.class);
+			map.put("medicineKorName", medicineKorName);
+			favMedicineList.add(map);
+		}
+		
+		if(favMedicineList.isEmpty()) {
+			return null;
+		}
+		return favMedicineList;
+	}
+
+	@Override
+	public Boolean addFavMedicine(Long docNum, String medicineNum) {
+		FavoriteMedicines favMed = diagnosisRepository.findFavoriteMedicines(docNum, medicineNum);
+		if(favMed == null) {
+			favoriteMedicinesRepository.save(FavoriteMedicines.builder()
+													.docNum(docNum)
+													.medicineNum(medicineNum)
+													.build());
+			return true;
+		} else {
+			favoriteMedicinesRepository.deleteById(favMed.getFavoriteMedicinesNum());;
+			return false;
+		}
 	}
 
 }

@@ -2,18 +2,17 @@ package com.kosta.care.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kosta.care.dto.DiagnosisDueDto;
-import com.kosta.care.entity.Disease;
-import com.kosta.care.entity.Doctor;
+import com.kosta.care.entity.Medicine;
 import com.kosta.care.repository.DoctorRepository;
 import com.kosta.care.service.DiagnosisDueService;
 
@@ -61,5 +60,40 @@ public class DocDiagnosisController {
 		}
 	}
 	
+	@GetMapping("/medicineList")
+	public ResponseEntity<List<Medicine>> medicineList() {
+		try {
+			List<Medicine> medicineList = diagnosisDueService.medicineList();
+			return new ResponseEntity<List<Medicine>>(medicineList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<Medicine>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/favMedicineList")
+	public ResponseEntity<List<Map<String, Object>>> favMedicineList(@RequestParam("docNum") Long docNum) {
+		try {
+			List<Map<String, Object>> favMedicineList = diagnosisDueService.favMedicineList(docNum);
+			return new ResponseEntity<List<Map<String,Object>>>(favMedicineList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<Map<String,Object>>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping("/addFavMedicine")
+	public ResponseEntity<Boolean> addFavMedicine(@RequestBody Map<String,Object> param) {
+		Long docNum = new Long((Integer)param.get("docNum"));
+		String medicineNum = (String) param.get("medicineNum");
+		
+		try {
+			Boolean isAddedFavMed = diagnosisDueService.addFavMedicine(docNum, medicineNum);
+			return new ResponseEntity<Boolean>(isAddedFavMed, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Boolean>(HttpStatus.BAD_REQUEST);
+		}
+	}
 	
 }
