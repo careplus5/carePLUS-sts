@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class FavoriteMedicines {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long FavoriteMedicinesNum;
+	private Long favoriteMedicinesNum;
 	@Column
 	private String medicineNum;
 	@Column

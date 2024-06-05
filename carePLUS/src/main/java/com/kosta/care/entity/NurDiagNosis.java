@@ -21,7 +21,7 @@ public class NurDiagNosis {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long nurDiagNum;
 	@Column
-	private Long preNum;
+	private Long prescriptionNum;
 	@Column
 	private Long nurNum;
 	@Column

@@ -38,4 +38,6 @@ public class AdmSchedule {
 	private Date admScheduleStartTime;
 	@Column
 	private Date admScheduleEndDate;
+	@Column
+	private Date admScheuleEndTime;
 }

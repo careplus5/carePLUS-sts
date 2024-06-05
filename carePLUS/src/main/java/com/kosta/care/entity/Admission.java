@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 public class Admission {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long admNum;
+	private Long admissionNum;
 	@Column
 	private Long docNum;
 	@Column
@@ -30,23 +30,25 @@ public class Admission {
 	private Long patNum;
 	@Column
 	private Long jobNum;
-	@Column
+	@Column //입원일
 	private Date admissionDate;
-	@Column
+	@Column //입원예정일
 	private Date admissionDueDate;
-	@Column
-	private Date admissionDcDueDate;
-	@Column
-	private Date admissionDc;
-	@Column
+	@Column //퇴원예정일
+	private Date admissionDischargeDueDate;
+	@Column //퇴원일
+	private Date admissionDischargeDate;
+	@Column //입원사유
 	private String admissionReason;
-	@Column
+	@Column //인수인계
 	private String admissionHandover;
-	@Column
+	@Column //의사의 소견
 	private String admissionDoctorOpinion;
-	@Column
-	private String admissionState;
-	@Column
+	@Column //간호사의 퇴원 사유
+	private String admissionDischargeOpinion;
+	@Column //입원 상태
+	private String admissionStatus;
+	@Column //?
 	private String admissionType;
 	
 	

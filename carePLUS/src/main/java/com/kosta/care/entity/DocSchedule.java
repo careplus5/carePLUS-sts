@@ -38,4 +38,6 @@ public class DocSchedule {
 	private Date docScheduleStartTime;
 	@Column
 	private Date docScheduleEndDate;
+	@Column
+	private Date docScheduleEndTime;
 }

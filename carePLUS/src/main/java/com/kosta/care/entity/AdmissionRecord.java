@@ -1,10 +1,14 @@
 package com.kosta.care.entity;
 
+import java.sql.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,20 +20,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AdminssionRequest {
+public class AdmissionRecord {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long adminssionDueNum;
+	private Long admissionRecordNum;
 	@Column
-	private Long patNum;
-	@Column
-	private Long diagNum;
-	@Column
-	private Long docNum;
+	private Long docDiagnosisNum;
 	@Column
 	private Long jobNum;
 	@Column
-	private String adminssionDuePeriod;
+	@CreationTimestamp
+	private Date admissionRecordDate;
 	@Column
-	private String adminssionDueReason;
+	private String admissionRecordContent;
 }

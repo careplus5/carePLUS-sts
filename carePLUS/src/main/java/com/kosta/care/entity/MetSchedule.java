@@ -38,4 +38,6 @@ public class MetSchedule {
 	private Date metScheduleStartTime;
 	@Column
 	private Date metScheduleEndDate;
+	@Column
+	private Date metScheduleEndTime;
 }

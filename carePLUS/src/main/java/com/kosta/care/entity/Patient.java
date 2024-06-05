@@ -26,7 +26,7 @@ public class Patient {
 	@Column
 	private String patAddress;
 	@Column
-	private String petTel;
+	private String patTel;
 	@Column
 	private String patHeight;
 	@Column

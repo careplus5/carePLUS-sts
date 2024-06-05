@@ -62,6 +62,7 @@ public class Surgery {
 	private String surgeryState;
 	@Column
 	private String surgeryEtc;
-	
+	@Column
+	private Long operationRoomNum;
 	
 }
