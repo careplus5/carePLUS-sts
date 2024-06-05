@@ -21,7 +21,7 @@ public class FavoriteMedicines {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long FavoriteMedicinesNum;
 	@Column
-	private Long medicineNum;
+	private String medicineNum;
 	@Column
 	private Long docNum;
 }

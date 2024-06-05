@@ -16,9 +16,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Medicine {
 	@Id
-	private Long medicineNum;
+	private String medicineNum;
 	@Column
-	private String mdeicineEnName;
+	private String medicineEnName;
 	@Column
 	private String medicineKorName;
 	@Column

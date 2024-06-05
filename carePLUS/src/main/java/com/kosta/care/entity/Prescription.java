@@ -25,7 +25,7 @@ public class Prescription {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long prescriptionNum;
 	@Column
-	private Long medicineNum;
+	private String medicineNum;
 	@Column
 	private Long patNum;
 	@Column
