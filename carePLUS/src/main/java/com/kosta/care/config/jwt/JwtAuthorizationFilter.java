@@ -54,7 +54,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 //		Long nurNum = Long.parseLong(request.getParameter("nurNum"));
 //		System.out.println(nurNum);
 		String uri = request.getRequestURI();      
-	      if(!uri.contains("/")) {
+	      if(uri.contains("/")) {
 	          chain.doFilter(request, response);
 	          return;
 	       }
