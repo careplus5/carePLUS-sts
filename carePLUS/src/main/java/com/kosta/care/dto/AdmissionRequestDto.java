@@ -9,15 +9,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PatientDto {
+public class AdmissionRequestDto {
+	
+	private Long admissionRequestNum;
 	private Long patNum;
 	private String patName;
 	private String patJumin;
 	private String patGender;
-	private String patAddress;
 	private String patTel;
-	private String patHeight;
-	private String patWeight;
-	private String patBloodType;
-	private String patHistory;
+	private String patAddress;
+	private Long diagnosisNum;
+	private Long docNum;
+	private Long jobNum;
+	private String admissionRequestPeriod;
+	private String admissionRequestReason;
 }

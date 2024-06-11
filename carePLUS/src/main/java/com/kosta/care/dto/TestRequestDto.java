@@ -9,15 +9,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PatientDto {
+public class TestRequestDto {
+	
+	private Long testRequestNum;
 	private Long patNum;
 	private String patName;
 	private String patJumin;
 	private String patGender;
-	private String patAddress;
-	private String patTel;
-	private String patHeight;
-	private String patWeight;
-	private String patBloodType;
-	private String patHistory;
+	private Long docNum;
+	private String docName;
+	private String testName;  // 검사 종류 (CT, MRI, X-Ray) 
+	private String testRequestAcpt;  // 검사 승인 여부
+	private String testPart;  // 검사 부위
 }

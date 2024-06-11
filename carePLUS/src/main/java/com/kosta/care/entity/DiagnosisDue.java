@@ -23,19 +23,19 @@ import lombok.NoArgsConstructor;
 public class DiagnosisDue {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long diagnosisDueNum;
+	private Long diagnosisDueNum;  // 진료예약 번호 
 	@Column 
-	private Long patNum;
+	private Long patNum;  // 환자 번호 
 	@Column
-	private Long docNum;
+	private Long docNum;  // 의사 번호 
 	@Column
-	private String diagnosisDueState;
+	private String diagnosisDueState;  // 증상 
 	@Column
-	private String diagnosisDueEtc;
+	private String diagnosisDueEtc;  // 특이사항 
 	@Column
-	private Date diagnosisDueDate;
+	private Date diagnosisDueDate;  // 진료 예약일 
 	@Column
-	private Date diagnosisDueTime;
+	private Date diagnosisDueTime;  // 진료 시간 
 	
 	public DiagnosisDueDto toDiagnosisDueDto() {
 		return new DiagnosisDueDto(diagnosisDueNum, patNum, docNum, diagnosisDueState, diagnosisDueEtc, diagnosisDueDate, diagnosisDueTime);

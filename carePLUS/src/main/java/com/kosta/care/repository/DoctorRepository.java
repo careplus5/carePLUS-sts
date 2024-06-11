@@ -1,5 +1,7 @@
 package com.kosta.care.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,4 +13,5 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 //	 Page<Doctor> findBySubjectContains(String subject, PageRequest pageRequest);
 //	 Page<Doctor> findByContentContains(String Content, PageRequest pageRequest);
 //	 
+	List<Doctor> findByDepartmentNum (Long departmentNum );
 }
