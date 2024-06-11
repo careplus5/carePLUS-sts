@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AlarmDto {
+	private Long AlarmNum;
 	private String title;
 	private String content;
+	private Boolean isCheck;
+	private String type;
 }

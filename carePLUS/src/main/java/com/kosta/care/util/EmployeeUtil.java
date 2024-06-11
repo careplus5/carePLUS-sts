@@ -67,7 +67,7 @@ public class EmployeeUtil {
 		return doctor;
 	}
 	
-	// 여까지해보자
+	// 여까지해보자 웅 그러자
 	public AdminHospital toAdm(EmployeeDto employeeDto) {
 		AdminHospital adm = AdminHospital.builder()
 				.admNum(employeeDto.getEmpNum())

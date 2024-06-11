@@ -17,11 +17,11 @@ public class EmployeeAlarmRepository {
 	private final AlarmRepository alarmRepository;
 	private final JPAQueryFactory jpaQueryFactory;
 
-	public List<Alarm> AlarmListFindByEmpNumAndAlarmDeliveryFalse(Long empNum){
+	public List<Alarm> AlarmListFindByEmpNumAndAlarmCheckFalse(Long empNum){
 		QAlarm alarm = QAlarm.alarm;
 		
 		return jpaQueryFactory.selectFrom(alarm)
-				.where(alarm.alarmDelivery.eq(false).and(alarm.empNum.eq(empNum)))
+				.where(alarm.alarmCheck.eq(false).and(alarm.empNum.eq(empNum)))
 				.fetch();
 	}
 }

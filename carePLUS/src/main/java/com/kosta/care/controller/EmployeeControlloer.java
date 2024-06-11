@@ -20,6 +20,7 @@ public class EmployeeControlloer {
 	
 	@PostMapping("/employeeAdd")
 	public ResponseEntity<String> EmployeeAdd(@ModelAttribute EmployeeDto employeeDto, @RequestParam(name="file", required = false) MultipartFile file){
+		System.out.println(employeeDto.getEmpNum());
 		try {
 			System.out.println(employeeDto);
 			employeeSerivce.Join(employeeDto,file);

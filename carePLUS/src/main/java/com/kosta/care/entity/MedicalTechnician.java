@@ -47,10 +47,10 @@ public class MedicalTechnician implements Employee{
 	private String metDepartment2Name;
 	@Column
 	@ColumnDefault("true")
-	private Boolean isNoticeAlaramOk;
+	private Boolean isNoticeAlarmOk;
 	@Column
 	@ColumnDefault("true")
-	private Boolean isBookAlaramOk;
+	private Boolean isBookAlarmOk;
 	@Column
 	private String fcmToken ;
 	

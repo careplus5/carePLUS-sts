@@ -43,10 +43,10 @@ public class AdminHospital implements Employee {
 	private String admEmail;
 	@Column
 	@ColumnDefault("true")
-	private Boolean isNoticeAlaramOk;
+	private Boolean isNoticeAlarmOk;
 	@Column
 	@ColumnDefault("true")
-	private Boolean isBookAlaramOk;
+	private Boolean isBookAlarmOk;
 	@Column
 	private String fcmToken ;
 	
