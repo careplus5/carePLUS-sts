@@ -20,6 +20,7 @@ public class JwtToken {
 				.withIssuedAt(new Date(System.currentTimeMillis()))
 				//.withExpiresAt(new Date(System.currentTimeMillis()+JwtProperties.ACCESS_EXPIRATION_TIME))
 				.sign(Algorithm.HMAC512(JwtProperties.SECRET));
+		
 	}
 	
 	public String makeRefreshToken(String id) {

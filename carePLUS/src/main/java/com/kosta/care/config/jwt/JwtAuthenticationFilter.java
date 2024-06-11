@@ -58,23 +58,23 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withClaim("username", emp.getUsername())
                 .withClaim("paassword", emp.getPassword())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
-
+		System.out.println("JwtAuthenticationFitler에서의 accesstoken:"+accessToken);
         String refreshToken = JWT.create()
                 .withSubject(emp.getUsername())
                 .withClaim("paassword", emp.getPassword())
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.REFRESH_EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
-        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + accessToken);
+        response.addHeader(JwtProperties.HEADER_STRING,accessToken);
         response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + refreshToken);
 
 ObjectMapper objectMapper = new ObjectMapper();
 Map<String, String> map = new HashMap<>();
-map.put("access_token", JwtProperties.TOKEN_PREFIX+accessToken);
-map.put("refresh_token", JwtProperties.TOKEN_PREFIX+refreshToken);
+map.put("accessToken", JwtProperties.TOKEN_PREFIX+accessToken);
+map.put("refreshToken", JwtProperties.TOKEN_PREFIX+refreshToken);
 
 String token = objectMapper.writeValueAsString(map);
-
+System.out.println("JwtAuthenticationFitler에서의 token:"+token);
 response.addHeader(JwtProperties.HEADER_STRING, token);
 response.setContentType("application/json; charset=utf-8");
 

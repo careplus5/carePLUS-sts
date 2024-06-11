@@ -29,7 +29,7 @@ public class Admission {
 	@Column
 	private Long patNum;
 	@Column
-	private Long jobNum;
+	private Long nurNum;
 	@Column //입원일
 	private Date admissionDate;
 	@Column //입원예정일

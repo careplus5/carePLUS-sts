@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.kosta.care.entity.FavoriteMedicines;
-import com.kosta.care.entity.Medicine;
 import com.kosta.care.entity.QDepartment;
 import com.kosta.care.entity.QDiagnosisDue;
 import com.kosta.care.entity.QDisease;

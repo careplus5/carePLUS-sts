@@ -9,8 +9,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -21,90 +23,127 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.care.config.auth.PrincipalDetails;
 import com.kosta.care.entity.Employee;
 import com.kosta.care.repository.EmployeeRepository;
-import com.kosta.care.util.EmployeeUtil;
 
 
 // 인가: 로그인 처리가 되어야만 하는 요청이 들어왔을 실행
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
+	private  final JwtToken jwtToken = new JwtToken();
+	private final EmployeeRepository empRepository;
+//	private EmployeeUtil empUtil;
+
 	public JwtAuthorizationFilter (AuthenticationManager authenticationManager, EmployeeRepository empRepository) {
 		super(authenticationManager);
+		System.out.println("JwtAuthorization 시작");
+		
 		this.empRepository = empRepository;
 	}
-	
-	private JwtToken jwtToken = new JwtToken();
-	private EmployeeRepository empRepository;
-	private EmployeeUtil empUtil;
-	
+
 	@Override
 	protected void doFilterInternal (HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-		//super.doFilterInternal(request, response, chain);
-	String uri = request.getRequestURI(); //로그인이 필요없으면 그냥 흐르게 
-
-	// 로그인(인증)이 필요없는 요청은 그대로 진행
-	if(!(uri.contains("/employee") || uri.contains("/admin") || uri.contains("/manager"))) {
-		chain.doFilter(request, response);
-		return;
-	}
+		// super.doFilterInternal(request, response, chain);
+//	String uri = request.getRequestURI(); //로그인이 필요없으면 그냥 흐르게
+//	System.out.println("1 인가 확인 중:"+uri);
+//	// 로그인(인증)이 필요없는 요청은 그대로 진행
+//	if(!(uri.contains("/login") || uri.contains("/") || uri.contains("/*"))) {
+//		System.out.println("로그인이 필요 없는 요청");
+//		chain.doFilter(request, response);
+//		return;
+//	}
+		
+		String authentication = request.getHeader(JwtProperties.HEADER_STRING);
+//		Long nurNum = Long.parseLong(request.getParameter("nurNum"));
+//		System.out.println(nurNum);
+		String uri = request.getRequestURI();      
+	      if(!uri.contains("/")) {
+	          chain.doFilter(request, response);
+	          return;
+	       }
+	      System.out.println("인가 확인 중: "+uri);
 	
-	String authentication = request.getHeader(JwtProperties.HEADER_STRING);
+	// authentication이없음 ..
+	System.out.println(authentication);
+	
 	// token을 갖고왔는지 안 갖고왔는지의 여부를 확인해야 함
 	// 토큰이 없거나 PREFIX가 Bearer가 아니거나
 	if(authentication==null) {
-		response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"로그인 필요");
+		response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"로그인했는데 또 나와서 열받쥬? 하지만 해야하쥬?");
+		System.out.println("authentication: "+authentication);
 		return;
 	}
 	
+
+	
 	ObjectMapper objectMapper = new ObjectMapper();
-	Map<String, String> token = objectMapper.readValue(authentication, Map.class); // jsonstr => map
-	System.out.println(token);
- 	
+	// 토큰
+//	Map<String, String> token = objectMapper.readValue(authentication, Map.class); // jsonstr => map
+//	String token = authentication.replace(JwtProperties.TOKEN_PREFIX, "");	
+	String token = authentication.replaceAll("\"", "");
+	System.out.println(token.toString()+"Zz");
+	
+	
 	//accessToken validate check
-	String access_token = token.get("access_token");
-	if(!access_token.startsWith(JwtProperties.TOKEN_PREFIX)) {
+	String accessToken = authentication.replaceAll("\"", "");
+	System.out.println(accessToken+"chlchlwhd");
+	if(!accessToken.startsWith(JwtProperties.TOKEN_PREFIX)) {
 		response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"login need");
 		return;
 	}
 	
-	access_token = access_token.replace(JwtProperties.TOKEN_PREFIX,"");
+	accessToken = accessToken.replace(JwtProperties.TOKEN_PREFIX,"");
+	System.out.println("두번째 토큰:"+accessToken);
+	
+	
+	// JWT 토큰검증
 	try {
+		System.out.println("토큰 검증 드가자");
 	String id = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))
 			.build()
-			.verify(access_token)
+			.verify(accessToken)
 			.getClaim("sub")
 			.asString();
 	
-	System.out.println(id);
+	System.out.println("id는 "+id);
 	if(id == null || id.equals("")) throw new Exception();
 	
+	// 토큰에서 추출한 아이디를 사용해 사용자 정보 조회
 Employee emp = empRepository.identifyJob(id);
-	if(emp == null) throw new Exception();
+System.out.println(emp.getName());
 	
+	
+	
+	// 인증 정보 기반으로 Spring Security의 PrincipalDetails 생성
 	PrincipalDetails principalDetails = new PrincipalDetails(emp);
+	
+	//인증 객체 생성
 	UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
+	
+	//Spring Security의 SecurityContextHolder에 인증 정보 저장
 	SecurityContextHolder.getContext().setAuthentication(auth);
+	
+	// 다음 필터로 요청 전달
 	chain.doFilter(request, response);
 	return;
 	}catch(JWTVerificationException ve) {
 		ve.printStackTrace();
 		try {
-			String refresh_token = token.get("refresh_token");
-			if(!refresh_token.startsWith(JwtProperties.TOKEN_PREFIX)) {
+			String refreshToken = token;
+			if(!refreshToken.startsWith(JwtProperties.TOKEN_PREFIX)) {
 				response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"login need");
 				return;
 			}
 			String id = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))
 					.build()
-					.verify(refresh_token)
+					.verify(refreshToken)
 					.getClaim("sub")
 					.asString();
 			
 			Employee emp = empRepository.identifyJob(id);
 			
-			String reAccess_token = jwtToken.makeAccessToken(id);
-			String reRefresh_token = jwtToken.makeRefreshToken(id);
+			String reAccessToken = jwtToken.makeAccessToken(id);
+			String reRefreshToken = jwtToken.makeRefreshToken(id);
 			Map<String, String> map = new HashMap<>();
-			map.put("access_token", JwtProperties.TOKEN_PREFIX+reAccess_token);
-			map.put("refresh_token", JwtProperties.TOKEN_PREFIX+reRefresh_token);
+			map.put("access_token", JwtProperties.TOKEN_PREFIX+reAccessToken);
+			map.put("refresh_token", JwtProperties.TOKEN_PREFIX+reRefreshToken);
 			
 			String reToken = objectMapper.writeValueAsString(map);
 			response.addHeader(JwtProperties.HEADER_STRING,reToken);

@@ -44,8 +44,8 @@ private EmployeeUtil empUtil;
 	 @Override
 	    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		 String identify = username.substring(0,2);
-		 System.out.println("z"+identify);
-			System.out.println(Long.parseLong(username));
+		 System.out.println("loadUserByUsername에서의 identity"+identify);
+			System.out.println("loadUserByUsername에서의 username"+Long.parseLong(username));
 			Employee emp = empRepository.identifyJob(username);
 //		return new PrincipalDetails(emp);
 		

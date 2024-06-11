@@ -43,33 +43,50 @@ public class MainController {
   
 
 
-    
-    @PostMapping("/login")
-    @ResponseBody
-    public ResponseEntity<?> loginEmployee(@RequestBody Employee emp, JwtToken jwtTokenProvider, AuthenticationManager authenticationManager) {
-
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                    		emp.getId(),
-                    		emp.getPassword()
-                    )
-                  
-            );
-            
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            String jwt = jwtTokenProvider.makeAccessToken(Long.toString(emp.getId()));
-//            String result = jwtTokenProvider.makeAccessToken(jwt);
-            
-            return ResponseEntity.ok().header("Authorization", "Bearer " + jwt).build();
-        } catch (AuthenticationException e) {
-        	logger.error("에러임"+emp.getId());
-        	return ResponseEntity.badRequest().body("로그인 실패");
-        }
-    }
-	
-	
+//    
+//    @PostMapping("/login")
+//    @ResponseBody
+//    public ResponseEntity<?> loginEmployee(@RequestBody Employee emp, JwtToken jwtTokenProvider, AuthenticationManager authenticationManager) {
+//
+//        try {
+//            Authentication authentication = authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(
+//                    		emp.getId(),
+//                    		emp.getPassword()
+//                    )
+//                  
+//            );
+//            
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//            String jwt = jwtTokenProvider.makeAccessToken(Long.toString(emp.getId()));
+////            String result = jwtTokenProvider.makeAccessToken(jwt);
+//            
+//            return ResponseEntity.ok().header("Authorization", "Bearer " + jwt).build();
+//        } catch (AuthenticationException e) {
+//        	logger.error("에러임"+emp.getId());
+//        	return ResponseEntity.badRequest().body("로그인 실패");
+//        }
+//    }
+//    
+//    @Autowired
+//	private AdmissionService admService;
+//
+//	
+//	@GetMapping("/wardPatientList")
+//	public ResponseEntity<List<Map<String, Object>>> admPatientList(@RequestParam("nurNum") Long nurNum) {
+//		System.out.println("리스트 가져오기 준비");
+//		try {
+//			System.out.println("리스트 가져오기 시작");
+//			List<Map<String, Object>> admission = admService.admPatientList(nurNum);
+//			return new ResponseEntity<List<Map<String, Object>>>(admission, HttpStatus.OK);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return new ResponseEntity<List<Map<String, Object>>>(HttpStatus.BAD_REQUEST);
+//		}
+//	}
+//	
+//	
 	@GetMapping("/")  // 두 개 이상의 매핑은 { }로 감싼다
 	@ResponseBody
 	public String index() {
@@ -83,15 +100,21 @@ public class MainController {
 	}
 	
 
-//@PostMapping("/login")
-//public ResponseEntity<?> login(@RequestBody User loginUser, AuthenticationManager authenticationManager){
-//	Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUser.getName(),loginUser.getPassword()));
-//
-//SecurityContextHolder.getContext().setAuthentication(authentication);
-//PrincipalDetails userDetails = (PrincipalDetails)authentication.getPrincipal();
-////String jwtToken = jwtTokenProvider.createToken(userDetails.getUsername());
-//return ResponseEntity.ok(true);
-//}
+@PostMapping("/login")
+@ResponseBody
+public ResponseEntity<?> login(@RequestBody Employee emp, JwtToken jwtToken, AuthenticationManager authenticationManager){
+	System.out.println("로그인 과정 시작~");
+	try {
+		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(emp.getId(),emp.getPassword()));
+	SecurityContextHolder.getContext().setAuthentication(authentication);
+	
+	String jwt = jwtToken.makeAccessToken(Long.toString(emp.getId()));
+	return ResponseEntity.ok().header("Authorization", "Bearer "+jwt).build();
+	} catch(AuthenticationException e) {
+		e.printStackTrace();
+		return ResponseEntity.badRequest().body("로그인 실패");
+	}
+}
 
 	
 	@PostMapping("/joinProc")
