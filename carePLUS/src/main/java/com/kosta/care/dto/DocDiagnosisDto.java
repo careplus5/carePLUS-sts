@@ -1,9 +1,11 @@
 package com.kosta.care.dto;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.kosta.care.entity.DocDiagnosis;
+import com.kosta.care.entity.Medicine;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,16 +16,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DiagnosisDueDto {
-	private Long diagnosisDueNum;  // 진료예약 번호 
-	private Long patNum;  // 환자 번호 
-	private Long docNum;  // 의사 번호 
-	private String diagnosisDueState;  // 증상 
-	private String diagnosisDueEtc;  // 특이 사항 
-	private Date diagnosisDueDate;  // 진료 예약일 
-	private Date diagnosisDueTime;  // 진료 시간 
-	
+public class DocDiagnosisDto {
 	private Long docDiagnosisNum;
+	private Long docNum;
+	private Long patNum;
 	private Long diseaseNum;
     private String diagContent;
     private boolean testChecked;

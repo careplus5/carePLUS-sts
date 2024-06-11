@@ -1,6 +1,7 @@
 package com.kosta.care.service;
 
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -8,17 +9,30 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kosta.care.dto.DocDiagnosisDto;
+import com.kosta.care.dto.PrescriptionDto;
+import com.kosta.care.entity.AdmissionRequest;
 import com.kosta.care.entity.DiagnosisDue;
 import com.kosta.care.entity.Disease;
+import com.kosta.care.entity.DocDiagnosis;
 import com.kosta.care.entity.Doctor;
 import com.kosta.care.entity.FavoriteMedicines;
 import com.kosta.care.entity.Medicine;
+import com.kosta.care.entity.Patient;
+import com.kosta.care.entity.Prescription;
+import com.kosta.care.entity.SurgeryRequest;
+import com.kosta.care.entity.TestRequest;
+import com.kosta.care.repository.AdmissionRequestRepository;
 import com.kosta.care.repository.DiagnosisDueRepository;
 import com.kosta.care.repository.DiagnosisRepository;
+import com.kosta.care.repository.DocDiagnosisRepository;
 import com.kosta.care.repository.DoctorRepository;
 import com.kosta.care.repository.FavoriteMedicinesRepository;
 import com.kosta.care.repository.MedicineRepository;
 import com.kosta.care.repository.PatientRepository;
+import com.kosta.care.repository.PrescriptionRepository;
+import com.kosta.care.repository.SurgeryRequestRepository;
+import com.kosta.care.repository.TestRequestRepository;
 import com.querydsl.core.Tuple;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +47,11 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 	private final DiagnosisRepository diagnosisRepository;
 	private final FavoriteMedicinesRepository favoriteMedicinesRepository;
 	private final MedicineRepository medicineRepository;
+	private final DocDiagnosisRepository docDiagnosisRepository;
+	private final TestRequestRepository testRequestRepository;
+	private final AdmissionRequestRepository admissionRequestRepository;
+	private final SurgeryRequestRepository surgeryRequestRepository;
+	private final PrescriptionRepository prescriptionRepository;
 	
 	private final ObjectMapper objectMapper;
 	
@@ -65,14 +84,16 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 		Tuple tuple = diagnosisRepository.findDiagDueInfoByDocDiagNum(docDiagNum);
 		
 		DiagnosisDue diagDue = tuple.get(0, DiagnosisDue.class);
-		String patName = tuple.get(1, String.class);
-		String patJumin = tuple.get(2, String.class);
-		String docDiagState = tuple.get(3, String.class);
+		Patient patient = tuple.get(1, Patient.class);
+		DocDiagnosis docDiagnosis = tuple.get(2, DocDiagnosis.class);
+
+		Optional<DocDiagnosis> odocDiagNum = docDiagnosisRepository.findById(docDiagNum);
 
 		Map<String, Object> map = objectMapper.convertValue(diagDue, Map.class);
-		map.put("patName", patName);
-		map.put("patJumin", patJumin);
-		map.put("docDiagState", docDiagState);
+		map.put("patName", patient.getPatName());
+		map.put("patJumin", patient.getPatJumin());
+		map.put("docDiagState", docDiagnosis.getDocDiagnosisState());
+		map.put("docDiagNum", odocDiagNum.get().getDocDiagnosisNum());
 		
 		return map;
 	}
@@ -80,6 +101,39 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 	@Override
 	public void updateDocDiagnosisState(Long docDiagNum, String newState) {
 		diagnosisRepository.modifyDocDiagnosisState(docDiagNum, newState);
+	}
+	
+	@Override
+	public List<Map<String, Object>> prevDiagListByPatNum(Long patNum) {
+		List<Tuple> tuples = diagnosisRepository.findPrevDiagRecord(patNum);
+		List<Map<String, Object>> prevDiagList = new ArrayList<>();
+		
+		for(Tuple tuple : tuples) {
+			DocDiagnosis docDiag = tuple.get(0, DocDiagnosis.class);
+			Prescription prescription = tuple.get(1, Prescription.class);
+			Long docNum = tuple.get(2, Long.class);
+			String docName = tuple.get(3, String.class);
+			String medName = tuple.get(4, String.class);
+			String testPart = tuple.get(5, String.class);
+			String diseaseName = tuple.get(6, String.class);
+
+			Map<String, Object> map = objectMapper.convertValue(docDiag, Map.class);
+			map.put("preDosage", prescription.getPrescriptionDosage());
+			map.put("preDosageTime", prescription.getPrescriptionDosageTimes());
+			map.put("preDosageTotal", prescription.getPrescriptionDosageTotal());
+			map.put("preHowTake", prescription.getPrescriptionHowTake());
+			map.put("docNum", docNum);
+			map.put("docName", docName);
+			map.put("medName", medName);
+			map.put("testPart", testPart);
+			map.put("diseaseName", diseaseName);
+			prevDiagList.add(map);
+		}
+		
+		if(prevDiagList.isEmpty()) {
+			return null;
+		}
+		return prevDiagList;
 	}
 
 	@Override
@@ -161,6 +215,68 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			favoriteMedicinesRepository.deleteById(favMed.getFavoriteMedicinesNum());;
 			return false;
 		}
+	}
+
+	@Override
+	public Boolean submitDiagnosis(DocDiagnosisDto docDiagDto) {
+		DocDiagnosis docDiagnosis = docDiagDto.toDocDiagnosis();
+		
+		if(docDiagDto.isTestChecked()) {
+			TestRequest testRequest = new TestRequest();
+			testRequest.setTestName(docDiagDto.getTestType());
+			testRequest.setTestPart(docDiagDto.getTestRequest());
+			testRequest.setDocNum(docDiagDto.getDocNum());
+			testRequest.setPatNum(docDiagDto.getPatNum());
+			testRequestRepository.save(testRequest);
+			docDiagnosis.setTestRequestNum(testRequest.getTestRequestNum());
+		}
+		
+		
+		
+		if(docDiagDto.isAdmChecked()) {
+			AdmissionRequest admissionRequest = new AdmissionRequest();
+			admissionRequest.setAdmissionRequestReason(docDiagDto.getAdmReason());
+			admissionRequest.setAdmissionRequestPeriod(docDiagDto.getAdmPeriod());
+			admissionRequest.setPatNum(docDiagDto.getPatNum());
+			admissionRequest.setDocNum(docDiagDto.getDocNum());
+			admissionRequest.setDiagnosisNum(docDiagDto.getDocDiagnosisNum());
+            admissionRequestRepository.save(admissionRequest);
+		}
+		
+		if(docDiagDto.isSurChecked()) {
+			SurgeryRequest surgeryRequest = new SurgeryRequest();
+			surgeryRequest.setSurReason(docDiagDto.getSurReason());
+			surgeryRequest.setSurDate(docDiagDto.getSurDate());
+			surgeryRequest.setSurPeriod(docDiagDto.getSurPeriod());
+			surgeryRequest.setPatNum(docDiagDto.getPatNum());
+			surgeryRequestRepository.save(surgeryRequest);
+		}
+    	
+		StringBuilder docDiagAddBuilder = new StringBuilder();
+		
+		for(PrescriptionDto preDto : docDiagDto.getSelectMedicine()) {
+			Prescription prescription = new Prescription();
+			prescription.setMedicineNum(preDto.getMedicineNum());
+			prescription.setPatNum(docDiagDto.getPatNum());
+			prescription.setDocNum(docDiagDto.getDocNum());
+			prescription.setPrescriptionDosage(preDto.getPreDosage());
+			prescription.setPrescriptionDosageTimes(preDto.getPreDosageTimes());
+			prescription.setPrescriptionDosageTotal(preDto.getPreDosageTotal());
+			prescription.setPrescriptionHowTake(preDto.getPreHowTake());
+			prescription.setPrescriptionDate(new Date(System.currentTimeMillis()));
+			prescriptionRepository.save(prescription);
+			docDiagAddBuilder.append(prescription.getPrescriptionNum()+",");
+		}
+		
+		//마지막 콤마 제거
+		if(docDiagAddBuilder.length() > 0) { 
+			docDiagAddBuilder.deleteCharAt(docDiagAddBuilder.length() - 1);
+		}
+		docDiagnosis.setPrescriptionNum(docDiagAddBuilder.toString());
+		
+		DocDiagnosis updateDocDiag = docDiagnosisRepository.save(docDiagnosis);
+		
+		return updateDocDiag != null;
 	}
 
 }
