@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kosta.care.dto.DocDiagnosisDto;
 import com.kosta.care.entity.Medicine;
 import com.kosta.care.repository.DoctorRepository;
 import com.kosta.care.service.DiagnosisDueService;
@@ -46,6 +47,18 @@ public class DocDiagnosisController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/prevDiagRecord")
+	public ResponseEntity<List<Map<String, Object>>> prevDiagRecord(@RequestParam("patNum") Long patNum) {
+		try {
+			List<Map<String, Object>> prevDiagList = diagnosisDueService.prevDiagListByPatNum(patNum);
+			System.out.println("prevDiagList: "+prevDiagList);
+			return new ResponseEntity<List<Map<String, Object>>>(prevDiagList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<Map<String, Object>>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	
@@ -91,6 +104,17 @@ public class DocDiagnosisController {
 		try {
 			Boolean isAddedFavMed = diagnosisDueService.addFavMedicine(docNum, medicineNum);
 			return new ResponseEntity<Boolean>(isAddedFavMed, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Boolean>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping("/diagnosisSubmit")
+	public ResponseEntity<Boolean> diagnosisSubmit(@RequestBody DocDiagnosisDto docDiagDto) {
+		try {
+			Boolean isSuccess = diagnosisDueService.submitDiagnosis(docDiagDto);
+			return new ResponseEntity<Boolean>(isSuccess, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Boolean>(HttpStatus.BAD_REQUEST);

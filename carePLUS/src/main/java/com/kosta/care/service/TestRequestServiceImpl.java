@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.kosta.care.dto.TestRequestDto;
 import com.kosta.care.entity.TestRequest;
+import com.kosta.care.repository.TestRequestDslRepository;
 import com.kosta.care.repository.TestRequestRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -14,11 +15,11 @@ import lombok.RequiredArgsConstructor;
 public class TestRequestServiceImpl implements TestRequestService {
 
 	@Autowired
-	private TestRequestRepository testRequestRepository;
+	private TestRequestDslRepository testRequestDslRepository;
 	
 	@Override
 	public TestRequestDto getLatestTestRequestByPatNum(Long patNum) throws Exception {
-		return testRequestRepository.findLatestByPatNum(patNum);
+		return testRequestDslRepository.findLatestByPatNum(patNum);
 	}
 
 }

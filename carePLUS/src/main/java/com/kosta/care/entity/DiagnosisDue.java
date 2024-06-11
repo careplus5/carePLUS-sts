@@ -8,7 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import com.kosta.care.dto.DiagnosisDueDto;
+import com.kosta.care.dto.DocDiagnosisDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,7 +37,4 @@ public class DiagnosisDue {
 	@Column
 	private Date diagnosisDueTime;  // 진료 시간 
 	
-	public DiagnosisDueDto toDiagnosisDueDto() {
-		return new DiagnosisDueDto(diagnosisDueNum, patNum, docNum, diagnosisDueState, diagnosisDueEtc, diagnosisDueDate, diagnosisDueTime);
-	}
 }

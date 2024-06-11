@@ -27,7 +27,7 @@ public class DocDiagnosis {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long docDiagnosisNum;
 	@Column
-	private Long prescriptionNum;
+	private String prescriptionNum;
 	@Column
 	private Long diseaseNum;
 	@Column

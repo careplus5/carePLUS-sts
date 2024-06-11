@@ -32,4 +32,6 @@ public class TestRequest {
 	private String testRequestAcpt;  // 요청 수락 여부 
 	@Column
 	private String testPart;  // 검사 부위
+	@Column
+	private String testRequest;
 }
