@@ -50,7 +50,7 @@ public class MedicalTechnician implements Employee{
 	private Boolean isNoticeAlarmOk;
 	@Column
 	@ColumnDefault("true")
-	private Boolean isBookAlarmOk;
+	private Boolean isTestAlarmOk;
 	@Column
 	private String fcmToken ;
 	

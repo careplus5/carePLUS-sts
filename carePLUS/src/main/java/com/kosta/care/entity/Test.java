@@ -1,6 +1,7 @@
 package com.kosta.care.entity;
 
 import java.sql.Date;
+import java.sql.Time;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,6 +52,6 @@ public class Test {
 	@Column
 	private String testOutInspectRecord;
 	@Column
-	private Date testAppointmentTime;
+	private Time testAppointmentTime;
 	
 }

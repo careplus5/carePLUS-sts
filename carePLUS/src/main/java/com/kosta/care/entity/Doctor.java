@@ -45,11 +45,14 @@ public class Doctor implements Employee{
 	@Column
 	private String docEmail;
 	@Column
-	@ColumnDefault("true")
-	private Boolean isNoticeAlarmOk;
-	@Column
-	@ColumnDefault("true")
-	private Boolean isBookAlarmOk;
+    @ColumnDefault("true")
+    private Boolean isNoticeAlarmOk;
+    @Column
+    @ColumnDefault("true")
+    private Boolean isDiagnosAlarmOk;
+    @Column
+    @ColumnDefault("true")
+    private Boolean isSurgeryAlarmOk;
 	@Column
 	private String fcmToken ;
 

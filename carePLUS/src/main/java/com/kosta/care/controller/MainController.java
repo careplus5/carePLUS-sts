@@ -132,7 +132,6 @@ public ResponseEntity<?> login(@RequestBody Employee emp, JwtToken jwtToken, Aut
 	}
 	
 	@PostMapping("/joinDocProc")
-@ResponseBody
 	public String joinDocProc(Doctor emp) {
 		System.out.println("회원가입 진행 : " + emp);
 	// 시큐리티는 반드시 밀번호가 암호화해서 들어감 
