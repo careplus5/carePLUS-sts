@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.kosta.care.dto.PatientDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,5 +40,20 @@ public class Patient {
 	private String patBloodType;
 	@Column
 	private String patHistory;
+	
+	public PatientDto patientDto() {
+		return PatientDto.builder()
+				.patNum(patNum)
+				.patName(patName)
+				.patJumin(patJumin)
+				.patGender(patGender)
+				.patAddress(patAddress)
+				.patTel(patTel)
+				.patHeight(patHeight)
+				.patWeight(patWeight)
+				.patBloodType(patBloodType)
+				.patHistory(patHistory)
+				.build();
+	}
 	
 }

@@ -59,7 +59,7 @@ public class Surgery {
 	private String surgeryBloodPack;
 	@Column
 	private String surgeryResult;
-	@Column
+	@Column  // 여기에다 대기중 기본값으로 
 	private String surgeryState;
 	@Column
 	private String surgeryEtc;

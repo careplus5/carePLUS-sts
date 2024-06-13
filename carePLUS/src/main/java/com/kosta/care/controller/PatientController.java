@@ -1,5 +1,6 @@
 package com.kosta.care.controller;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,6 +20,36 @@ public class PatientController {
 	
 	@Autowired
 	private PatientService patientService;
+	
+	// 환자 등록
+	@PostMapping("/patientJoin")
+	public ResponseEntity<Patient> patientJoin(PatientDto patientDto) {
+		try {
+			Patient patient = patientService.joinPatient(patientDto);
+			return new ResponseEntity<Patient>(patient, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Patient>(HttpStatus.BAD_REQUEST);
+			
+		}
+	}
+	
+	// 모든 환자 조회
+	@PostMapping("/allPatient")
+	public ResponseEntity<List<Patient>> allPatient() {
+		
+		try {
+			List<Patient> patientList = patientService.getAllPatientSearch();
+			
+			if(!patientList.isEmpty()) {
+				return new ResponseEntity<List<Patient>>(patientList, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<List<Patient>>(HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<List<Patient>>(HttpStatus.BAD_REQUEST);
+		}
+	}
 	
 	// 접수등록에서 환자 조회
 	@PostMapping("/patNumCheck")

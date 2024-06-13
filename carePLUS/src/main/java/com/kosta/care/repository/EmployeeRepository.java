@@ -22,7 +22,8 @@ public class EmployeeRepository{
 	@Autowired
 	private MedicalTechnicianRepository metRepository;
 	
-	
+	@Autowired
+	private AdminHospitalRepository admRepository;
 	@Autowired
 	private EntityManager entityManager;
 	
@@ -43,7 +44,7 @@ public Employee identifyJob(String username) {
 		System.out.println(emp.getPassword());
 		return nurRepository.findByNurNum(id);
 	} else if(identify.equals("13")){
-		return metRepository.findByMetNum(id);
+		return admRepository.findByAdmNum(id);
 	} else {
 		
 		throw new UsernameNotFoundException("User not found with id:"+username);
