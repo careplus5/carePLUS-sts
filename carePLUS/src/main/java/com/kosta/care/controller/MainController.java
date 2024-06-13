@@ -21,22 +21,30 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kosta.care.config.auth.PrincipalDetails;
 import com.kosta.care.config.jwt.JwtToken;
+import com.kosta.care.entity.AdminHospital;
 import com.kosta.care.entity.Doctor;
 import com.kosta.care.entity.Employee;
+import com.kosta.care.entity.MedicalTechnician;
 import com.kosta.care.entity.Nurse;
+import com.kosta.care.repository.AdminHospitalRepository;
 import com.kosta.care.repository.DoctorRepository;
 import com.kosta.care.repository.EmployeeRepository;
+import com.kosta.care.repository.MedicalTechnicianRepository;
 import com.kosta.care.repository.NurseRepository;
 
 @Controller
 public class MainController {
 	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 	@Autowired
+	private AdminHospitalRepository admRepository;
+	@Autowired
 	private EmployeeRepository empRepository;
 	@Autowired
 	private NurseRepository nurRepository;
 	@Autowired
 	private DoctorRepository docRepository;
+	@Autowired
+	private MedicalTechnicianRepository metRepository;
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 	
@@ -101,7 +109,6 @@ public class MainController {
 	
 
 @PostMapping("/login")
-@ResponseBody
 public ResponseEntity<?> login(@RequestBody Employee emp, JwtToken jwtToken, AuthenticationManager authenticationManager){
 	System.out.println("로그인 과정 시작~");
 	try {
@@ -132,7 +139,6 @@ public ResponseEntity<?> login(@RequestBody Employee emp, JwtToken jwtToken, Aut
 	}
 	
 	@PostMapping("/joinDocProc")
-@ResponseBody
 	public String joinDocProc(Doctor emp) {
 		System.out.println("회원가입 진행 : " + emp);
 	// 시큐리티는 반드시 밀번호가 암호화해서 들어감 
@@ -146,6 +152,33 @@ public ResponseEntity<?> login(@RequestBody Employee emp, JwtToken jwtToken, Aut
 		return "redirect:/";
 	}
 	
+	@PostMapping("/joinMetProc")
+	public String joinMetProc(MedicalTechnician emp) {
+		System.out.println("회원가입 진행 : " + emp);
+	// 시큐리티는 반드시 밀번호가 암호화해서 들어감 
+		String rawPassword = emp.getPassword();
+	String encodePassword = bCryptPasswordEncoder.encode(rawPassword);
+		// BCryptPasswordEncoder 이것을 만들어 주었음 config 패키에다
+		// Using generated security password: a13ff4b5-9ffb-46a8-8f7f-120b3534f961
+		// 콘솔에서 보면 위와 같은 것이 있음 이것이 암호화 한 것
+	emp.setPassword(encodePassword);
+		metRepository.save(emp);
+		return "redirect:/";
+	}
+	
+	@PostMapping("/joinAdmProc")
+	public String joinAdmProc(AdminHospital emp) {
+		System.out.println("회원가입 진행 : " + emp);
+	// 시큐리티는 반드시 밀번호가 암호화해서 들어감 
+		String rawPassword = emp.getPassword();
+	String encodePassword = bCryptPasswordEncoder.encode(rawPassword);
+		// BCryptPasswordEncoder 이것을 만들어 주었음 config 패키에다
+		// Using generated security password: a13ff4b5-9ffb-46a8-8f7f-120b3534f961
+		// 콘솔에서 보면 위와 같은 것이 있음 이것이 암호화 한 것
+	emp.setPassword(encodePassword);
+	admRepository.save(emp);
+		return "redirect:/";
+	}
 	
 	@PostMapping("/joinNurProc")
 	public String joinNurProc(Nurse emp) {

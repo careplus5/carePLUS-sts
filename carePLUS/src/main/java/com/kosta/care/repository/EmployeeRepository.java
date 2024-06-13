@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kosta.care.entity.Doctor;
 import com.kosta.care.entity.Employee;
+import com.kosta.care.entity.MedicalTechnician;
 import com.kosta.care.entity.Nurse;
 
 @Repository
@@ -15,7 +16,8 @@ public class EmployeeRepository{
 	
 	@Autowired
 	private DoctorRepository docRepository;
-	
+	@Autowired
+	private AdminHospitalRepository admHospitalRepository;
 	@Autowired
 	private NurseRepository nurRepository;
 	
@@ -42,7 +44,11 @@ public Employee identifyJob(String username) {
 		Employee emp = nurRepository.findByNurNum(id);
 		System.out.println(emp.getPassword());
 		return nurRepository.findByNurNum(id);
-	} else if(identify.equals("13")){
+	} else if(identify.equals("13")) {
+	return admHospitalRepository.findByAdmNum(id);
+	}
+	else if(identify.equals("14")){
+	
 		return metRepository.findByMetNum(id);
 	} else {
 		
@@ -58,6 +64,10 @@ public Employee identifyJob(String username) {
 	public Nurse findByIdForNurse(Long id) {
 		return entityManager.find(Nurse.class,id);
 	}
+	public MedicalTechnician findByIdForMet(Long id) {
+		return entityManager.find(MedicalTechnician.class,id);
+	}
+
 
 	public void save(Employee emp) {
 		

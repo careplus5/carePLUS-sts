@@ -90,7 +90,7 @@ public class MedicalTechnician implements Employee{
 
 	@Override
 	public void setPassword(String encodePassword) {
-		// TODO Auto-generated method stub
+		this.metPassword=encodePassword;
 		
 	}
 

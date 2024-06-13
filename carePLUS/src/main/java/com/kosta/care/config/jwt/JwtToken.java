@@ -32,7 +32,7 @@ public class JwtToken {
 
 	    public String generateToken(Authentication authentication) {
 	        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-
+	        System.out.println(principalDetails.getUsername()+"님의 토큰 생성 완료.");
 
 	        return Jwts.builder()
 	                .setSubject(principalDetails.getUsername())

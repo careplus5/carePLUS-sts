@@ -33,4 +33,6 @@ public class AdmissionRecord {
 	private Date admissionRecordDate;
 	@Column
 	private String admissionRecordContent;
+	@Column
+	private Long admissionNum;
 }

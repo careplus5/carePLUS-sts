@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Test {
+public class Test{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long testNum;
@@ -52,5 +52,7 @@ public class Test {
 	private String testOutInspectRecord;
 	@Column
 	private Date testAppointmentTime;
+
+	
 	
 }
