@@ -40,4 +40,66 @@ public class NurseSchedule {
 	private Date nurScheduleEndDate;
 	@Column
 	private Date nurScheduleEndTime;
+	public Long getNurScheduleNum() {
+		return nurScheduleNum;
+	}
+	public void setNurScheduleNum(Long nurScheduleNum) {
+		this.nurScheduleNum = nurScheduleNum;
+	}
+	public Long getNurNum() {
+		return nurNum;
+	}
+	public void setNurNum(Long nurNum) {
+		this.nurNum = nurNum;
+	}
+	public Long getJobNum() {
+		return jobNum;
+	}
+	public void setJobNum(Long jobNum) {
+		this.jobNum = jobNum;
+	}
+	public String getNurScheduleType() {
+		return nurScheduleType;
+	}
+	public void setNurScheduleType(String nurScheduleType) {
+		this.nurScheduleType = nurScheduleType;
+	}
+	public String getNurScheduleTitle() {
+		return nurScheduleTitle;
+	}
+	public void setNurScheduleTitle(String nurScheduleTitle) {
+		this.nurScheduleTitle = nurScheduleTitle;
+	}
+	public String getNurScheduleContent() {
+		return nurScheduleContent;
+	}
+	public void setNurScheduleContent(String nurScheduleContent) {
+		this.nurScheduleContent = nurScheduleContent;
+	}
+	public Date getNurScheduleStartDate() {
+		return nurScheduleStartDate;
+	}
+	public void setNurScheduleStartDate(Date nurScheduleStartDate) {
+		this.nurScheduleStartDate = nurScheduleStartDate;
+	}
+	public Date getNurScheduleStartTime() {
+		return nurScheduleStartTime;
+	}
+	public void setNurScheduleStartTime(Date nurScheduleStartTime) {
+		this.nurScheduleStartTime = nurScheduleStartTime;
+	}
+	public Date getNurScheduleEndDate() {
+		return nurScheduleEndDate;
+	}
+	public void setNurScheduleEndDate(Date nurScheduleEndDate) {
+		this.nurScheduleEndDate = nurScheduleEndDate;
+	}
+	public Date getNurScheduleEndTime() {
+		return nurScheduleEndTime;
+	}
+	public void setNurScheduleEndTime(Date nurScheduleEndTime) {
+		this.nurScheduleEndTime = nurScheduleEndTime;
+	}
+	
+	
 }

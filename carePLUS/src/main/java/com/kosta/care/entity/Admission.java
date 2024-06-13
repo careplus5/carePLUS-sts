@@ -25,6 +25,8 @@ public class Admission {
 	@Column
 	private Long docNum;
 	@Column
+	private Long jobNum;
+	@Column
 	private Long bedsNum;
 	@Column
 	private Long patNum;

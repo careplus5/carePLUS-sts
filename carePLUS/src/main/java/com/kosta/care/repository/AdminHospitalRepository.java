@@ -1,8 +1,11 @@
 package com.kosta.care.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+<<<<<<< HEAD
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+=======
+>>>>>>> branch 'main' of https://github.com/careplus5/carePLUS-sts.git
 import org.springframework.stereotype.Repository;
 
 import com.kosta.care.entity.AdminHospital;
@@ -16,4 +19,5 @@ public interface AdminHospitalRepository extends JpaRepository<AdminHospital,Lon
 	public void findByAdmissionNum(Long admissionNum);
 	
 
+	AdminHospital findByAdmNum(Long admNum);
 }

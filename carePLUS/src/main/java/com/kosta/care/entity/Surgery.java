@@ -1,12 +1,15 @@
 package com.kosta.care.entity;
 
 import java.sql.Date;
+import java.sql.Time;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import com.google.api.client.util.DateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +26,7 @@ public class Surgery {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long surgeryNum;
 	@Column
-	private Long docNum1;
+	private Long docNum;
 	@Column
 	private Long nurNum1;
 	@Column
@@ -35,17 +38,15 @@ public class Surgery {
 	@Column
 	private Long patNum;
 	@Column
-	private String surgeryCaution;
-	@Column
-	private String surgeryReason;
-	@Column
-	private Date surgeryDate;
+	private Long surgeryRequestNum;
 	@Column
 	private Date surgeryDueDate;
 	@Column
-	private Date surgeryStart;
-	@Column//아 이거 String 맞겠지.? String으로 받아줘..
-	private String surgeryPeriod;
+	private Time surgeryStartTime;
+	@Column
+	private Time surgeryPeriodTime;
+	@Column
+	private Time surgeryTotalTime;
 	@Column
 	private Date surgeryDueEnd;
 	@Column
@@ -58,7 +59,7 @@ public class Surgery {
 	private String surgeryBloodPack;
 	@Column
 	private String surgeryResult;
-	@Column
+	@Column  // 여기에다 대기중 기본값으로 
 	private String surgeryState;
 	@Column
 	private String surgeryEtc;

@@ -42,11 +42,14 @@ public class AdminHospital implements Employee {
 	@Column
 	private String admEmail;
 	@Column
-	@ColumnDefault("true")
-	private Boolean isNoticeAlarmOk;
-	@Column
-	@ColumnDefault("true")
-	private Boolean isBookAlarmOk;
+    @ColumnDefault("true")
+    private Boolean isNoticeAlarmOk;
+    @Column
+    @ColumnDefault("true")
+    private Boolean isPrescriptionAlarmOk;
+    @Column
+    @ColumnDefault("true")
+    private Boolean isDischargeAlarmOk;
 	@Column
 	private String fcmToken ;
 	

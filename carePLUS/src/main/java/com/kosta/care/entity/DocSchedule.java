@@ -40,4 +40,66 @@ public class DocSchedule {
 	private Date docScheduleEndDate;
 	@Column
 	private Date docScheduleEndTime;
+	
+	public Long getDocScheduleNum() {
+		return docScheduleNum;
+	}
+	public void setDocScheduleNum(Long docScheduleNum) {
+		this.docScheduleNum = docScheduleNum;
+	}
+	public Long getDocNum() {
+		return docNum;
+	}
+	public void setDocNum(Long docNum) {
+		this.docNum = docNum;
+	}
+	public Long getJobNum() {
+		return jobNum;
+	}
+	public void setJobNum(Long jobNum) {
+		this.jobNum = jobNum;
+	}
+	public String getDocScheduleType() {
+		return docScheduleType;
+	}
+	public void setDocScheduleType(String docScheduleType) {
+		this.docScheduleType = docScheduleType;
+	}
+	public String getDocScheduleTitle() {
+		return docScheduleTitle;
+	}
+	public void setDocScheduleTitle(String docScheduleTitle) {
+		this.docScheduleTitle = docScheduleTitle;
+	}
+	public String getDocScheduleContent() {
+		return docScheduleContent;
+	}
+	public void setDocScheduleContent(String docScheduleContent) {
+		this.docScheduleContent = docScheduleContent;
+	}
+	public Date getDocScheduleStartDate() {
+		return docScheduleStartDate;
+	}
+	public void setDocScheduleStartDate(Date docScheduleStartDate) {
+		this.docScheduleStartDate = docScheduleStartDate;
+	}
+	public Date getDocScheduleStartTime() {
+		return docScheduleStartTime;
+	}
+	public void setDocScheduleStartTime(Date docScheduleStartTime) {
+		this.docScheduleStartTime = docScheduleStartTime;
+	}
+	public Date getDocScheduleEndDate() {
+		return docScheduleEndDate;
+	}
+	public void setDocScheduleEndDate(Date docScheduleEndDate) {
+		this.docScheduleEndDate = docScheduleEndDate;
+	}
+	public Date getDocScheduleEndTime() {
+		return docScheduleEndTime;
+	}
+	public void setDocScheduleEndTime(Date docScheduleEndTime) {
+		this.docScheduleEndTime = docScheduleEndTime;
+	}
+	
 }

@@ -43,12 +43,17 @@ public class Nurse implements Employee {
 	private String nurEmail;
 	@Column
 	private String nurDepartment2Name;
-	@Column
 	@ColumnDefault("true")
 	private Boolean isNoticeAlarmOk;
 	@Column
 	@ColumnDefault("true")
-	private Boolean isBookAlarmOk;
+	private Boolean isSurgeryAlarmOk;
+	@Column
+	@ColumnDefault("true")
+	private Boolean isAdmissionAlarmOk;
+	@Column
+	@ColumnDefault("true")
+	private Boolean isRequestAlarmOk;	
 	@Column
 	private String fcmToken ;
 	
