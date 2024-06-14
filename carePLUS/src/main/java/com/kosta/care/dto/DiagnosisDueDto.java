@@ -1,6 +1,7 @@
 package com.kosta.care.dto;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.util.List;
 
 import com.kosta.care.entity.DocDiagnosis;
@@ -21,7 +22,10 @@ public class DiagnosisDueDto {
 	private String diagnosisDueState;  // 증상 
 	private String diagnosisDueEtc;  // 특이 사항 
 	private Date diagnosisDueDate;  // 진료 예약일 
-	private Date diagnosisDueTime;  // 진료 시간 
+	private Time diagnosisDueTime;  // 진료 시간 
+	
+	//진료예약을 위해 이름 필요추가 (김동현)
+	private String docName;
 	
 	private Long docDiagnosisNum;
 	private Long diseaseNum;

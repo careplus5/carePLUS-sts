@@ -38,4 +38,6 @@ public class DiagnosisDue {
 	private Date diagnosisDueDate;  // 진료 예약일 
 	@Column
 	private Time diagnosisDueTime;  // 진료 시간 
+	
+	
 }

@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.dto.DocDiagnosisDto;
 import com.kosta.care.dto.PrescriptionDto;
 import com.kosta.care.entity.AdmissionRequest;
@@ -279,4 +281,30 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 		return updateDocDiag != null;
 	}
 
+	// 진료예약 조회
+	@Override
+	public List<DiagnosisDue> diagSearchAll() {
+		return diagnosisDueRepository.findAll();
+	}
+
+	// 모달로 의사 스케줄 조회 (진료예약) 
+	@Override
+	public List<List<DiagnosisDueDto>> doctorDiagnosisDueList(Long departmentNum,Date date) throws Exception {
+		System.out.println(date);
+		List<Doctor> doctors = doctorRepository.findByDepartmentNum(departmentNum);
+		
+		List<List<DiagnosisDueDto>> doctorDiagnosisDueList = new ArrayList<List<DiagnosisDueDto>>();
+		for(Doctor doctor : doctors) {
+			List<DiagnosisDue> diagnosisDueList = diagnosisDueRepository.findByDocNumAndDiagnosisDueDate(doctor.getDocNum(), date);
+			
+			List<DiagnosisDueDto> diagnosisDueDtoList = diagnosisDueList.stream().map(due->DiagnosisDueDto.builder()
+												.diagnosisDueDate(due.getDiagnosisDueDate())
+												.diagnosisDueTime(due.getDiagnosisDueTime())
+												.docNum(due.getDocNum())
+												.docName(doctor.getName()).build()).collect(Collectors.toList());
+												
+			doctorDiagnosisDueList.add(diagnosisDueDtoList);
+		}
+		return doctorDiagnosisDueList;
+	}
 }
