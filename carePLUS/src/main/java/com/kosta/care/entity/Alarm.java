@@ -27,7 +27,7 @@ public class Alarm {
 	@Column
 	private Long empNum;
 	@Column
-	private String alarmTitle;
+	private String alarmCategory;
 	@Column
 	private String alarmContent;
 	@Column

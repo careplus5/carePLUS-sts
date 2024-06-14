@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AlarmDto {
 	private Long AlarmNum;
-	private String title;
+	private String category;
 	private String content;
 	private Boolean isCheck;
 	private String type;

@@ -21,16 +21,26 @@ public class EmployeeUtil {
 		String jobString = job.toString();
 		String findJob = jobString.substring(0,2);
 		switch (findJob) {
-	    case "11": return toDoc(emp);
-	    case "12": return toNur(emp);
-	    // case "13": return toAdm(emp);
-	    // case "14": return toMet(emp);
-	    default: throw new Exception("해당하는 직원 유형이 없습니다");
-	}
-		
-	}
+		    case "11": return toDoc(emp);
+		    case "12": return toNur(emp);
+		    // case "13": return toAdm(emp);
+		    // case "14": return toMet(emp);
+		    default: throw new Exception("해당하는 직원 유형이 없습니다");
+		}
+	}	
 	
-	
+	public Object chooseEmpDto(EmployeeDto empDto) throws Exception{
+		Long job = empDto.getEmpNum();
+		String jobString = job.toString();
+		String findJob = jobString.substring(0,2);
+		switch (findJob) {
+		    case "11": return DtoToDoc(empDto);
+		    case "12": return DtoToNur(empDto);
+		    case "13": return DtoToAdm(empDto);
+		    case "14": return DtoToMet(empDto);
+		    default: throw new Exception("해당하는 직원 유형이 없습니다");
+		}
+	}
 	
 
 	public Nurse toNur(Employee emp) {
@@ -68,28 +78,96 @@ public class EmployeeUtil {
 	}
 	
 	// 여까지해보자 웅 그러자
-	public AdminHospital toAdm(EmployeeDto employeeDto) {
+//	public AdminHospital toAdm(EmployeeDto employeeDto) {
+//		AdminHospital adm = AdminHospital.builder()
+//				.admNum(employeeDto.getEmpNum())
+//				.profNum(employeeDto.getProfNum())
+//				.departmentNum(employeeDto.getDepartmentNum())
+//				.jobNum(employeeDto.getJobNum())
+//				.admName(employeeDto.getEmpName())
+//				.admPassword(employeeDto.getEmpPassword())
+//				.admPosition(employeeDto.getEmpPosition())
+//				.admEmail(employeeDto.getEmpEmail())
+//				.build();
+//		return adm;
+//	}
+//	
+//	public MedicalTechnician toMet(EmployeeDto employeeDto) {
+//		MedicalTechnician met = MedicalTechnician.builder()
+//				.metNum(employeeDto.getEmpNum())
+//				.profNum(employeeDto.getProfNum())
+//				.departmentNum(employeeDto.getDepartmentNum())
+//				.jobNum(employeeDto.getJobNum())
+//				.metName(employeeDto.getEmpName())
+//				.metPassword(employeeDto.getEmpName())
+//				.metTel(employeeDto.getEmpTel())
+//				.metPosition(employeeDto.getEmpPosition())
+//				.metEmail(employeeDto.getEmpEmail())
+//				.metDepartment2Name(employeeDto.getDepartment2Name())
+//				.build();
+//		return met;
+//	}
+	
+	//여기 밑...
+	
+	public Nurse DtoToNur(EmployeeDto employeeDto) {
+		Nurse nurse = Nurse.builder()
+				.departmentName("간호사")
+				.nurNum(employeeDto.getEmpNum())
+				.profNum(employeeDto.getProfNum())
+				.departmentNum(employeeDto.getDepartmentNum())
+				.jobNum(employeeDto.getJobNum())
+				.nurName(employeeDto.getEmpName())
+				.nurPassword(employeeDto.getEmpPassword())
+				.nurTel(employeeDto.getEmpTel())
+				.nurPosition(employeeDto.getEmpPosition())
+				.nurEmail(employeeDto.getEmpEmail())
+				.nurDepartment2Name(employeeDto.getDepartment2Name())
+				.build();
+		return nurse;
+	}
+	
+	public Doctor DtoToDoc(EmployeeDto employeeDto) {
+		Doctor doctor = Doctor.builder()
+				.departmentName("의사")
+				.docNum(employeeDto.getEmpNum())
+				.profNum(employeeDto.getProfNum())
+				.departmentNum(employeeDto.getDepartmentNum())
+				.jobNum(employeeDto.getJobNum())
+				.docName(employeeDto.getEmpName())
+				.docPassword(employeeDto.getEmpPassword())
+				.docTel(employeeDto.getEmpTel())
+				.docPosition(employeeDto.getEmpPosition())
+				.docEmail(employeeDto.getEmpEmail())
+				.build();
+		return doctor;
+	}
+
+	public AdminHospital DtoToAdm(EmployeeDto employeeDto) {
 		AdminHospital adm = AdminHospital.builder()
+				.departmentName("원무과")
 				.admNum(employeeDto.getEmpNum())
 				.profNum(employeeDto.getProfNum())
 				.departmentNum(employeeDto.getDepartmentNum())
 				.jobNum(employeeDto.getJobNum())
 				.admName(employeeDto.getEmpName())
 				.admPassword(employeeDto.getEmpPassword())
+				.admTel(employeeDto.getEmpTel())
 				.admPosition(employeeDto.getEmpPosition())
 				.admEmail(employeeDto.getEmpEmail())
 				.build();
 		return adm;
 	}
 	
-	public MedicalTechnician toMet(EmployeeDto employeeDto) {
+	public MedicalTechnician DtoToMet(EmployeeDto employeeDto) {
 		MedicalTechnician met = MedicalTechnician.builder()
+				.departmentName("의료기사")
 				.metNum(employeeDto.getEmpNum())
 				.profNum(employeeDto.getProfNum())
 				.departmentNum(employeeDto.getDepartmentNum())
 				.jobNum(employeeDto.getJobNum())
 				.metName(employeeDto.getEmpName())
-				.metPassword(employeeDto.getEmpName())
+				.metPassword(employeeDto.getEmpPassword())
 				.metTel(employeeDto.getEmpTel())
 				.metPosition(employeeDto.getEmpPosition())
 				.metEmail(employeeDto.getEmpEmail())

@@ -61,12 +61,9 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 		String jobString = job.toString();
 		String findJob = jobString.substring(0,2);
 		
-		//넣어 줄 Entity 선택해서 정보 호출
-		Employee emp = empRepository.identifyJob(Long.toString(employeeDto.getEmpNum()));
-		
 		//중복체크를 위한 Optional생성
 		Optional<?> oemp = Optional.empty();
-		System.out.println("Join:"+emp);
+		
 			
 		//아이디 중복체크
 		if(findJob.equals("11")) {
@@ -86,6 +83,7 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 		String encodePassword = bCryptPasswordEncoder.encode(rawPassword);
 		employeeDto.setEmpPassword(encodePassword);
 		
+		Object emp = employeeUtil.chooseEmpDto(employeeDto);
 
 		//맞는 위치에 save
 		switch (findJob) {
