@@ -5,11 +5,12 @@ import java.util.List;
 import com.kosta.care.dto.AlarmDto;
 
 public interface AlarmService {
-	String sendAlarmByToken(Long empNum, String alarmTitle, String alarmContent) throws Exception;
+	void sendAlarmByEmpNum(Long empNum, String alarmCategory,String alarmContent) throws Exception;
+	void sendAlarmListByJobNum(Long jobNum, String alarmContent, String alarmCategoy) throws Exception;
 	List<AlarmDto> sendNotCheckAlarm(Long empNum) throws Exception;
 	Long checkAlarm(Long alarmNum) throws Exception;
 	void registFcmToken(String fcmToken, Long empNum) throws Exception;
 	Boolean deleteAlarmList (Long empNum) throws Exception;
-	Boolean changeAlarmStatus(Long empNum) throws Exception;
-	Boolean checkAlarmStatus(Long empNum) throws Exception;
+	String changeAlarmStatus(Long empNum, String alarmName) throws Exception;
+	List<Boolean> checkAlarmStatus(Long empNum) throws Exception;
 }

@@ -1,8 +1,11 @@
 package com.kosta.care.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
@@ -34,178 +37,361 @@ public class AlarmServiceImpl implements AlarmService {
 	private final MedicalTechnicianRepository medicalTechnicianRepository;
 	private final AlarmRepository alarmRepository;
 	private final EmployeeAlarmRepository employeeAlarmRepository;
-	
+
 	@Override
-	public String sendAlarmByToken(Long empNum, String alarmTitle, String alarmContent) throws Exception {
-		
-		//empNum로 맞는 Repository를 찾아서 토큰 값 불러오기
+	public void sendAlarmByEmpNum(Long empNum, String alarmCategory, String alarmContent) throws Exception {
+
+		// empNum로 맞는 Repository를 찾아서 토큰 값 불러오기
 		String empNumString = empNum.toString();
-		String findJob = empNumString.substring(0,2);
+		String findJob = empNumString.substring(0, 2);
 		String FcmToken = null;
-		if(findJob.equals("11")) {
+		if (findJob.equals("11")) {
 			Optional<Doctor> employee = doctorRepository.findById(empNum);
 			FcmToken = employee.get().getFcmToken();
-		}else if(findJob.equals("12")) {
-			Optional<Nurse>employee = nurseRepository.findById(empNum);
+		} else if (findJob.equals("12")) {
+			Optional<Nurse> employee = nurseRepository.findById(empNum);
 			FcmToken = employee.get().getFcmToken();
-		}else if(findJob.equals("13")) {
-			Optional<AdminHospital>employee = adminHospitalRepository.findById(empNum);
+		} else if (findJob.equals("13")) {
+			Optional<AdminHospital> employee = adminHospitalRepository.findById(empNum);
 			FcmToken = employee.get().getFcmToken();
-		}else if(findJob.equals("14")) {
-			Optional<MedicalTechnician>employee = medicalTechnicianRepository.findById(empNum);
+		} else if (findJob.equals("14")) {
+			Optional<MedicalTechnician> employee = medicalTechnicianRepository.findById(empNum);
 			FcmToken = employee.get().getFcmToken();
 		}
 		System.out.println(FcmToken);
-		//DB에 알림 생성
-		Alarm alarm = Alarm.builder()
-				.empNum(empNum)
-				.alarmCheck(false)
-				.alarmDelivery(false)
-				.alarmTitle(alarmTitle)
-				.alarmContent(alarmContent)
-				.build();
-		
-		alarmRepository.save(alarm);
-		
-		//FCM메시지 만들기
-		Notification notification = Notification.builder()
-				.setTitle(alarm.getAlarmNum()+"")
-				.setBody(alarmContent).build();
+		// DB에 알림 생성
+		Alarm alarm = Alarm.builder().empNum(empNum).alarmCheck(false).alarmDelivery(false).alarmCategory(alarmCategory)
+				.alarmContent(alarmContent).build();
 
-		Message message = Message.builder()
-				.setToken(FcmToken)
-				.setNotification(notification).build();
-		//알림 끄기를 안했을 시에만!	알림 전송
-		if(findJob.equals("11")) {
+		alarmRepository.save(alarm);
+
+		Notification notification = null;
+		if (findJob.equals("11")) {
 			Optional<Doctor> employee = doctorRepository.findById(empNum);
-			if(employee.get().getIsNoticeAlarmOk().equals(true)) {
-				firebaseMessaging.send(message);
-				alarm.setAlarmDelivery(true);
+			System.out.println(employee);
+			if (alarmCategory.equals("공지사항") && employee.get().getIsNoticeAlarmOk().equals(true)) {
+
+				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
+						.setBody("("+alarmCategory+")"+alarmContent).build();
+
+			} else if (alarmCategory.equals("진료") && employee.get().getIsDiagnosAlarmOk().equals(true)) {
+
+				System.out.println(employee.get().getIsDiagnosAlarmOk());
+
+				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
+						.setBody("("+alarmCategory+")"+alarmContent).build();
+
+			} else if (alarmCategory.equals("수술") && employee.get().getIsSurgeryAlarmOk().equals(true)) {
+
+				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
+						.setBody("("+alarmCategory+")"+alarmContent).build();
+
+			} else {
+
+				notification = Notification.builder()
+						.setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "false").setBody("("+alarmCategory+")"+alarmContent)
+						.build();
+
 			}
-		}else if(findJob.equals("12")) {
-			Optional<Nurse>employee = nurseRepository.findById(empNum);
-			if(employee.get().getIsNoticeAlarmOk().equals(true)) {
-				firebaseMessaging.send(message);
-				alarm.setAlarmDelivery(true);
+		} else if (findJob.equals("12")) {
+			Optional<Nurse> employee = nurseRepository.findById(empNum);
+			if (alarmCategory.equals("공지사항") && employee.get().getIsNoticeAlarmOk().equals(true)) {
+
+				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
+						.setBody("("+alarmCategory+")"+alarmContent).build();
+
+			} else if (alarmCategory.equals("수술") && employee.get().getIsSurgeryAlarmOk().equals(true)) {
+
+				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
+						.setBody("("+alarmCategory+")"+alarmContent).build();
+
+			} else if (alarmCategory.equals("입원") && employee.get().getIsAdmissionAlarmOk().equals(true)) {
+
+				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
+						.setBody("("+alarmCategory+")"+alarmContent).build();
+
+			} else if (alarmCategory.equals("요청사항") && employee.get().getIsRequestAlarmOk().equals(true)) {
+
+				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
+						.setBody("("+alarmCategory+")"+alarmContent).build();
+
+			} else {
+
+				notification = Notification.builder()
+						.setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "false").setBody("("+alarmCategory+")"+alarmContent)
+						.build();
+
 			}
-		}else if(findJob.equals("13")) {
-			Optional<AdminHospital>employee = adminHospitalRepository.findById(empNum);
-			if(employee.get().getIsNoticeAlarmOk().equals(true)) {
-				firebaseMessaging.send(message);
-				alarm.setAlarmDelivery(true);
+		} else if (findJob.equals("13")) {
+			Optional<AdminHospital> employee = adminHospitalRepository.findById(empNum);
+			if (alarmCategory.equals("공지사항") && employee.get().getIsNoticeAlarmOk().equals(true)) {
+
+				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
+						.setBody("("+alarmCategory+")"+alarmContent).build();
+
+			} else if (alarmCategory.equals("처방") && employee.get().getIsPrescriptionAlarmOk().equals(true)) {
+
+				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
+						.setBody("("+alarmCategory+")"+alarmContent).build();
+
+			} else if (alarmCategory.equals("퇴원") && employee.get().getIsDischargeAlarmOk().equals(true)) {
+
+				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
+						.setBody("("+alarmCategory+")"+alarmContent).build();
+
+			} else {
+
+				notification = Notification.builder()
+						.setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "false").setBody("("+alarmCategory+")"+alarmContent)
+						.build();
+
 			}
-		}else if(findJob.equals("14")) {
-			Optional<MedicalTechnician>employee = medicalTechnicianRepository.findById(empNum);
-			if(employee.get().getIsNoticeAlarmOk().equals(true)) {
-				firebaseMessaging.send(message);
-				alarm.setAlarmDelivery(true);
+		} else if (findJob.equals("14")) {
+			Optional<MedicalTechnician> employee = medicalTechnicianRepository.findById(empNum);
+			if (alarmCategory.equals("공지사항") && employee.get().getIsNoticeAlarmOk().equals(true)) {
+
+				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
+						.setBody("("+alarmCategory+")"+alarmContent).build();
+
+			} else {
+
+				notification = Notification.builder()
+						.setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "false").setBody("("+alarmCategory+")"+alarmContent)
+						.build();
+
 			}
 		}
-		return "전송 성공";
+		Message message = Message.builder().setToken(FcmToken).setNotification(notification).build();
+
+		firebaseMessaging.send(message);
+		alarm.setAlarmDelivery(true);
 	}
-	
-	//알림 재발송
+
 	@Override
-	public List<AlarmDto> sendNotCheckAlarm(Long empNum) throws Exception{
-		//미확인 알림 리스트 가져오기
+	public void sendAlarmListByJobNum(Long jobNum, String alarmContent, String alarmCategoy) throws Exception {
+		if (jobNum.equals("11")) {
+			List<Doctor> employeeList = doctorRepository.findByJobNum(jobNum);
+			for (Doctor doctor : employeeList) {
+				sendAlarmByEmpNum(doctor.getDocNum(), alarmContent, alarmCategoy);
+			}
+		} else if (jobNum.equals("12")) {
+			List<Nurse> employeeList = nurseRepository.findByJobNum(jobNum);
+			for (Nurse nurse : employeeList) {
+				sendAlarmByEmpNum(nurse.getNurNum(), alarmContent, alarmCategoy);
+			}
+		} else if (jobNum.equals("13")) {
+			List<AdminHospital> employeeList = adminHospitalRepository.findByJobNum(jobNum);
+			for (AdminHospital adminHospital : employeeList) {
+				sendAlarmByEmpNum(adminHospital.getAdmNum(), alarmContent, alarmCategoy);
+			}
+		} else if (jobNum.equals("14")) {
+			List<MedicalTechnician> employeeList = medicalTechnicianRepository.findByJobNum(jobNum);
+			for (MedicalTechnician medicalTechnician : employeeList) {
+				sendAlarmByEmpNum(medicalTechnician.getMetNum(), alarmContent, alarmCategoy);
+			}
+		}
+	}
+
+	// 알림 재발송
+	@Override
+	public List<AlarmDto> sendNotCheckAlarm(Long empNum) throws Exception {
+		// 미확인 알림 리스트 가져오기
 		List<Alarm> alarmList = alarmRepository.findByEmpNumAndAlarmCheckFalse(empNum);
-		
+
 		List<AlarmDto> alarmDtoList = alarmList.stream()
-				.map(alarm->AlarmDto.builder()
-					.AlarmNum(alarm.getAlarmNum())
-					.isCheck(alarm.getAlarmCheck())
-					.title(alarm.getAlarmTitle())
-					.content(alarm.getAlarmContent())
-					.build()).collect(Collectors.toList());
+				.map(alarm -> AlarmDto.builder().AlarmNum(alarm.getAlarmNum()).isCheck(alarm.getAlarmCheck())
+						.category(alarm.getAlarmCategory()).content(alarm.getAlarmContent()).build())
+				.collect(Collectors.toList());
 		return alarmDtoList;
 	}
-	
-	//특정알람 확인(알람번호)
-	public Long checkAlarm(Long alarmNum) throws Exception{
+
+	// 특정알람 확인(알람번호)
+	public Long checkAlarm(Long alarmNum) throws Exception {
 		Optional<Alarm> alarm = alarmRepository.findById(alarmNum);
 		alarm.get().setAlarmCheck(true);
 		alarmRepository.save(alarm.get());
 		return alarmNum;
 	}
-	//프론트에서 받은 fcmToken DB에 저장
-	public void registFcmToken(String fcmToken, Long empNum)throws Exception{
+
+	// 프론트에서 받은 fcmToken DB에 저장
+	public void registFcmToken(String fcmToken, Long empNum) throws Exception {
 		String empNumString = empNum.toString();
-		String findJob = empNumString.substring(0,2);
-		if(findJob.equals("11")) {
+		String findJob = empNumString.substring(0, 2);
+		if (findJob.equals("11")) {
 			Optional<Doctor> employee = doctorRepository.findById(empNum);
 			employee.get().setFcmToken(fcmToken);
 			doctorRepository.save(employee.get());
-		}else if(findJob.equals("12")) {
-			Optional<Nurse>employee = nurseRepository.findById(empNum);;
+		} else if (findJob.equals("12")) {
+			Optional<Nurse> employee = nurseRepository.findById(empNum);
+			;
 			employee.get().setFcmToken(fcmToken);
 			nurseRepository.save(employee.get());
-		}else if(findJob.equals("13")) {
-			Optional<AdminHospital>employee = adminHospitalRepository.findById(empNum);
+		} else if (findJob.equals("13")) {
+			Optional<AdminHospital> employee = adminHospitalRepository.findById(empNum);
 			employee.get().setFcmToken(fcmToken);
 			adminHospitalRepository.save(employee.get());
-		}else if(findJob.equals("14")) {
-			Optional<MedicalTechnician>employee = medicalTechnicianRepository.findById(empNum);
+		} else if (findJob.equals("14")) {
+			Optional<MedicalTechnician> employee = medicalTechnicianRepository.findById(empNum);
 			employee.get().setFcmToken(fcmToken);
 			medicalTechnicianRepository.save(employee.get());
 		}
 	}
-	//알림 리스트 삭제
-	public Boolean deleteAlarmList (Long empNum)throws Exception{
-		//확인이 false인 알림 가져오기
+
+	// 알림 리스트 삭제
+	public Boolean deleteAlarmList(Long empNum) throws Exception {
+		// 확인이 false인 알림 가져오기
 		List<Alarm> alarmList = alarmRepository.findByEmpNumAndAlarmCheckFalse(empNum);
-		
-		try{
-			for(Alarm alarm : alarmList) {
-			alarm.setAlarmCheck(true);
-			alarmRepository.save(alarm);
-			}return true;
-		}catch (Exception e) {
+
+		try {
+			for (Alarm alarm : alarmList) {
+				alarm.setAlarmCheck(true);
+				alarmRepository.save(alarm);
+			}
+			return true;
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
 
+	@Transactional
 	@Override
-	public Boolean changeAlarmStatus(Long empNum) throws Exception {
+	public String changeAlarmStatus(Long empNum, String alarmName) throws Exception {
 		String empNumString = empNum.toString();
-		String findJob = empNumString.substring(0,2);
-		if(findJob.equals("11")) {
+		String findJob = empNumString.substring(0, 2);
+
+		if (findJob.equals("11")) {
 			Optional<Doctor> oemployee = doctorRepository.findById(empNum);
-			oemployee.get().setIsNoticeAlarmOk(!(oemployee.get().getIsNoticeAlarmOk()));
-			doctorRepository.save(oemployee.get());
-		}else if(findJob.equals("12")) {
+			if (oemployee.isEmpty()) throw new Exception("직원번호 오류");
+			Doctor emp = oemployee.get();
+			switch (alarmName) {
+			case "공지사항":
+				emp.setIsNoticeAlarmOk(!emp.getIsNoticeAlarmOk());
+				System.out.println(emp.getIsNoticeAlarmOk());
+				doctorRepository.save(emp);
+				System.out.println(emp);
+				return "공지사항";
+			case "진료":
+				emp.setIsDiagnosAlarmOk(!emp.getIsDiagnosAlarmOk());
+				doctorRepository.save(emp);
+				return "진료";
+			case "수술":
+				emp.setIsSurgeryAlarmOk(!emp.getIsSurgeryAlarmOk());
+				doctorRepository.save(emp);
+				return "수술";
+			default:
+				throw new Exception("알림 설정 이름 오류");
+			}
+		} else if (findJob.equals("12")) {
 			Optional<Nurse> oemployee = nurseRepository.findById(empNum);
-			oemployee.get().setIsNoticeAlarmOk(!(oemployee.get().getIsNoticeAlarmOk()));
-			nurseRepository.save(oemployee.get());
-		}else if(findJob.equals("13")) {
+			if (oemployee.isEmpty()) throw new Exception("직원번호 오류");
+			Nurse emp = oemployee.get();
+			switch (alarmName) {
+			case "공지사항":
+				emp.setIsNoticeAlarmOk(!emp.getIsNoticeAlarmOk());
+				nurseRepository.save(emp);
+				return "공지사항";
+			case "수술":
+				emp.setIsSurgeryAlarmOk(!emp.getIsSurgeryAlarmOk());
+				nurseRepository.save(emp);
+				return "수술";
+			case "입원":
+				emp.setIsAdmissionAlarmOk(!emp.getIsAdmissionAlarmOk());
+				nurseRepository.save(emp);
+				return "입원";
+			case "요청사항":
+				emp.setIsRequestAlarmOk(!emp.getIsRequestAlarmOk());
+				nurseRepository.save(emp);
+				return "요청사항";
+			default:
+				throw new Exception("알림 설정 이름 오류");
+			}
+		} else if (findJob.equals("13")) {
 			Optional<AdminHospital> oemployee = adminHospitalRepository.findById(empNum);
-			oemployee.get().setIsNoticeAlarmOk(!(oemployee.get().getIsNoticeAlarmOk()));
-			adminHospitalRepository.save(oemployee.get());
-		}else if(findJob.equals("14")) {
+			if (oemployee.isEmpty()) throw new Exception("직원번호 오류");
+			AdminHospital emp = oemployee.get();
+			switch (alarmName) {
+			case "공지사항":
+				emp.setIsNoticeAlarmOk(!emp.getIsNoticeAlarmOk());
+				adminHospitalRepository.save(emp);
+				return "공지사항";
+			case "처방":
+				emp.setIsPrescriptionAlarmOk(!emp.getIsPrescriptionAlarmOk());
+				adminHospitalRepository.save(emp);
+				return "처방";
+			case "퇴원":
+				emp.setIsDischargeAlarmOk(!emp.getIsDischargeAlarmOk());
+				adminHospitalRepository.save(emp);
+				return "퇴원";
+			default:
+				throw new Exception("알림 설정 이름 오류");
+			}
+		} else if (findJob.equals("14")) {
 			Optional<MedicalTechnician> oemployee = medicalTechnicianRepository.findById(empNum);
-			oemployee.get().setIsNoticeAlarmOk(!(oemployee.get().getIsNoticeAlarmOk()));
-			medicalTechnicianRepository.save(oemployee.get());
+			if (oemployee.isEmpty()) throw new Exception("직원번호 오류");
+			MedicalTechnician emp = oemployee.get();
+			if (alarmName.equals("공지사항")) {
+				emp.setIsNoticeAlarmOk(!emp.getIsNoticeAlarmOk());
+				medicalTechnicianRepository.save(emp);
+				return "공지사항";
+			} else {
+				throw new Exception("알림 설정 이름 오류");
+			}
+		} else {
+			throw new Exception("직업 코드 오류");
 		}
-		return true;
 	}
 
 	@Override
-	public Boolean checkAlarmStatus(Long empNum) throws Exception {
+	public List<Boolean> checkAlarmStatus(Long empNum) throws Exception {
 		String empNumString = empNum.toString();
-		String findJob = empNumString.substring(0,2);
-		if(findJob.equals("11")) {
+		String findJob = empNumString.substring(0, 2);
+
+		if (findJob.equals("11")) {
 			Optional<Doctor> employee = doctorRepository.findById(empNum);
-			return employee.get().getIsNoticeAlarmOk();
-		}else if(findJob.equals("12")) {
-			Optional<Nurse>employee = nurseRepository.findById(empNum);;
-			return employee.get().getIsNoticeAlarmOk();
-		}else if(findJob.equals("13")) {
-			Optional<AdminHospital>employee = adminHospitalRepository.findById(empNum);
-			return employee.get().getIsNoticeAlarmOk();
-		}else if(findJob.equals("14")) {
-			Optional<MedicalTechnician>employee = medicalTechnicianRepository.findById(empNum);
-			return employee.get().getIsNoticeAlarmOk();
+			if (employee.isPresent()) {
+				List<Boolean> checkAlarm = new ArrayList<>();
+				checkAlarm.add(employee.get().getIsNoticeAlarmOk());
+				checkAlarm.add(employee.get().getIsDiagnosAlarmOk());
+				checkAlarm.add(employee.get().getIsSurgeryAlarmOk());
+				return checkAlarm;
+			} else {
+				throw new Exception("의사 알림 정보 조회 오류");
+			}
+		} else if (findJob.equals("12")) {
+			Optional<Nurse> employee = nurseRepository.findById(empNum);
+			if (employee.isPresent()) {
+				List<Boolean> checkAlarm = new ArrayList<>();
+				checkAlarm.add(employee.get().getIsNoticeAlarmOk());
+				checkAlarm.add(employee.get().getIsSurgeryAlarmOk());
+				checkAlarm.add(employee.get().getIsAdmissionAlarmOk());
+				checkAlarm.add(employee.get().getIsRequestAlarmOk());
+				return checkAlarm;
+			} else {
+				throw new Exception("간호사 알림 정보 조회 오류");
+			}
+		} else if (findJob.equals("13")) {
+			Optional<AdminHospital> employee = adminHospitalRepository.findById(empNum);
+			if (employee.isPresent()) {
+				List<Boolean> checkAlarm = new ArrayList<>();
+				checkAlarm.add(employee.get().getIsNoticeAlarmOk());
+				checkAlarm.add(employee.get().getIsPrescriptionAlarmOk());
+				checkAlarm.add(employee.get().getIsDischargeAlarmOk());
+				return checkAlarm;
+			} else {
+				throw new Exception("원무과 알림 정보 조회 오류");
+			}
+		} else if (findJob.equals("14")) {
+			Optional<MedicalTechnician> employee = medicalTechnicianRepository.findById(empNum);
+			if (employee.isPresent()) {
+				List<Boolean> checkAlarm = new ArrayList<>();
+				checkAlarm.add(employee.get().getIsNoticeAlarmOk());
+				return checkAlarm;
+			} else {
+				throw new Exception("의료기사 알림 정보 조회 오류");
+			}
+		} else {
+			throw new Exception("잘못된 직원번호 입니다");
 		}
-		return null;
 	}
 }

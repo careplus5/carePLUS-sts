@@ -87,7 +87,7 @@ public class DiagnosisRepository {
 		QPrescription prescription = QPrescription.prescription;
 		QDocDiagnosis docDiagnosis = QDocDiagnosis.docDiagnosis;
 		QMedicine medicine = QMedicine.medicine;
-		QTestRequest testRequest = QTestRequest.testRequest1;
+		QTestRequest testRequest = QTestRequest.testRequest;
 		QDisease disease = QDisease.disease;
 		
 		return jpaQueryFactory.select(docDiagnosis, prescription, doctor.docNum, doctor.docName, medicine.medicineKorName, testRequest.testPart, disease.diseaseName)

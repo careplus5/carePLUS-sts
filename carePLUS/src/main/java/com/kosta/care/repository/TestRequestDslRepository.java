@@ -24,7 +24,7 @@ public class TestRequestDslRepository {
 	
 	public TestRequestDto findLatestByPatNum (Long patNum)  {
 		
-		QTestRequest testRequest = QTestRequest.testRequest1;
+		QTestRequest testRequest = QTestRequest.testRequest;
 		QPatient patient = QPatient.patient;
 		QDoctor doctor = QDoctor.doctor;
 		

@@ -14,4 +14,5 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 //	 Page<Doctor> findByContentContains(String Content, PageRequest pageRequest);
 //	 
 	List<Doctor> findByDepartmentNum (Long departmentNum );
+	List<Doctor> findByJobNum (Long jobNum);
 }
