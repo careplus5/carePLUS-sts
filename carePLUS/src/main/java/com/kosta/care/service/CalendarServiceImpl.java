@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
 import com.kosta.care.dto.CalendarDto;
 import com.kosta.care.entity.DocSchedule;
 import com.kosta.care.entity.MetSchedule;
@@ -12,42 +16,53 @@ import com.kosta.care.repository.DocScheduleRepository;
 import com.kosta.care.repository.MetScheduleRepository;
 import com.kosta.care.repository.NurseScheduleRepository;
 
+@Service
 public class CalendarServiceImpl implements CalendarService {
 	private final DocScheduleRepository docScheduleRepository;
-    private final NurseScheduleRepository nurseScheduleRepository;
     private final MetScheduleRepository metScheduleRepository;
     
 
     public CalendarServiceImpl(
     	DocScheduleRepository docScheduleRepository,
-        NurseScheduleRepository nurseScheduleRepository,
         MetScheduleRepository metScheduleRepository
     ) {
         this.docScheduleRepository = docScheduleRepository;
-        this.nurseScheduleRepository = nurseScheduleRepository;
         this.metScheduleRepository = metScheduleRepository;
     }
 
     @Override
-    public List<CalendarDto> getAllSchedules() {
-        List<CalendarDto> docSchedules = docScheduleRepository.findAll().stream()
-            .map(this::toDTO)
-            .collect(Collectors.toList());
+    public List<CalendarDto> getAllSchedules(Long empNum) throws Exception{
+        
+        if (empNum == null) {
+            throw new UsernameNotFoundException("empNum이 Null 찍히는데요?");
+        }
+        
+        
+        String jobString = empNum.toString();
+     // 추가적인 로그 출력
+        System.out.println("empNum: " + empNum);
+        System.out.println("jobString: " + jobString);
+        
+		String findJob = jobString.substring(0,2);
 
-        List<CalendarDto> nurseSchedules = nurseScheduleRepository.findAll().stream()
-            .map(this::toDTO)
-            .collect(Collectors.toList());
 
-        List<CalendarDto> metSchedules = metScheduleRepository.findAll().stream()
-            .map(this::toDTO)
-            .collect(Collectors.toList());
-
-        List<CalendarDto> allSchedules = new ArrayList<>();
-        allSchedules.addAll(docSchedules);
-        allSchedules.addAll(nurseSchedules);
-        allSchedules.addAll(metSchedules);
-
-        return allSchedules;
+        List<CalendarDto> schedules = new ArrayList<>();
+        switch (findJob) {
+            case "11":
+                schedules = docScheduleRepository.findByDocNum(empNum).stream()
+                    .map(this::toDTO)
+                    .collect(Collectors.toList());
+                break;
+            case "14":
+                schedules = metScheduleRepository.findByMetNum(empNum).stream()
+                    .map(this::toDTO)
+                    .collect(Collectors.toList());
+                break;
+            default:
+                throw new Exception("Unexpected value: " + findJob);
+        }
+        System.out.println(schedules);
+        return schedules;
     }
 
     private CalendarDto toDTO(DocSchedule schedule) {
@@ -65,20 +80,6 @@ public class CalendarServiceImpl implements CalendarService {
         return dto;
     }
 
-    private CalendarDto toDTO(NurseSchedule schedule) {
-    	CalendarDto dto = new CalendarDto();
-        dto.setId(schedule.getNurScheduleNum());
-        dto.setEmpNum(schedule.getNurNum()); //사번으로 수술간호사 처리 가능한가?
-        dto.setJobNum(schedule.getJobNum());
-        dto.setScheduleType(schedule.getNurScheduleType()); //수술간호사 스케
-        dto.setTitle(schedule.getNurScheduleTitle()); // 환자번호
-        dto.setContent(schedule.getNurScheduleContent()); // 수술번호 (수술실번호는..?)
-        dto.setStartDate(schedule.getNurScheduleStartDate());
-        dto.setStartTime(schedule.getNurScheduleStartTime());
-        dto.setEndDate(schedule.getNurScheduleEndDate());
-        dto.setEndTime(schedule.getNurScheduleEndTime());
-        return dto;
-    }
 
     private CalendarDto toDTO(MetSchedule schedule) {
     	CalendarDto dto = new CalendarDto();
@@ -95,5 +96,6 @@ public class CalendarServiceImpl implements CalendarService {
         return dto;
     }
 
+	
 
 }

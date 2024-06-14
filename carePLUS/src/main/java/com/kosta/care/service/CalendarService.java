@@ -5,5 +5,5 @@ import java.util.List;
 import com.kosta.care.dto.CalendarDto;
 
 public interface CalendarService {
-	List<CalendarDto> getAllSchedules();
+	List<CalendarDto> getAllSchedules(Long empNum) throws Exception;
 }
