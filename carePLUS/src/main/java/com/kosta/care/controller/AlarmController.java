@@ -61,7 +61,7 @@ public class AlarmController {
 	public ResponseEntity<String> changeFCMToken(@RequestBody Map<String,Object> param){
 
 		String fcmToken = (String)param.get("fcmToken");
-		Long empNum = (Long)param.get("empNum");
+		Long empNum = Long.parseLong((String)param.get("empNum"));
 		try {
 			alarmService.registFcmToken(fcmToken, empNum);
 			return new ResponseEntity<String>("변경 성공", HttpStatus.OK);

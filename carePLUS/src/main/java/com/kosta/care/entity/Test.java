@@ -52,12 +52,7 @@ public class Test{
 	@Column
 	private String testOutInspectRecord;
 	@Column
-<<<<<<< HEAD
 	private Date testAppointmentTime;
 
-	
-=======
-	private Time testAppointmentTime;
->>>>>>> branch 'main' of https://github.com/careplus5/carePLUS-sts.git
 	
 }
