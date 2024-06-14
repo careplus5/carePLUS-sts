@@ -45,7 +45,7 @@ public class AdmissionRepository {
 //		QDiagnosisDue diagnosisDue = QDiagnosisDue.diagnosisDue;
 //		QDocDiagnosis docDiagnosis = QDocDiagnosis.docDiagnosis;
 		QAdmission admission = QAdmission.admission;
-			
+			System.out.println("해당 리스트는 "+nurNum+"의 리스트입니다.");
 		// 입원 번호, 환자 번호, 환자 이름(성별/나이), 입원 예정일, 입원일, 담당과, 담당의, 병실 일련 번호, 퇴원 예정일
 		// patient : 환자 번호, 환자 이름, 환자 성별, 환자 나이
 		//admission.admissionDate,admission.patNum,patient.patName,admission.admissionDueDate,
@@ -70,20 +70,12 @@ public class AdmissionRepository {
 	}
 	
 	
-	//입퇴원에 있는 환자 전체 조회
+	// 의사 입퇴원 일지
 		public List<Tuple> findAdmPatientDoctorRecordByAdmissionNum(Long admissionNum) {
 			System.out.println("조회해보자");
 			QDoctor doctor = QDoctor.doctor;
 			QAdmissionRecord record = QAdmissionRecord.admissionRecord;
 			QAdmission admission = QAdmission.admission;
-				
-			// 입원 번호, 환자 번호, 환자 이름(성별/나이), 입원 예정일, 입원일, 담당과, 담당의, 병실 일련 번호, 퇴원 예정일
-			// patient : 환자 번호, 환자 이름, 환자 성별, 환자 나이
-			//admission.admissionDate,admission.patNum,patient.patName,admission.admissionDueDate,
-			//admission.admissionDate, doctor.departmentName, doctor.docName, admission.bedsNum, admission.admissionDischargeDueDate,
-			//admission.admissionDischargeDate,admission.admissionStatus
-			
-			// 담당 간호사 nurse(nurNum) = admission(nurNum)이 일치하면 다 갖고 오기
 			
 			
 			return jpaQueryFactory.select(record,doctor.docName)
@@ -96,25 +88,16 @@ public class AdmissionRepository {
 		}
 
 		
-		//입퇴원에 있는 환자 전체 조회
+		//간호 입원 일지
 		public List<Tuple> findAdmPatientNurseRecordByAdmissionNum(Long admissionNum) {
 			System.out.println("조회해보자");
 			QNurse nurse = QNurse.nurse;
 			QAdmissionRecord record = QAdmissionRecord.admissionRecord;
 			QAdmission admission = QAdmission.admission;
 				
-			// 입원 번호, 환자 번호, 환자 이름(성별/나이), 입원 예정일, 입원일, 담당과, 담당의, 병실 일련 번호, 퇴원 예정일
-			// patient : 환자 번호, 환자 이름, 환자 성별, 환자 나이
-			//admission.admissionDate,admission.patNum,patient.patName,admission.admissionDueDate,
-			//admission.admissionDate, doctor.departmentName, doctor.docName, admission.bedsNum, admission.admissionDischargeDueDate,
-			//admission.admissionDischargeDate,admission.admissionStatus
-			
-			// 담당 간호사 nurse(nurNum) = admission(nurNum)이 일치하면 다 갖고 오기
-			
-			
 			return jpaQueryFactory.select(record,nurse.nurName)
 					.from(record)
-					.join(nurse).on(record.jobNum.eq(nurse.nurNum))
+					.join(nurse).on(record.jobNum.eq(nurse.departmentNum))
 					.join(admission).on(record.admissionNum.eq(admission.admissionNum))
 					.where(record.admissionNum.eq(admission.admissionNum))
 					.fetch();

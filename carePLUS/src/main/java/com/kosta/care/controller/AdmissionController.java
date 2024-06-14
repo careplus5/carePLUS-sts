@@ -1,6 +1,5 @@
 package com.kosta.care.controller;
 
-import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.care.repository.NurseRepository;
@@ -33,6 +33,7 @@ public class AdmissionController {
 		System.out.println("리스트 가져오기 준비");
 		try {
 			System.out.println("리스트 가져오기 시작");
+			System.out.println(nurNum);
 			List<Map<String, Object>> admission = admService.admPatientList(nurNum);
 			System.out.println(admission.toString());
 			return new ResponseEntity<List<Map<String, Object>>>(admission, HttpStatus.OK);

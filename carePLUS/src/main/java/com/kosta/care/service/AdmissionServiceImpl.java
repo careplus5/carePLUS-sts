@@ -43,14 +43,14 @@ public class AdmissionServiceImpl implements AdmissionService {
 	@Override
 	public List<Map<String, Object>> admPatientList(Long nurNum) {
 		// admission내역
-		System.out.println(nurNum+"찾아보자이");
+		
 		
 		List<Tuple> tuples = admRepository.findAdmPatientByNurNum(nurNum);
 		System.out.println(tuples.toString());
 		List<Map<String, Object>> admList = new ArrayList<>();
 		
 		for(Tuple tuple : tuples) {
-			
+			System.out.println(nurNum+"찾아보자이");
 			Admission admission = tuple.get(0,Admission.class);
 			String docDepartment = tuple.get(1, String.class);
 			String docName = tuple.get(2,String.class);
@@ -67,7 +67,7 @@ public class AdmissionServiceImpl implements AdmissionService {
 		
 		return admList;
 	}
-	
+	// 의사 입원 기록
 	@Override
 	public List<Map<String, Object>> admPatientDoctorRecordList(Long admissionNum) {
 		// admission내역
@@ -91,7 +91,7 @@ public class AdmissionServiceImpl implements AdmissionService {
 		return recordList;
 	}
 	
-
+	//간호사 입원 기록
 	@Override
 	public List<Map<String, Object>> admPatientNurseRecordList(Long admissionNum) {
 		// admission내역
