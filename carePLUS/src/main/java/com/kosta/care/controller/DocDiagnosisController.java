@@ -39,7 +39,7 @@ public class DocDiagnosisController {
 	
 	@GetMapping("/diagPatientInfo")
 	public ResponseEntity<Map<String, Object>> diagPatientInfo(@RequestParam("docDiagNum") Long docDiagNum) {
-		String newState = "진료중";
+		String newState = "ing";
 		try {
 			diagnosisDueService.updateDocDiagnosisState(docDiagNum, newState);
 			Map<String, Object> patInfo = diagnosisDueService.diagDueInfoByDocDiagNum(docDiagNum);

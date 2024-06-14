@@ -36,8 +36,8 @@ public class DocDiagnosisDto {
     private List<PrescriptionDto> selectMedicine;
     
     public DocDiagnosis toDocDiagnosis() {
-    	String docDiagState = "완료";
-    	String docDiagKind = surChecked || admChecked ? "입원" : "외래";
+    	String docDiagState = "end";
+    	String docDiagKind = "diag";
     	Date docDiagDate = new Date(System.currentTimeMillis());
     	StringBuilder docDiagAddBuilder = new StringBuilder();
     	

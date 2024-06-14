@@ -1,7 +1,7 @@
 package com.kosta.care.service;
 
-import java.util.ArrayList;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,8 +23,8 @@ import com.kosta.care.entity.Prescription;
 import com.kosta.care.entity.SurgeryRequest;
 import com.kosta.care.entity.TestRequest;
 import com.kosta.care.repository.AdmissionRequestRepository;
+import com.kosta.care.repository.DiagnosisDslRepository;
 import com.kosta.care.repository.DiagnosisDueRepository;
-import com.kosta.care.repository.DiagnosisRepository;
 import com.kosta.care.repository.DocDiagnosisRepository;
 import com.kosta.care.repository.DoctorRepository;
 import com.kosta.care.repository.FavoriteMedicinesRepository;
@@ -44,7 +44,7 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 	private final DiagnosisDueRepository diagnosisDueRepository;
 	private final PatientRepository patientRepository;
 	private final DoctorRepository doctorRepository;
-	private final DiagnosisRepository diagnosisRepository;
+	private final DiagnosisDslRepository diagnosisRepository;
 	private final FavoriteMedicinesRepository favoriteMedicinesRepository;
 	private final MedicineRepository medicineRepository;
 	private final DocDiagnosisRepository docDiagnosisRepository;
@@ -116,7 +116,7 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			String medName = tuple.get(4, String.class);
 			String testPart = tuple.get(5, String.class);
 			String diseaseName = tuple.get(6, String.class);
-
+			
 			Map<String, Object> map = objectMapper.convertValue(docDiag, Map.class);
 			map.put("preDosage", prescription.getPrescriptionDosage());
 			map.put("preDosageTime", prescription.getPrescriptionDosageTimes());

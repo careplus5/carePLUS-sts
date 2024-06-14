@@ -48,7 +48,7 @@ public class Surgery {
 	@Column
 	private Time surgeryTotalTime;
 	@Column
-	private Date surgeryDueEnd;
+	private Time surgeryDueEnd;
 	@Column
 	private String surgeryPatStatus;
 	@Column
@@ -57,6 +57,8 @@ public class Surgery {
 	private String surgeryAnesthesiaPart;
 	@Column
 	private String surgeryBloodPack;
+	@Column
+	private String surgeryBloodPackCnt;
 	@Column
 	private String surgeryResult;
 	@Column  // 여기에다 대기중 기본값으로 

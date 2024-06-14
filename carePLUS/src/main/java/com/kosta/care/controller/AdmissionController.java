@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.care.repository.NurseRepository;
@@ -56,6 +55,29 @@ public class AdmissionController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<List<Map<String, Object>>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+@GetMapping("/admDiagPatientList")
+	public ResponseEntity<List<Map<String, Object>>> admDiagPatientList(@RequestParam("docNum") Long docNum) {
+		try {
+			List<Map<String, Object>> admDiagList = admService.admDiagPatientList(docNum);
+			return new ResponseEntity<List<Map<String,Object>>>(admDiagList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<Map<String,Object>>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/admDiagPatientInfo")
+	public ResponseEntity<Map<String, Object>> admDiagPatientInfo(@RequestParam("admNum") Long admNum) {
+		try {
+			Map<String, Object> admPatInfo = admService.admDiagPatInfo(admNum);
+			return new ResponseEntity<Map<String,Object>>(admPatInfo, HttpStatus.OK);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	

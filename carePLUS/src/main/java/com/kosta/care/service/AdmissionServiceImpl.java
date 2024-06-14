@@ -5,15 +5,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.AdmissionRecord;
+import com.kosta.care.entity.AdmissionRequest;
+import com.kosta.care.entity.Patient;
+import com.kosta.care.repository.AdmissionDslRepository;
 import com.kosta.care.repository.AdmissionRepository;
+import com.kosta.care.repository.DiagnosisDslRepository;
 import com.kosta.care.repository.DiagnosisDueRepository;
-import com.kosta.care.repository.DiagnosisRepository;
 import com.kosta.care.repository.DoctorRepository;
 import com.kosta.care.repository.FavoriteMedicinesRepository;
 import com.kosta.care.repository.MedicineRepository;
@@ -23,17 +27,18 @@ import com.querydsl.core.Tuple;
 
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class AdmissionServiceImpl implements AdmissionService {
 
 
 	private final DiagnosisDueRepository diagnosisDueRepository;
 	private final NurseRepository nurRepository;
-	private final AdmissionRepository admRepository;
+	private final AdmissionDslRepository admRepository;
+	private final AdmissionRepository admissionRepository;
 	private final PatientRepository patientRepository;
 	private final DoctorRepository doctorRepository;
-	private final DiagnosisRepository diagnosisRepository;
+	private final DiagnosisDslRepository diagnosisRepository;
 	private final FavoriteMedicinesRepository favoriteMedicinesRepository;
 	private final MedicineRepository medicineRepository;
 	
@@ -115,8 +120,6 @@ public class AdmissionServiceImpl implements AdmissionService {
 		return recordList;
 	}
 
-
-	
 	@Override
 	public Boolean updateAdmissionDischarge(Long admissionNum,String admissionDischargeOpinion, Date admissionDischargeDate) {
 		try {
@@ -137,5 +140,53 @@ public class AdmissionServiceImpl implements AdmissionService {
 		}
 	}
 
-	
+	@Override
+	public List<Map<String, Object>> admDiagPatientList(Long docNum) {
+		List<Tuple> tuples = admRepository.findAdmPatListByDocNum(docNum);
+		List<Map<String, Object>> admDiagPatList = new ArrayList<>();
+		
+		for(Tuple tuple : tuples) {
+			Admission admission = tuple.get(0, Admission.class);
+			Patient patient = tuple.get(1, Patient.class);
+
+			Map<String, Object> map = objectMapper.convertValue(admission, Map.class);
+			map.put("patNum", patient.getPatNum());
+			map.put("patName", patient.getPatName());
+			admDiagPatList.add(map);
+		}
+		
+		if(admDiagPatList.isEmpty()) {
+			return null;
+		}
+		return admDiagPatList;
+	}
+
+
+	@Override
+	public Map<String, Object> admDiagPatInfo(Long admNum) throws Exception {
+		Tuple tuple = admRepository.findAdmDiagPatInfoByAdmNum(admNum);
+		
+		Admission admission = tuple.get(0, Admission.class);
+		Patient patient = tuple.get(1, Patient.class);
+		AdmissionRequest admRequest = tuple.get(2, AdmissionRequest.class);
+		
+		Optional<Admission> oadmission = admissionRepository.findById(admNum);
+		
+		if(oadmission.isEmpty()) throw new Exception("입원정보 없음");
+		
+		String newState = "ing";
+		admission.setAdmissionDiagState(newState);
+		
+		Map<String, Object> map = objectMapper.convertValue(admission, Map.class);
+		map.put("patNum", patient.getPatNum());
+		map.put("patName", patient.getPatName());
+		map.put("patJumin", patient.getPatJumin());
+		map.put("admPeriod", admRequest.getAdmissionRequestPeriod());
+		map.put("admReason", admRequest.getAdmissionRequestReason());
+		
+		//입원환자 입원진료상태 업데이트
+		admissionRepository.save(admission);
+		
+		return map;
+	}
 }

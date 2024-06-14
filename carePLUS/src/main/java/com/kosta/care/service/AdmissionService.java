@@ -35,4 +35,9 @@ public interface AdmissionService {
 	// 퇴원처리
 	Boolean updateAdmissionDischarge(Long admissionNum,String admissionDischargeOpinion, Date admissionDischargeDate);
 	
+	//입원진료-입원 환자 목록 조회
+	List<Map<String,Object>> admDiagPatientList(Long docNum);
+	
+	//입원진료-입원환자정보
+	Map<String,Object> admDiagPatInfo(Long admNum) throws Exception;
 }
