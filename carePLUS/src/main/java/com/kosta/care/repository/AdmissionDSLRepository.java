@@ -18,7 +18,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @Repository
-public class AdmissionRepository {
+public class AdmissionDSLRepository {
 	@Autowired
 	private JPAQueryFactory jpaQueryFactory;
 	
@@ -60,7 +60,7 @@ public class AdmissionRepository {
 				.join(nurse).on(admission.nurNum.eq(nurse.nurNum))
 				.join(patient).on(admission.patNum.eq(patient.patNum))
 				.join(doctor).on(admission.docNum.eq(doctor.docNum))
-				.where(admission.nurNum.eq(nurse.nurNum))
+				.where(nurse.nurNum.eq(nurNum))
 				.fetch();
 		
 	}

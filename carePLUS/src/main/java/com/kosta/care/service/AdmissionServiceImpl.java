@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.AdmissionRecord;
-import com.kosta.care.repository.AdmissionRepository;
+import com.kosta.care.repository.AdmissionDSLRepository;
 import com.kosta.care.repository.DiagnosisDueRepository;
 import com.kosta.care.repository.DiagnosisRepository;
 import com.kosta.care.repository.DoctorRepository;
@@ -30,7 +30,7 @@ public class AdmissionServiceImpl implements AdmissionService {
 
 	private final DiagnosisDueRepository diagnosisDueRepository;
 	private final NurseRepository nurRepository;
-	private final AdmissionRepository admRepository;
+	private final AdmissionDSLRepository admRepository;
 	private final PatientRepository patientRepository;
 	private final DoctorRepository doctorRepository;
 	private final DiagnosisRepository diagnosisRepository;

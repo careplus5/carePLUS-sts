@@ -25,21 +25,13 @@ public class PrincipalDetailService implements UserDetailsService  {
 	
 @Autowired
 private EmployeeUtil empUtil;
-//	@Autowired
-//	private DoctorRepository docRepository;
 	@Autowired
 	private NurseRepository nurRepository;
-//	@Autowired
-//	private MedicalTechnicianRepository metRepository;
-//	@Autowired
-//	private AdminHospitalRepository admRepository;
-	
+
 	@Autowired
 	private EmployeeRepository empRepository;
 
-//	public Employee identifyJob(String username)throws Exception{
-//	
-//	}
+
 
 	 @Override
 	    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
