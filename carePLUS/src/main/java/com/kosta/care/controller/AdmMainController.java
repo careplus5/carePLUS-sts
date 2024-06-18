@@ -1,5 +1,6 @@
 package com.kosta.care.controller;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -9,12 +10,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.dto.TestRequestDto;
 import com.kosta.care.entity.Department;
-import com.kosta.care.entity.TestRequest;
+import com.kosta.care.entity.DiagnosisDue;
 import com.kosta.care.service.DepartmentService;
+import com.kosta.care.service.DiagnosisDueService;
+import com.kosta.care.service.DoctorService;
 import com.kosta.care.service.TestRequestService;
 
 @RestController
@@ -24,7 +29,13 @@ public class AdmMainController {
 	private DepartmentService departmentService;
 	
 	@Autowired
+	private DoctorService doctorService;
+	
+	@Autowired
 	private TestRequestService testRequestService;
+	
+	@Autowired
+	private DiagnosisDueService diagnosisDueService;
 	
 	// 진료 부서 조회 (리액트에서 select option에 쓰임)
 	@GetMapping("/departments")
@@ -54,6 +65,29 @@ public class AdmMainController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<TestRequestDto> (HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/doctorDueList")
+	public ResponseEntity<List<List<DiagnosisDueDto>>> doctorDueList(@RequestParam("departmentNum") Long departmentNum,
+			@RequestParam("diagnosisDueDate") String date) {
+		try {
+			List<List<DiagnosisDueDto>> doctorDueList = diagnosisDueService.doctorDiagnosisDueList(departmentNum, Date.valueOf(date));
+			return new ResponseEntity<List<List<DiagnosisDueDto>>>(doctorDueList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<List<DiagnosisDueDto>>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/diagSearchAll")
+	public ResponseEntity<List<DiagnosisDue>> diagSearchAll() {
+		try {
+			List<DiagnosisDue> diagnosisList = diagnosisDueService.diagSearchAll();
+			return new ResponseEntity<List<DiagnosisDue>>(diagnosisList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<DiagnosisDue>>( HttpStatus.BAD_REQUEST);
 		}
 	}
 }

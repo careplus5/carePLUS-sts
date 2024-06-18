@@ -1,9 +1,12 @@
 package com.kosta.care.service;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.dto.DocDiagnosisDto;
+import com.kosta.care.entity.DiagnosisDue;
 import com.kosta.care.entity.Medicine;
 
 public interface DiagnosisDueService {
@@ -26,4 +29,7 @@ public interface DiagnosisDueService {
 	Boolean addFavMedicine(Long docNum, String medicineNum);
 	//외래진료 완료
 	Boolean submitDiagnosis(DocDiagnosisDto docDiagDto);
+	// 전체 진료예약 조회
+	List<DiagnosisDue> diagSearchAll();
+	List<List<DiagnosisDueDto>> doctorDiagnosisDueList(Long departmentNum,Date date) throws Exception;
 }

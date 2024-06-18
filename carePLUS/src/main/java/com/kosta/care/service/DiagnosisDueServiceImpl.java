@@ -1,14 +1,16 @@
 package com.kosta.care.service;
 
-import java.util.ArrayList;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.dto.DocDiagnosisDto;
 import com.kosta.care.dto.PrescriptionDto;
 import com.kosta.care.entity.AdmissionRequest;
@@ -23,8 +25,8 @@ import com.kosta.care.entity.Prescription;
 import com.kosta.care.entity.SurgeryRequest;
 import com.kosta.care.entity.TestRequest;
 import com.kosta.care.repository.AdmissionRequestRepository;
+import com.kosta.care.repository.DiagnosisDslRepository;
 import com.kosta.care.repository.DiagnosisDueRepository;
-import com.kosta.care.repository.DiagnosisRepository;
 import com.kosta.care.repository.DocDiagnosisRepository;
 import com.kosta.care.repository.DoctorRepository;
 import com.kosta.care.repository.FavoriteMedicinesRepository;
@@ -44,7 +46,7 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 	private final DiagnosisDueRepository diagnosisDueRepository;
 	private final PatientRepository patientRepository;
 	private final DoctorRepository doctorRepository;
-	private final DiagnosisRepository diagnosisRepository;
+	private final DiagnosisDslRepository diagnosisRepository;
 	private final FavoriteMedicinesRepository favoriteMedicinesRepository;
 	private final MedicineRepository medicineRepository;
 	private final DocDiagnosisRepository docDiagnosisRepository;
@@ -116,7 +118,7 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			String medName = tuple.get(4, String.class);
 			String testPart = tuple.get(5, String.class);
 			String diseaseName = tuple.get(6, String.class);
-
+			
 			Map<String, Object> map = objectMapper.convertValue(docDiag, Map.class);
 			map.put("preDosage", prescription.getPrescriptionDosage());
 			map.put("preDosageTime", prescription.getPrescriptionDosageTimes());
@@ -279,4 +281,30 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 		return updateDocDiag != null;
 	}
 
+	// 진료예약 조회
+	@Override
+	public List<DiagnosisDue> diagSearchAll() {
+		return diagnosisDueRepository.findAll();
+	}
+
+	// 모달로 의사 스케줄 조회 (진료예약) 
+	@Override
+	public List<List<DiagnosisDueDto>> doctorDiagnosisDueList(Long departmentNum,Date date) throws Exception {
+		System.out.println(date);
+		List<Doctor> doctors = doctorRepository.findByDepartmentNum(departmentNum);
+		
+		List<List<DiagnosisDueDto>> doctorDiagnosisDueList = new ArrayList<List<DiagnosisDueDto>>();
+		for(Doctor doctor : doctors) {
+			List<DiagnosisDue> diagnosisDueList = diagnosisDueRepository.findByDocNumAndDiagnosisDueDate(doctor.getDocNum(), date);
+			
+			List<DiagnosisDueDto> diagnosisDueDtoList = diagnosisDueList.stream().map(due->DiagnosisDueDto.builder()
+												.diagnosisDueDate(due.getDiagnosisDueDate())
+												.diagnosisDueTime(due.getDiagnosisDueTime())
+												.docNum(due.getDocNum())
+												.docName(doctor.getName()).build()).collect(Collectors.toList());
+												
+			doctorDiagnosisDueList.add(diagnosisDueDtoList);
+		}
+		return doctorDiagnosisDueList;
+	}
 }

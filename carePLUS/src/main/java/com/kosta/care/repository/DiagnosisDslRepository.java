@@ -28,7 +28,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 
 @Repository
-public class DiagnosisRepository {
+public class DiagnosisDslRepository {
 	@Autowired
 	private JPAQueryFactory jpaQueryFactory;
 	
@@ -44,21 +44,19 @@ public class DiagnosisRepository {
 		
 		return jpaQueryFactory.select(diagnosisDue, patient.patName, docDiagnosis.docDiagnosisNum, docDiagnosis.docDiagnosisState)
 					.from(diagnosisDue)
-					.join(patient)
-					.on(diagnosisDue.patNum.eq(patient.patNum))
-					.join(doctor)
-					.on(diagnosisDue.docNum.eq(doctor.docNum))
-					.join(docDiagnosis)
-					.on(diagnosisDue.patNum.eq(docDiagnosis.patNum))
+					.join(patient).on(diagnosisDue.patNum.eq(patient.patNum))
+					.join(doctor).on(diagnosisDue.docNum.eq(doctor.docNum))
+					.join(docDiagnosis).on(diagnosisDue.patNum.eq(docDiagnosis.patNum))
 					.where(docDiagnosis.docNum.eq(docNum)
 							.and(diagnosisDue.docNum.eq(docNum))
 							.and(docDiagnosis.docDiagnosisDate.eq(Expressions.dateTemplate(Date.class, "CURDATE()")).or(docDiagnosis.docDiagnosisDate.isNull()))
 							.and(diagnosisDue.diagnosisDueDate.eq(Expressions.dateTemplate(Date.class, "CURDATE()"))))
 					.orderBy(
 							new CaseBuilder()
-								.when(docDiagnosis.docDiagnosisState.eq("진료중")).then(1)
-								.when(docDiagnosis.docDiagnosisState.eq("완료")).then(3)
-								.otherwise(2).asc()
+								.when(docDiagnosis.docDiagnosisState.eq("ing")).then(1)
+								.when(docDiagnosis.docDiagnosisState.eq("end")).then(3)
+								.otherwise(2).asc(),
+								diagnosisDue.diagnosisDueTime.asc()
 					)
 					.fetch();
 	}
@@ -71,10 +69,8 @@ public class DiagnosisRepository {
 		
 		return jpaQueryFactory.select(diagnosisDue, patient, docDiagnosis)
 				.from(diagnosisDue)
-				.join(patient)
-				.on(diagnosisDue.patNum.eq(patient.patNum))
-				.join(docDiagnosis)
-				.on(diagnosisDue.patNum.eq(docDiagnosis.patNum))
+				.join(patient).on(diagnosisDue.patNum.eq(patient.patNum))
+				.join(docDiagnosis).on(diagnosisDue.patNum.eq(docDiagnosis.patNum))
 				.where(docDiagnosis.docDiagnosisNum.eq(docDiagNum))
 				.orderBy(diagnosisDue.diagnosisDueDate.desc())
 	            .limit(1)
@@ -92,16 +88,11 @@ public class DiagnosisRepository {
 		
 		return jpaQueryFactory.select(docDiagnosis, prescription, doctor.docNum, doctor.docName, medicine.medicineKorName, testRequest.testPart, disease.diseaseName)
 					.from(docDiagnosis)
-					.join(prescription)
-					.on(docDiagnosis.prescriptionNum.eq(prescription.prescriptionNum))
-					.join(doctor)
-					.on(docDiagnosis.docNum.eq(doctor.docNum))
-					.join(medicine)
-					.on(medicine.medicineNum.eq(prescription.medicineNum))
-					.leftJoin(testRequest)
-					.on(testRequest.testRequestNum.eq(docDiagnosis.testRequestNum))
-					.join(disease)
-					.on(disease.diseaseNum.eq(docDiagnosis.diseaseNum))
+					.join(prescription).on(docDiagnosis.prescriptionNum.eq(prescription.prescriptionNum))
+					.join(doctor).on(docDiagnosis.docNum.eq(doctor.docNum))
+					.join(medicine).on(medicine.medicineNum.eq(prescription.medicineNum))
+					.leftJoin(testRequest).on(testRequest.testRequestNum.eq(docDiagnosis.testRequestNum))
+					.join(disease).on(disease.diseaseNum.eq(docDiagnosis.diseaseNum))
 					.where(docDiagnosis.patNum.eq(patNum)
 							.and(docDiagnosis.docDiagnosisDate.before(Expressions.dateTemplate(Date.class, "CURDATE()"))))
 					.orderBy(docDiagnosis.docDiagnosisDate.desc())
@@ -116,8 +107,7 @@ public class DiagnosisRepository {
 		
 		return jpaQueryFactory.select(disease, department.departmentName)
 				.from(disease)
-				.join(department)
-				.on(disease.departmentNum.eq(department.departmentNum))
+				.join(department).on(disease.departmentNum.eq(department.departmentNum))
 				.where(disease.departmentNum.eq(deptNum))
 				.fetch();
 	}
@@ -141,8 +131,7 @@ public class DiagnosisRepository {
 		
 		return jpaQueryFactory.select(favoriteMedicines, medicine.medicineKorName)
 					.from(favoriteMedicines)
-					.join(medicine)
-					.on(favoriteMedicines.medicineNum.eq(medicine.medicineNum))
+					.join(medicine).on(favoriteMedicines.medicineNum.eq(medicine.medicineNum))
 					.where(favoriteMedicines.docNum.eq(docNum))
 					.fetch();
 	}

@@ -52,6 +52,10 @@ public class Admission {
 	private String admissionStatus;
 	@Column //?
 	private String admissionType;
+	@Column //입원요청번호
+	private Long admissionRequestNum;
+	@Column //진료상태
+	private String admissionDiagState;
 	
 	
 }

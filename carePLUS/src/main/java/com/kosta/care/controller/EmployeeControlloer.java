@@ -3,6 +3,9 @@ package com.kosta.care.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -65,6 +68,13 @@ public class EmployeeControlloer {
 			e.printStackTrace();
 			return new ResponseEntity<EmployeeDto>(HttpStatus.BAD_REQUEST);
 		}
+	}
+	
+	@GetMapping("/empName")
+	public String empName() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println("얘 이름이 "+authentication.getName());
+		return authentication.getName();
 	}
 	
 //	@PostMapping("/employeeModify")

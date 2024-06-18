@@ -1,10 +1,11 @@
 package com.kosta.care.service;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.util.List;
 import java.util.Map;
 
-import com.kosta.care.entity.Admission;
+import com.kosta.care.entity.AdmissionRecord;
 
 public interface AdmissionService {
 	
@@ -35,4 +36,19 @@ public interface AdmissionService {
 	// 퇴원처리
 	Boolean updateAdmissionDischarge(Long admissionNum,String admissionDischargeOpinion, Date admissionDischargeDate);
 	
+	//입원진료-입원 환자 목록 조회
+	List<Map<String,Object>> admDiagPatientList(Long docNum);
+	
+	//입원진료-입원환자정보
+	Map<String,Object> admDiagPatInfo(Long admNum) throws Exception;
+	
+	//간호사 입원 일지 추가
+	 AdmissionRecord saveNurseAdmissionRecord(AdmissionRecord record);
+	 
+	//입원진료-입원 환자 목록 조회
+		List<Map<String,Object>> dailyPrescriptionList(Long patNum);
+		
+	// 처방 상태 업데이
+		Boolean updatePrescDiary(String patNum, String prescriptionNum, String buttonNum, String nurNum, String diaryStatus, Time diaryTime);
+		
 }
