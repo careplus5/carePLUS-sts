@@ -229,11 +229,10 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			testRequest.setTestPart(docDiagDto.getTestRequest());
 			testRequest.setDocNum(docDiagDto.getDocNum());
 			testRequest.setPatNum(docDiagDto.getPatNum());
+			testRequest.setTestRequestAcpt("검사요청");
 			testRequestRepository.save(testRequest);
 			docDiagnosis.setTestRequestNum(testRequest.getTestRequestNum());
 		}
-		
-		
 		
 		if(docDiagDto.isAdmChecked()) {
 			AdmissionRequest admissionRequest = new AdmissionRequest();
@@ -269,7 +268,6 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			prescriptionRepository.save(prescription);
 			docDiagAddBuilder.append(prescription.getPrescriptionNum()+",");
 		}
-		
 		//마지막 콤마 제거
 		if(docDiagAddBuilder.length() > 0) { 
 			docDiagAddBuilder.deleteCharAt(docDiagAddBuilder.length() - 1);

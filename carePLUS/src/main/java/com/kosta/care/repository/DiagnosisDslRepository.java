@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.kosta.care.entity.FavoriteMedicines;
+import com.kosta.care.entity.QAdmission;
 import com.kosta.care.entity.QDepartment;
 import com.kosta.care.entity.QDiagnosisDue;
 import com.kosta.care.entity.QDisease;
@@ -20,6 +21,7 @@ import com.kosta.care.entity.QFavoriteMedicines;
 import com.kosta.care.entity.QMedicine;
 import com.kosta.care.entity.QPatient;
 import com.kosta.care.entity.QPrescription;
+import com.kosta.care.entity.QSurgery;
 import com.kosta.care.entity.QTestRequest;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -50,7 +52,8 @@ public class DiagnosisDslRepository {
 					.where(docDiagnosis.docNum.eq(docNum)
 							.and(diagnosisDue.docNum.eq(docNum))
 							.and(docDiagnosis.docDiagnosisDate.eq(Expressions.dateTemplate(Date.class, "CURDATE()")).or(docDiagnosis.docDiagnosisDate.isNull()))
-							.and(diagnosisDue.diagnosisDueDate.eq(Expressions.dateTemplate(Date.class, "CURDATE()"))))
+							.and(diagnosisDue.diagnosisDueDate.eq(Expressions.dateTemplate(Date.class, "CURDATE()")))
+							.and(docDiagnosis.docDiagnosisKind.eq("diag").or(docDiagnosis.docDiagnosisKind.isNull())))
 					.orderBy(
 							new CaseBuilder()
 								.when(docDiagnosis.docDiagnosisState.eq("ing")).then(1)
@@ -144,5 +147,20 @@ public class DiagnosisDslRepository {
 						.where(favoriteMedicines.docNum.eq(docNum).and(favoriteMedicines.medicineNum.eq(medicineNum)))
 						.fetchOne();
 	}
+	
+	
+	//담당환자
+	//담당환자- 담당환자 조회
+//	public List<Tuple> findDocDiagPatListByDocNum(Long docNum) {
+//		QDocDiagnosis docDiagnosis = QDocDiagnosis.docDiagnosis;
+//		QPatient patient = QPatient.patient;
+//		QDisease disease = QDisease.disease;
+//		QAdmission admission = QAdmission.admission;
+//		QSurgery surgery = QSurgery.surgery;
+//		
+//		return jpaQueryFactory.select(docDiagnosis, patient, disease.diseaseName, admission.admissionStatus, surgery.surgeryState)
+//				.from(docDiagnosis)
+//				.join(null)
+//	}
 	
 }

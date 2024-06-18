@@ -68,4 +68,30 @@ public class DocDiagnosisDto {
     					.docDiagnosisAdd(docDiagAddBuilder.toString())
     					.build();
     }
+    
+    public DocDiagnosis toAmdDiagnosis() {
+    	String docDiagState = "end";
+    	Date docDiagDate = new Date(System.currentTimeMillis());
+    	StringBuilder docDiagAddBuilder = new StringBuilder();
+    	
+    	if(testChecked) {
+    		docDiagAddBuilder.append("검사,");
+    	}
+    	if(surChecked) {
+    		docDiagAddBuilder.append("수술,");
+    	}
+    	//마지막 콤마 제거
+    	if(docDiagAddBuilder.length() > 0) { 
+    		docDiagAddBuilder.deleteCharAt(docDiagAddBuilder.length() - 1);
+    	}
+    	
+    	return DocDiagnosis.builder()
+    					.docDiagnosisNum(docDiagnosisNum)
+    					.docNum(docNum)
+    					.patNum(patNum)
+    					.docDiagnosisState(docDiagState)
+    					.docDiagnosisDate(docDiagDate)
+    					.docDiagnosisAdd(docDiagAddBuilder.toString())
+    					.build();
+    }
 }

@@ -98,7 +98,9 @@ public class DocDiagnosisController {
 	
 	@PostMapping("/addFavMedicine")
 	public ResponseEntity<Boolean> addFavMedicine(@RequestBody Map<String,Object> param) {
-		Long docNum = new Long((Integer)param.get("docNum"));
+		String username = (String) param.get("docNum");
+		Long docNum = Long.parseLong(username);
+
 		String medicineNum = (String) param.get("medicineNum");
 		
 		try {
