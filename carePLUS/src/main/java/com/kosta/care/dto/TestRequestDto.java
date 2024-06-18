@@ -16,6 +16,7 @@ public class TestRequestDto {
 	private String patName;
 	private String patJumin;
 	private String patGender;
+	private String patBloodType;
 	private Long docNum;
 	private String docName;
 	private String testName;  // 검사 종류 (CT, MRI, X-Ray) 
