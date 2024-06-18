@@ -7,6 +7,7 @@ import com.kosta.care.dto.AlarmDto;
 public interface AlarmService {
 	void sendAlarmByEmpNum(Long empNum, String alarmCategory,String alarmContent) throws Exception;
 	void sendAlarmListByJobNum(Long jobNum, String alarmContent, String alarmCategoy) throws Exception;
+	void sendAlarmListByDepartmentNum(String departmentName, String alarmContent, String alarmCategoty) throws Exception;
 	List<AlarmDto> sendNotCheckAlarm(Long empNum) throws Exception;
 	Long checkAlarm(Long alarmNum) throws Exception;
 	void registFcmToken(String fcmToken, Long empNum) throws Exception;

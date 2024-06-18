@@ -18,7 +18,9 @@ public class EmployeeDto {
 	private Long empNum;
 	private Long profNum;
 	private Long departmentNum;
+	private String departmentName;
 	private Long jobNum;
+	private String jobName;
 	private	String department2Name;
 	private String empPosition;
 	private String empName;

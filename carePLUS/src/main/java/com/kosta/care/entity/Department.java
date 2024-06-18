@@ -24,6 +24,10 @@ public class Department {
 	private String departmentName;
 	@Column
 	private Long jobNum;
+	@Column
+	private Long department1Num;
+	@Column
+	private Long department2Num;
 	
 	
 }

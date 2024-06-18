@@ -24,7 +24,7 @@ public class AlarmController {
 	@GetMapping("/sendAlarm/{empNum}")
 	public ResponseEntity<String> sendAlarm(@PathVariable Long empNum) {
 		try {
-			alarmService.sendAlarmByEmpNum(empNum, "공지사항", "알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용알림내용");
+			alarmService.sendAlarmByEmpNum(empNum, "공지사항", "된거맞지?!");
 			return new ResponseEntity<String>("알림전송 성공,", HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -58,11 +58,11 @@ public class AlarmController {
 	}
 
 	@PostMapping("/changeFCMToken")
-	public ResponseEntity<String> changeFCMToken(@RequestBody Map<String,Object> param){
-
-		String fcmToken = (String)param.get("fcmToken");
-		Long empNum = Long.parseLong((String)param.get("empNum"));
-
+	public ResponseEntity<String> changeFCMToken(@RequestBody Map<String, Object> param) {
+		System.out.println(param);
+		String fcmToken = (String) param.get("fcmToken");
+		System.out.println(fcmToken);
+		Long empNum = Long.parseLong((String) param.get("empNum"));
 		try {
 			alarmService.registFcmToken(fcmToken, empNum);
 			return new ResponseEntity<String>("변경 성공", HttpStatus.OK);

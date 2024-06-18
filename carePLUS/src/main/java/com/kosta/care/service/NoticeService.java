@@ -1,0 +1,18 @@
+package com.kosta.care.service;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.kosta.care.dto.NoticesDto;
+import com.kosta.care.entity.Notices;
+import com.kosta.care.util.PageInfo;
+
+public interface NoticeService{
+	
+	String noticesWrite (NoticesDto noticesDto) throws Exception;
+	List<NoticesDto> noticesListByPage(PageInfo pageInfo, String type, String word)throws Exception;
+	NoticesDto noticesDetail(Long noticeNum) throws Exception;
+	void noticesModify(NoticesDto noticesDto) throws Exception;
+	
+}

@@ -27,7 +27,7 @@ public class CalendarController {
 	public ResponseEntity<EmployeeDto> getUserInfo(@RequestParam Map<String, Object> param) {
 		Long userId = Long.parseLong((String)param.get("userId"));
 		try {
-			return new ResponseEntity<EmployeeDto>(employeeSerivce.Detail(userId), HttpStatus.OK);
+			return new ResponseEntity<EmployeeDto>(employeeSerivce.detail(userId), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<EmployeeDto>(HttpStatus.BAD_REQUEST);
