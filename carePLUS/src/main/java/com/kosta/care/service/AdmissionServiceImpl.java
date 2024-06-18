@@ -13,24 +13,35 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kosta.care.dto.AdmDiagnosisDto;
+import com.kosta.care.dto.PrescriptionDto;
 import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.AdmissionRecord;
 import com.kosta.care.entity.AdmissionRequest;
+import com.kosta.care.entity.DocDiagnosis;
+import com.kosta.care.entity.Doctor;
+import com.kosta.care.entity.Nurse;
 import com.kosta.care.entity.Patient;
 import com.kosta.care.entity.Prescription;
 import com.kosta.care.entity.PrescriptionDiary;
+import com.kosta.care.entity.SurgeryRequest;
+import com.kosta.care.entity.TestRequest;
 import com.kosta.care.repository.AdmissionDslRepository;
 import com.kosta.care.repository.AdmissionRecordRepository;
 import com.kosta.care.repository.AdmissionRepository;
 import com.kosta.care.repository.DiagnosisDslRepository;
 //github.com/careplus5/carePLUS-sts.git
 import com.kosta.care.repository.DiagnosisDueRepository;
+import com.kosta.care.repository.DocDiagnosisRepository;
 import com.kosta.care.repository.DoctorRepository;
 import com.kosta.care.repository.FavoriteMedicinesRepository;
 import com.kosta.care.repository.MedicineRepository;
 import com.kosta.care.repository.NurseRepository;
 import com.kosta.care.repository.PatientRepository;
 import com.kosta.care.repository.PrescriptionDiaryRepository;
+import com.kosta.care.repository.PrescriptionRepository;
+import com.kosta.care.repository.SurgeryRequestRepository;
+import com.kosta.care.repository.TestRequestRepository;
 import com.querydsl.core.Tuple;
 
 import lombok.RequiredArgsConstructor;
@@ -51,6 +62,11 @@ public class AdmissionServiceImpl implements AdmissionService {
 	private final FavoriteMedicinesRepository favoriteMedicinesRepository;
 	private final MedicineRepository medicineRepository;
 	private final AdmissionRecordRepository adminRecordRepository;
+	private final DocDiagnosisRepository docDiagnosisRepository;
+	private final TestRequestRepository testRequestRepository;
+	private final SurgeryRequestRepository surgeryRequestRepository;
+	private final PrescriptionRepository prescriptionRepository;
+	private final AdmissionRecordRepository admissionRecordRepository;
 	
 	private final ObjectMapper objectMapper;
 	
@@ -197,10 +213,12 @@ public class AdmissionServiceImpl implements AdmissionService {
 		for(Tuple tuple : tuples) {
 			Admission admission = tuple.get(0, Admission.class);
 			Patient patient = tuple.get(1, Patient.class);
+			String docName = tuple.get(2, String.class);
 
 			Map<String, Object> map = objectMapper.convertValue(admission, Map.class);
 			map.put("patNum", patient.getPatNum());
 			map.put("patName", patient.getPatName());
+			map.put("docName", docName);
 			admDiagPatList.add(map);
 		}
 		
@@ -235,6 +253,15 @@ public class AdmissionServiceImpl implements AdmissionService {
 		
 		//입원환자 입원진료상태 업데이트
 		admissionRepository.save(admission);
+		
+		//의사진료에 입원진료 insert
+		DocDiagnosis docDiag = new DocDiagnosis();
+		docDiag.setDocDiagnosisKind("adm");
+		docDiag.setDocDiagnosisState("ing");
+		docDiag.setDocNum(admission.getDocNum());
+		docDiag.setPatNum(admission.getPatNum());
+		docDiagnosisRepository.save(docDiag);
+		map.put("admDiagNum", docDiag.getDocDiagnosisNum());
 		
 		return map;
 	}
@@ -275,5 +302,119 @@ List<Map<String, Object>> dailyPrescList = new ArrayList<>();
 		}
 		
 		return dailyPrescList;
+	}
+	
+	@Override
+	public Map<String, Object> firstDiagRecordInfo(Long patNum) {
+		Tuple tuple = admRepository.findFirstDiagRecordByPatNum(patNum);
+		
+		String diseaseName = tuple.get(0, String.class);
+		String diagContent = tuple.get(1, String.class);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("diseaseName", diseaseName);
+		map.put("diagContent", diagContent);
+		
+		return map;
+	}
+	@Override
+	public List<Map<String, Object>> admNurRecordList(Long admNum) {
+		List<Tuple> tuples = admRepository.findAdmNurRecordByAdmNum(admNum);
+		List<Map<String, Object>> admNurRecordList = new ArrayList<>();
+		
+		for(Tuple tuple : tuples) {
+			AdmissionRecord admissionRecord = tuple.get(0, AdmissionRecord.class);
+			Nurse nurse = tuple.get(1, Nurse.class);
+			
+			Map<String, Object> map = objectMapper.convertValue(admissionRecord, Map.class);
+			map.put("nurNum", nurse.getNurNum());
+			map.put("nurName", nurse.getNurName());
+			admNurRecordList.add(map);
+		}
+		
+		if(admNurRecordList.isEmpty()) return null;
+		
+		return admNurRecordList;
+	}
+	@Override
+	public List<Map<String, Object>> admDiagRecordList(Long admNum) {
+		List<Tuple> tuples = admRepository.findAdmDiagRecordByAdmNum(admNum);
+		List<Map<String, Object>> admDiagRecordList = new ArrayList<>();
+		
+		for(Tuple tuple : tuples) {
+			AdmissionRecord admissionRecord = tuple.get(0, AdmissionRecord.class);
+			Doctor doctor = tuple.get(1, Doctor.class);
+			
+			Map<String, Object> map = objectMapper.convertValue(admissionRecord, Map.class);
+			map.put("docNum", doctor.getDocNum());
+			map.put("docName", doctor.getDocName());
+			admDiagRecordList.add(map);
+		}
+		
+		if(admDiagRecordList.isEmpty()) return null;
+		
+		return admDiagRecordList;
+	}
+	
+	@Override
+	public Boolean submitAdmDiag(AdmDiagnosisDto admDiagDto) {
+		AdmissionRecord admDiagRecord = admDiagDto.toAdmDiagRecord();
+		Optional<DocDiagnosis> odocDiag = docDiagnosisRepository.findById(admDiagDto.getDocDiagnosisNum());
+		DocDiagnosis docDiag = odocDiag.get();
+		
+		if(admDiagDto.isTestChecked()) {
+			TestRequest testRequest = new TestRequest();
+			testRequest.setTestName(admDiagDto.getTestType());
+			testRequest.setTestPart(admDiagDto.getTestRequest());
+			testRequest.setDocNum(admDiagDto.getDocNum());
+			testRequest.setPatNum(admDiagDto.getPatNum());
+			testRequest.setTestRequestAcpt("검사요청");
+			testRequestRepository.save(testRequest);
+			docDiag.setTestRequestNum(testRequest.getTestRequestNum());
+		}
+		
+		if(admDiagDto.isSurChecked()) {
+			SurgeryRequest surRequest = new SurgeryRequest();
+			surRequest.setSurReason(admDiagDto.getSurReason());
+			surRequest.setSurDate(admDiagDto.getSurDate());
+			surRequest.setSurPeriod(admDiagDto.getSurPeriod());
+			surRequest.setPatNum(admDiagDto.getPatNum());
+			surgeryRequestRepository.save(surRequest);
+		}
+		
+		StringBuilder docDiagAddBuilder = new StringBuilder();
+		for(PrescriptionDto preDto : admDiagDto.getSelectMedicine()) {
+			Prescription prescription = new Prescription();
+			prescription.setMedicineNum(preDto.getMedicineNum());
+			prescription.setPatNum(admDiagDto.getPatNum());
+			prescription.setDocNum(admDiagDto.getDocNum());
+			prescription.setPrescriptionDosage(preDto.getPreDosage());
+			prescription.setPrescriptionDosageTimes(preDto.getPreDosageTimes());
+			prescription.setPrescriptionDosageTotal(preDto.getPreDosageTotal());
+			prescription.setPrescriptionHowTake(preDto.getPreHowTake());
+			prescription.setPrescriptionDate(new Date(System.currentTimeMillis()));
+			prescriptionRepository.save(prescription);
+			docDiagAddBuilder.append(prescription.getPrescriptionNum()+",");
+		}
+		//마지막 콤마 제거
+		if(docDiagAddBuilder.length() > 0) { 
+			docDiagAddBuilder.deleteCharAt(docDiagAddBuilder.length() - 1);
+		}
+		docDiag.setPrescriptionNum(docDiagAddBuilder.toString());
+		docDiag.setDocDiagnosisState("end");
+		
+		docDiagnosisRepository.save(docDiag);
+		
+		AdmissionRecord updateAdmDiag = admissionRecordRepository.save(admDiagRecord);
+		
+		//입원진료 상태변경
+		Optional<Admission> oadm = admissionRepository.findById(admDiagDto.getAdmissionNum());
+		if (oadm.isPresent()) {
+		    Admission admission = oadm.get();
+		    admission.setAdmissionDiagState("wait");
+		    admissionRepository.save(admission);
+		} 
+		
+		return updateAdmDiag != null;
 	}
 }

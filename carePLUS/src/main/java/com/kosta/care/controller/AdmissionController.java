@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kosta.care.dto.AdmDiagnosisDto;
+import com.kosta.care.dto.DocDiagnosisDto;
 import com.kosta.care.entity.AdmissionRecord;
 import com.kosta.care.repository.NurseRepository;
 import com.kosta.care.service.AdmissionService;
@@ -178,28 +180,73 @@ public class AdmissionController {
 	}
 	
 	
-	@PostMapping("/updatePrescriptionStatus")
-	public ResponseEntity<Boolean> updatePrescriptionStatus(@RequestBody Map<String, Object> params) {
-		
-		try {
-			String patNum = params.get("patNum").toString();
-				String prescriptionNum = (String) params.get("prescriptionNum");
-			 	String buttonNum = (String) params.get("buttonNum");
-		        String nurNum = (String) params.get("nurNum");
-		        String diaryStatus = params.get("diaryStatus").toString();
-		        String diaryTimeStr = params.get("diaryTime").toString();
-		        
-		        // Convert string to date
-	            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-	            java.util.Date diaryTime = formatter.parse(diaryTimeStr);
-	            java.sql.Time dd = new java.sql.Time(diaryTime.getTime());
-	            
-			System.out.println("controller start: updatePrescriptionStatus: "+nurNum);
-			System.out.println("controller start: updatePrescriptionStatus: "+diaryStatus);
+	   @PostMapping("/updatePrescriptionStatus")
+	   public ResponseEntity<Boolean> updatePrescriptionStatus(@RequestBody Map<String, Object> params) {
+	      
+	      try {
+	         String patNum = params.get("patNum").toString();
+	            String prescriptionNum = (String) params.get("prescriptionNum");
+	             String buttonNum = (String) params.get("buttonNum");
+	              String nurNum = (String) params.get("nurNum");
+	              String diaryStatus = params.get("diaryStatus").toString();
+	              String diaryTimeStr = params.get("diaryTime").toString();
+	              
+	              // Convert string to date
+	               SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+	               java.util.Date diaryTime = formatter.parse(diaryTimeStr);
+	               java.sql.Time dd = new java.sql.Time(diaryTime.getTime());
+	               
+	         System.out.println("controller start: updatePrescriptionStatus: "+nurNum);
+	         System.out.println("controller start: updatePrescriptionStatus: "+diaryStatus);
 
-			Boolean updatePrescStatus = admService.updatePrescDiary(patNum,prescriptionNum, buttonNum, nurNum, diaryStatus, dd);
-			System.out.println(updatePrescStatus);
-			return new ResponseEntity<Boolean>(updatePrescStatus, HttpStatus.OK);
+	         Boolean updatePrescStatus = admService.updatePrescDiary(patNum,prescriptionNum, buttonNum, nurNum, diaryStatus, dd);
+	         System.out.println(updatePrescStatus);
+	         return new ResponseEntity<Boolean>(updatePrescStatus, HttpStatus.OK);
+	      } catch (Exception e) {
+	         e.printStackTrace();
+	         return new ResponseEntity<Boolean>(HttpStatus.BAD_REQUEST);
+	      }
+	   }
+			
+			
+	@GetMapping("/firstDiagRecord")
+	public ResponseEntity<Map<String, Object>> firstDiagRecord(@RequestParam("patNum") Long patNum) {
+		try {
+			Map<String, Object> firstDiagRecord = admService.firstDiagRecordInfo(patNum);
+			return new ResponseEntity<Map<String,Object>>(firstDiagRecord, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/admDiagNurRecord")
+	public ResponseEntity<List<Map<String, Object>>> admDiagNurRecord(@RequestParam("admNum") Long admNum) {
+		try {
+			List<Map<String, Object>> admNurRecordList = admService.admNurRecordList(admNum);
+			return new ResponseEntity<List<Map<String, Object>>>(admNurRecordList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<Map<String, Object>>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@GetMapping("/admDiagRecord")
+	public ResponseEntity<List<Map<String, Object>>> admDiagRecord(@RequestParam("admNum") Long admNum) {
+		try {
+			List<Map<String, Object>> admDiagRecordList = admService.admDiagRecordList(admNum);
+			return new ResponseEntity<List<Map<String, Object>>>(admDiagRecordList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<Map<String, Object>>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping("/admDiagnosisSubmit")
+	public ResponseEntity<Boolean> admDiagnosisSubmit(@RequestBody AdmDiagnosisDto admDiagDto) {
+		try {
+			Boolean isSuccess = admService.submitAdmDiag(admDiagDto);
+			return new ResponseEntity<Boolean>(isSuccess, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Boolean>(HttpStatus.BAD_REQUEST);

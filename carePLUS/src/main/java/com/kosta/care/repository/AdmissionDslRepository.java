@@ -12,6 +12,7 @@ import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.QAdmission;
 import com.kosta.care.entity.QAdmissionRecord;
 import com.kosta.care.entity.QAdmissionRequest;
+import com.kosta.care.entity.QDisease;
 import com.kosta.care.entity.QDocDiagnosis;
 import com.kosta.care.entity.QDoctor;
 import com.kosta.care.entity.QNurse;
@@ -108,22 +109,23 @@ public class AdmissionDslRepository {
 	public List<Tuple> findAdmPatListByDocNum(Long docNum) {
 		QAdmission admission = QAdmission.admission;
 		QPatient patient = QPatient.patient;
+		QDoctor doctor = QDoctor.doctor;
 		
-		 return jpaQueryFactory.select(admission, patient)
+		 return jpaQueryFactory.select(admission, patient, doctor.docName)
 			 	.from(admission)
 			 	.join(patient).on(admission.patNum.eq(patient.patNum))
+			 	.join(doctor).on(admission.docNum.eq(doctor.docNum))
 			 	.where(admission.docNum.eq(docNum))
 			 	.orderBy(
 			 			new CaseBuilder()
 			 				.when(admission.admissionDiagState.eq("ing")).then(1)
-			 				.when(admission.admissionDiagState.eq("end")).then(3)
 			 				.otherwise(2).asc()
 			 				
 			 	)
 			 	.fetch();
 	}
 		
-	//입원진료-입원환자정보
+	//입원진료-입원환자정보 조회
 	public Tuple findAdmDiagPatInfoByAdmNum(Long admNum) {
 		QPatient patient = QPatient.patient;
 		QAdmission admission = QAdmission.admission;
@@ -136,7 +138,6 @@ public class AdmissionDslRepository {
 					.where(admission.admissionNum.eq(admNum))
 					.fetchOne();
 	}
-	
 	
 
 	// 처방전, 처방 일지
@@ -155,5 +156,54 @@ public class AdmissionDslRepository {
 					.fetch();
 		}
 		
+	//입원진료-초기진단기록 조회
+	public Tuple findFirstDiagRecordByPatNum(Long patNum) {
+		QDocDiagnosis docDiagnosis = QDocDiagnosis.docDiagnosis;
+		QAdmission admission = QAdmission.admission;
+		QDisease disease = QDisease.disease;
+		
+		return jpaQueryFactory.select(disease.diseaseName, docDiagnosis.docDiagnosisContent)
+					.from(docDiagnosis)
+					.join(admission).on(docDiagnosis.patNum.eq(admission.patNum))
+					.join(disease).on(docDiagnosis.diseaseNum.eq(disease.diseaseNum))
+					.where(docDiagnosis.patNum.eq(patNum))
+					.orderBy(docDiagnosis.docDiagnosisDate.asc())
+		            .limit(1)
+		            .fetchOne();
+	}
+	
+	//입원진료-간호사 입원일지 조회
+	public List<Tuple> findAdmNurRecordByAdmNum(Long admNum) {
+		QAdmissionRecord admissionRecord = QAdmissionRecord.admissionRecord;
+		QAdmission admission = QAdmission.admission;
+		QNurse nurse = QNurse.nurse;
+		
+		return jpaQueryFactory.select(admissionRecord, nurse)
+					.from(admissionRecord)
+					.join(admission).on(admissionRecord.admissionNum.eq(admission.admissionNum))
+					.join(nurse).on(admissionRecord.jobNum.eq(nurse.nurNum))
+					.where(admissionRecord.admissionNum.eq(admNum)
+							.and(admissionRecord.jobNum.isNotNull()))
+					.orderBy(admissionRecord.admissionRecordDate.desc())
+					.fetch();
+	}
+
+	//입원진료-의사 입원진단기록 조회
+	public List<Tuple> findAdmDiagRecordByAdmNum(Long admNum) {
+		QAdmissionRecord admissionRecord = QAdmissionRecord.admissionRecord;
+		QAdmission admission = QAdmission.admission;
+		QDocDiagnosis docDiagnosis = QDocDiagnosis.docDiagnosis;
+		QDoctor doctor = QDoctor.doctor;
+		
+		return jpaQueryFactory.select(admissionRecord, doctor)
+				.from(admissionRecord)
+				.join(admission).on(admissionRecord.admissionNum.eq(admission.admissionNum))
+				.join(docDiagnosis).on(admissionRecord.docDiagnosisNum.eq(docDiagnosis.docDiagnosisNum))
+				.join(doctor).on(docDiagnosis.docNum.eq(doctor.docNum))
+				.where(admissionRecord.admissionNum.eq(admNum)
+						.and(admissionRecord.docDiagnosisNum.isNotNull()))
+				.orderBy(admissionRecord.admissionRecordDate.desc())
+				.fetch();
+	}
 
 }
