@@ -61,6 +61,7 @@ public class MedicalTechnician implements Employee{
 				.empNum(metNum)
 				.profNum(profNum)
 				.departmentNum(departmentNum)
+				.departmentName(departmentName)
 				.department2Name(metDepartment2Name)
 				.jobNum(jobNum)
 				.empName(metName)
