@@ -60,6 +60,7 @@ public class Doctor implements Employee{
 				.empNum(docNum)
 				.profNum(profNum)
 				.departmentNum(departmentNum)
+				.departmentName(departmentName)
 				.jobNum(jobNum)
 				.empName(docName)
 				.empPassword(docPassword)
