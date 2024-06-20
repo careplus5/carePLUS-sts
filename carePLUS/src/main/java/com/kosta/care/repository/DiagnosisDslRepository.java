@@ -186,14 +186,14 @@ public class DiagnosisDslRepository {
 			QTestRequest testRequest = QTestRequest.testRequest;
 			QDisease disease = QDisease.disease;
 			
-			JPAQuery<Tuple> query =  jpaQueryFactory.select(docDiagnosis, prescription, doctor.docNum, doctor.docName, medicine.medicineKorName, testRequest.testPart, disease.diseaseName)
+			JPAQuery<Tuple> query =  jpaQueryFactory.select(docDiagnosis, prescription, doctor.docNum, doctor.docName, medicine.medicineKorName, testRequest.testPart, disease.diseaseNum, disease.diseaseName)
 						.from(docDiagnosis)
 						.leftJoin(prescription).on(docDiagnosis.prescriptionNum.eq(prescription.prescriptionNum))
 						.join(doctor).on(docDiagnosis.docNum.eq(doctor.docNum))
 						.leftJoin(medicine).on(medicine.medicineNum.eq(prescription.medicineNum))
 						.leftJoin(testRequest).on(testRequest.testRequestNum.eq(docDiagnosis.testRequestNum))
 						.join(disease).on(disease.diseaseNum.eq(docDiagnosis.diseaseNum))
-						.where(docDiagnosis.patNum.eq((long) 88001)
+						.where(docDiagnosis.patNum.eq(patNum)
 								.and(docDiagnosis.docDiagnosisDate.before(Expressions.dateTemplate(Date.class, "CURDATE()"))))
 						.orderBy(docDiagnosis.docDiagnosisDate.desc());
 

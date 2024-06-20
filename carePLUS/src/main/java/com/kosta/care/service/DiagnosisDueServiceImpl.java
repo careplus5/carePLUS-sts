@@ -223,6 +223,8 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			surgeryRequest.setSurPeriod(docDiagDto.getSurPeriod());
 			surgeryRequest.setDepartmentNum(docDiagDto.getDeptNum());
 			surgeryRequest.setPatNum(docDiagDto.getPatNum());
+			surgeryRequest.setDocNum(docDiagDto.getDocNum());
+			surgeryRequest.setSurgeryRequestAcpt("wait");
 			surgeryRequestRepository.save(surgeryRequest);
 		}
     	
@@ -319,7 +321,8 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			String docName = tuple.get(3, String.class);
 			String medName = tuple.get(4, String.class);
 			String testPart = tuple.get(5, String.class);
-			String diseaseName = tuple.get(6, String.class);
+			Long diseaseNum = tuple.get(6, Long.class);
+			String diseaseName = tuple.get(7, String.class);
 			
 			Map<String, Object> map = objectMapper.convertValue(docDiag, Map.class);
 			map.put("preDosage", prescription==null? null:prescription.getPrescriptionDosage());
@@ -330,6 +333,7 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			map.put("docName", docName);
 			map.put("medName", medName);
 			map.put("testPart", testPart);
+			map.put("diseaseNum", diseaseNum);
 			map.put("diseaseName", diseaseName);
 			patDiagList.add(map);
 		}

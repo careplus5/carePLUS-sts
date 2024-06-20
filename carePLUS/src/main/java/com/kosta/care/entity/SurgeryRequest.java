@@ -24,6 +24,8 @@ public class SurgeryRequest {
 	private Long surgeryRequestNum;
 	@Column
 	private Long patNum;
+	@Column
+	private Long docNum;
 	@Column//Long같기도 한데 그냥 String으로 할게.. 바꾸거나 parseInt.해줘...ㅠ
 	private String surPeriod;
 	@Column
@@ -32,4 +34,6 @@ public class SurgeryRequest {
 	private Date surDate;
 	@Column
 	private Long departmentNum;
+	@Column
+	private String surgeryRequestAcpt;
 }

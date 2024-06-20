@@ -382,6 +382,8 @@ List<Map<String, Object>> dailyPrescList = new ArrayList<>();
 			surRequest.setSurPeriod(admDiagDto.getSurPeriod());
 			surRequest.setPatNum(admDiagDto.getPatNum());
 			surRequest.setDepartmentNum(admDiagDto.getDeptNum());
+			surRequest.setDocNum(admDiagDto.getDocNum());
+			surRequest.setSurgeryRequestAcpt("wait");
 			surgeryRequestRepository.save(surRequest);
 		}
 		
