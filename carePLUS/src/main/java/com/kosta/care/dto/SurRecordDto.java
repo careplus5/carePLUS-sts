@@ -1,8 +1,6 @@
 package com.kosta.care.dto;
 
-import java.sql.Date;
 import java.sql.Time;
-import java.util.List;
 
 import com.kosta.care.entity.Surgery;
 

@@ -10,10 +10,13 @@ import com.kosta.care.entity.Doctor;
 import com.kosta.care.entity.Employee;
 import com.kosta.care.entity.MedicalTechnician;
 import com.kosta.care.entity.Nurse;
+import com.kosta.care.entity.QJob;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import lombok.RequiredArgsConstructor;
 
 @Repository
 public class EmployeeRepository{
-	
 	@Autowired
 	private DoctorRepository docRepository;
 	@Autowired
@@ -30,6 +33,8 @@ public class EmployeeRepository{
 	private AdminHospitalRepository admRepository;
 	@Autowired
 	private EntityManager entityManager;
+	@Autowired
+	private JPAQueryFactory jpaQueryFactory;
 	
 	
 	

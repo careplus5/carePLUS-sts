@@ -76,14 +76,14 @@ public class SurgeryDslRespository {
         
         List<Tuple> result2 = jpaQueryFactory.select(surgery, nurse2.nurNum, nurse2.nurName, department2.departmentName)
         		.from(surgery)
-        		.join(nurse2).on(surgery.nurNum1.eq(nurse2.nurNum))
+        		.join(nurse2).on(surgery.nurNum2.eq(nurse2.nurNum))
         		.join(department2).on(nurse2.departmentNum.eq(department2.departmentNum))
         		.where(surgery.surgeryNum.eq(surgeryNum))
         		.fetch();
 
         List<Tuple> result3 = jpaQueryFactory.select(surgery, nurse3.nurNum, nurse3.nurName, department3.departmentName)
         		.from(surgery)
-        		.join(nurse3).on(surgery.nurNum1.eq(nurse3.nurNum))
+        		.join(nurse3).on(surgery.nurNum3.eq(nurse3.nurNum))
         		.join(department3).on(nurse3.departmentNum.eq(department3.departmentNum))
         		.where(surgery.surgeryNum.eq(surgeryNum))
         		.fetch();

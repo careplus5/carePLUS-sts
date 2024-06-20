@@ -1,19 +1,32 @@
 package com.kosta.care.controller;
 
+import java.io.FileInputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.care.dto.EmployeeDto;
 import com.kosta.care.service.EmployeeSerivce;
+import com.kosta.care.util.PageInfo;
 
 @RestController
 public class EmployeeControlloer {
@@ -21,12 +34,15 @@ public class EmployeeControlloer {
 	@Autowired
 	private EmployeeSerivce employeeSerivce;
 	
+	@Value("${upload.path}")
+	private String uploadPath;
+	
 	@PostMapping("/employeeAdd")
-	public ResponseEntity<String> EmployeeAdd(@ModelAttribute EmployeeDto employeeDto, @RequestParam(name="file", required = false) MultipartFile file){
+	public ResponseEntity<String> employeeAdd(@ModelAttribute EmployeeDto employeeDto, @RequestParam(name="file", required = false) MultipartFile file){
 		System.out.println(employeeDto.getEmpNum());
 		try {
 			System.out.println(employeeDto);
-			employeeSerivce.Join(employeeDto,file);
+			employeeSerivce.join(employeeDto,file);
 			return new ResponseEntity<String>("등록 완료", HttpStatus.OK);
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -35,9 +51,9 @@ public class EmployeeControlloer {
 	}
 	
 	@PostMapping("/employeeDelete")
-	public ResponseEntity<String> EmployeeDelete(@RequestParam("empNum") Long empNum){
+	public ResponseEntity<String> employeeDelete(@RequestParam("empNum") Long empNum){
 		try {
-			employeeSerivce.Delete(empNum);
+			employeeSerivce.delete(empNum);
 			return new ResponseEntity<String>("삭제완료", HttpStatus.OK);
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -45,24 +61,31 @@ public class EmployeeControlloer {
 		}
 	}
 	
-//	@GetMapping("/employeeList")
-//	public ResponseEntity<Map<String,Object>>EmployeeList(@RequestParam(name="page", required = false, defaultValue = "1") Integer page,
-//			@RequestParam(name="type", required = false) String type,
-//			@RequestParam(name="word", required = false) String word){
-//		Map<String, Object> res = new HashMap<>();
-//		try {
-//			
-//			return new ResponseEntity<Map<String,Object>>(res, HttpStatus.OK);
-//		}catch (Exception e) {
-//			e.printStackTrace();
-//			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
-//		}
-//	}
+	@GetMapping("/employeeList")
+	public ResponseEntity<Map<String,Object>>employeeList(@RequestParam(name="page", required = false, defaultValue = "1") Integer page,
+			@RequestParam(name="jobName", required = false) String jobName,
+			@RequestParam(name="type", required = false) String type,
+			@RequestParam(name="word", required = false) String word){
+		System.out.println(jobName);
+		Map<String, Object> res = new HashMap<>();
+		try {
+			PageInfo pageInfo = PageInfo.builder().curPage(page).build();
+			List<EmployeeDto> employeeList = employeeSerivce.employeeListByPage(jobName, pageInfo, type, word);
+			res.put("employeeList", employeeList);
+			res.put("pageInfo", pageInfo);
+			return new ResponseEntity<Map<String,Object>>(res, HttpStatus.OK);
+		}catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
 	
 	@PostMapping("/employeeDetail")
-	public ResponseEntity<EmployeeDto>EmployeeDetail(@RequestParam("empNum") Long empNum){
+	public ResponseEntity<EmployeeDto>employeeDetail(@RequestBody Map<String,Long> param){
 		try {
-			EmployeeDto empDto = employeeSerivce.Detail(empNum);
+			Long empNum = param.get("empNum");
+			EmployeeDto empDto = employeeSerivce.detail(empNum);
+			System.out.println(empDto);
 			return new ResponseEntity<EmployeeDto>(empDto, HttpStatus.OK);
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -70,6 +93,7 @@ public class EmployeeControlloer {
 		}
 	}
 	
+
 	@GetMapping("/empName")
 	public String empName() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -77,19 +101,28 @@ public class EmployeeControlloer {
 		return authentication.getName();
 	}
 	
-//	@PostMapping("/employeeModify")
-//	public ResponseEntity<String>EmployeeModify(@RequestParam(name="file", required = false)MultipartFile file,
-//			@RequestParam("jobNum")Long jobNum, @RequestParam("departmentNum")Long departmentNum,
-//			@RequestParam(name="department2Name", required = false, defaultValue = "null")String department2Name, @RequestParam("empPosition")String empPosition,
-//			@RequestParam("empName")String empName, @RequestParam("empTel")String empTel, @RequestParam("empEmail")String empEmail,
-//			@RequestParam("empNum")Long empNum, @RequestParam("empPassword")String empPassword
-//			){
-//		try {
-//			
-//		}catch (Exception e) {
-//			e.printStackTrace()
-//			return new ResponseEntity<String>("삭제실패", HttpStatus.BAD_REQUEST)
-//		}
-//	}
+	@GetMapping("/image/{num}")
+	public void imageView(@PathVariable Long num, HttpServletResponse response) {
+		try {
+			FileInputStream fis = new FileInputStream(uploadPath+num);
+			OutputStream out = response.getOutputStream();
+			FileCopyUtils.copy(fis, out);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@PostMapping("/employeeModify")
+	public ResponseEntity<String>EmployeeModify(@ModelAttribute EmployeeDto employeeDto, @RequestParam(name="file", required = false) MultipartFile file){
+		try {
+			employeeSerivce.modify(employeeDto,file);
+			return new ResponseEntity<String>("수정성공", HttpStatus.OK);
+		}catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("수정실패", HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	
 }

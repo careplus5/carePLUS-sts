@@ -1,48 +1,30 @@
-package com.kosta.care.entity;
+package com.kosta.care.dto;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-
-import com.kosta.care.dto.NoticesDto;
+import com.kosta.care.entity.Notices;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Notices {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+public class NoticesDto {
 	private Long noticeNum;
-	@Column
 	private String noticeCategory;
-	@Column
 	private String noticeTitle;
-	@Column
 	private String noticeContent;
-	@Column
-	@CreationTimestamp
 	private Date noticeWriteDate;
-	@Column
-	@ColumnDefault("0")
 	private Long noticeViewCount;
 	
-	public NoticesDto ToNoticesDto() {
+	public Notices ToNotices() {
 		
-		return NoticesDto.builder()
+		return Notices.builder()
 				.noticeNum(noticeNum)
 				.noticeCategory(noticeCategory)
 				.noticeTitle(noticeTitle)
@@ -51,4 +33,5 @@ public class Notices {
 				.noticeViewCount(noticeViewCount)
 				.build();
 	}
+	
 }

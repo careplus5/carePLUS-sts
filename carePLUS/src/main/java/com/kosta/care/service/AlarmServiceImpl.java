@@ -57,7 +57,7 @@ public class AlarmServiceImpl implements AlarmService {
 		} else if (findJob.equals("14")) {
 			Optional<MedicalTechnician> employee = medicalTechnicianRepository.findById(empNum);
 			FcmToken = employee.get().getFcmToken();
-		}
+		}else System.out.println("관리자 입니다");
 		System.out.println(FcmToken);
 		// DB에 알림 생성
 		Alarm alarm = Alarm.builder().empNum(empNum).alarmCheck(false).alarmDelivery(false).alarmCategory(alarmCategory)
@@ -161,7 +161,10 @@ public class AlarmServiceImpl implements AlarmService {
 
 			}
 		}
-		Message message = Message.builder().setToken(FcmToken).setNotification(notification).build();
+		Message message = Message.builder()
+				.setToken(FcmToken)
+				.setNotification(notification)
+				.build();
 
 		firebaseMessaging.send(message);
 		alarm.setAlarmDelivery(true);
@@ -192,6 +195,12 @@ public class AlarmServiceImpl implements AlarmService {
 		}
 	}
 
+	@Override
+	public void sendAlarmListByDepartmentNum(String departmentName, String alarmContent, String alarmCategoty) throws Exception {
+		
+		
+	}
+	
 	// 알림 재발송
 	@Override
 	public List<AlarmDto> sendNotCheckAlarm(Long empNum) throws Exception {
@@ -223,7 +232,6 @@ public class AlarmServiceImpl implements AlarmService {
 			doctorRepository.save(employee.get());
 		} else if (findJob.equals("12")) {
 			Optional<Nurse> employee = nurseRepository.findById(empNum);
-			;
 			employee.get().setFcmToken(fcmToken);
 			nurseRepository.save(employee.get());
 		} else if (findJob.equals("13")) {
