@@ -21,7 +21,14 @@ public class Beds {
 	@Id
 	private Long bedsNum;
 	@Column
-	private String bedsCode;
+	private Integer bedsDept;
+	@Column
+	private Integer bedsWard;
+	@Column
+	private Integer bedsRoom;
+	@Column
+	private Integer bedsBed;
+	
 	@Column
 	private Boolean bedsIsUse;
 }

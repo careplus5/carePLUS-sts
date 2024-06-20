@@ -12,6 +12,7 @@ import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.QAdmission;
 import com.kosta.care.entity.QAdmissionRecord;
 import com.kosta.care.entity.QAdmissionRequest;
+import com.kosta.care.entity.QBeds;
 import com.kosta.care.entity.QDocDiagnosis;
 import com.kosta.care.entity.QDoctor;
 import com.kosta.care.entity.QNurse;
@@ -69,6 +70,7 @@ public class AdmissionDslRepository {
 	public Admission findByAdmissionNum(Long admissionNum) {
 		return entityManager.find(Admission.class, admissionNum);
 	}
+	
 	
 	
 	// 의사 입퇴원 일지

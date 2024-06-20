@@ -1,5 +1,7 @@
 package com.kosta.care.entity;
 
+import java.sql.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NurDiagNosis {
+public class NurDiagnosis {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long nurDiagNum;
@@ -30,6 +32,15 @@ public class NurDiagNosis {
 	private Long jobNum;
 	@Column
 	private String nurDiagContent;
+	@Column
+	private Long docDiagnosisNum;
+	@Column
+	private Date nurDiagnosisDueDate;
+	@Column
+	private Date nurDiagnosisDate;
+	@Column
+	private String nurDiagStatus;
+	
 	
 	
 	
