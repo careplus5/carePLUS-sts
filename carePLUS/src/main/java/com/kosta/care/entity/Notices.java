@@ -38,7 +38,7 @@ public class Notices {
 	private Date noticeWriteDate;
 	@Column
 	@ColumnDefault("0")
-	private Long noticeViewCount;
+	private Integer noticeViewCount;
 	
 	public NoticesDto ToNoticesDto() {
 		

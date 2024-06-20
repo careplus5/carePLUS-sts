@@ -64,6 +64,7 @@ public class Nurse implements Employee {
 					.empNum(nurNum)
 					.profNum(profNum)
 					.departmentNum(departmentNum)
+					.departmentName(departmentName)
 					.department2Name(nurDepartment2Name)
 					.jobNum(jobNum)
 					.empName(nurName)

@@ -58,6 +58,7 @@ public class AdminHospital implements Employee {
 				.empNum(admNum)
 				.profNum(profNum)
 				.departmentNum(departmentNum)
+				.departmentName(departmentName)
 				.jobNum(jobNum)
 				.empName(admName)
 				.empPassword(admPassword)

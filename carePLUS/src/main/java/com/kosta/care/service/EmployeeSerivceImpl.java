@@ -316,6 +316,8 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 			for (Object employee : pages.getContent()) {
 				employeeDtoList.add(employeeUtil.MetToEmpDto((MedicalTechnician) employee));
 			}
+		}else {
+			System.out.println("정상입니다 안심하세요");
 		}
 		System.out.println("serviceDto:"+employeeDtoList);
 		return employeeDtoList;
