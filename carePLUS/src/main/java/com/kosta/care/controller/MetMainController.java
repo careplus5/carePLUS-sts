@@ -86,4 +86,16 @@ public class MetMainController {
         }
     }
 	
+	@GetMapping("/testAllList")
+    public ResponseEntity<List<TestDto>> getPatientAllTestList(@RequestParam("dept2Name")String dept2Name,@RequestParam("patNum")Long patNum ) {
+        try {
+         	
+        	List<TestDto> testDtos =  testService.getPatientAllTestList(dept2Name, patNum);
+            return new ResponseEntity<List<TestDto>>(testDtos, HttpStatus.OK); // 요청 성공 시 200 OK 응답과 함께 데이터 반환
+        } catch (Exception e) {
+            // 예외 처리: 다른 모든 예외
+            return new ResponseEntity<List<TestDto>>(HttpStatus.BAD_REQUEST);
+        }
+    }
+	
 }

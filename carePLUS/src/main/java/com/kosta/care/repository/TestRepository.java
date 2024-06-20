@@ -12,5 +12,6 @@ public interface TestRepository extends JpaRepository<Test, Long> {
 	
     List<Test> findByTestNameAndTestAppointmentDate(String testName, Date testAppointmentDate);
 
+    List<Test> findByTestNameAndTestStatusAndPatient_PatNum(String testName, String testStatus, Long patNum);
 
 }
