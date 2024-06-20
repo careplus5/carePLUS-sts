@@ -57,22 +57,6 @@ public class MetMainController {
             return new ResponseEntity<List<TestRequestDto>>(HttpStatus.BAD_REQUEST);
         }
     }
-	
-	@PostMapping("/updateTestStatus")
-    public ResponseEntity<Boolean> updateTestStatus(@RequestBody Map<String, Object> param) {
-        try {
-        	System.out.println(param);
-            testService.updateTestStatus(
-            		Long.valueOf(String.valueOf(param.get("id"))), String.valueOf(param.get("testStatus")));
-            return new ResponseEntity<Boolean>(true, HttpStatus.OK); // 업데이트 성공 시 200 OK 응답
-        } catch (EntityNotFoundException e) {
-            // 예외 처리: 검색된 엔터티가 없음
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (Exception e) {
-            // 예외 처리: 다른 모든 예외
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
 
 	@GetMapping("/testTodayList")
     public ResponseEntity<List<TestDto>> getTodayAcceptedTests(@RequestParam("dept2Name")String dept2Name,@RequestParam("today")String today ) {

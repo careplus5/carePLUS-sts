@@ -10,6 +10,6 @@ public interface TestRequestService {
 	
 	TestRequestDto getLatestTestRequestByPatNum(Long patNum) throws Exception;
 
-	void updateStatus(Long testRequestNum, String testRequestAcpt) throws Exception;
+	void updateRequestStatus(Long testRequestNum, String testRequestAcpt) throws Exception;
 	List<TestRequestDto> getAllTestRequests(String dept2Name) throws Exception;
 }

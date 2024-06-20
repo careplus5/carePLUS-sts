@@ -31,9 +31,8 @@ public class Test{
 	private Long docDiagnosisNum;
 	@Column
 	private Long metNum;
-	@ManyToOne
-    @JoinColumn(name = "patNum", referencedColumnName = "patNum", insertable = false, updatable = false)
-	private Patient patient;
+	@Column
+	private Long patNum;
 	@ManyToOne
     @JoinColumn(name = "testRequestNum", referencedColumnName = "testRequestNum", insertable = false, updatable = false)
 	private TestRequest testRequest;
@@ -58,14 +57,14 @@ public class Test{
 	@Column
 	private String testOutInspectRecord;
 	@Column
-	private Time testAppointmentTime;
+	private Date testAppointmentTime;
 	
 	 public TestDto toDto() {
 	        return TestDto.builder()
 	            .testNum(this.testNum)
 	            .docDiagnosisNum(this.docDiagnosisNum)
 	            .metNum(this.metNum)
-	            .patNum(this.patient != null ? this.patient.getPatNum() : null)
+	            .patNum(this.patNum)
 	            .testRequestNum(this.testRequest != null ? this.testRequest.getTestRequestNum() : null)
 	            .docNum(this.docNum)
 	            .testFileNum(this.testFileNum)
@@ -78,10 +77,6 @@ public class Test{
 	            .testAppointmentDate(this.testAppointmentDate)
 	            .testOutInspectRecord(this.testOutInspectRecord)
 	            .testAppointmentTime(this.testAppointmentTime)
-	            .patName(this.patient != null ? this.patient.getPatName() : null)
-	            .patGender(this.patient != null ? this.patient.getPatGender() : null)
-	            .patJumin(this.patient != null ? this.patient.getPatJumin() : null)
-	            .patBloodType(this.patient != null ? this.patient.getPatBloodType() : null)
 	            .build();
 	    }
 

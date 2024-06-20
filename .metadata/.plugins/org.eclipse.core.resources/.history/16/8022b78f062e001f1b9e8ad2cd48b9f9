@@ -1,0 +1,10 @@
+package com.kosta.care.service;
+
+import java.util.List;
+import java.sql.Date;
+
+import com.kosta.care.dto.TestDto;
+
+public interface TestService {
+    List<TestDto> getTodayAcceptedTests(String dept2Name, Date today) throws Exception;
+}

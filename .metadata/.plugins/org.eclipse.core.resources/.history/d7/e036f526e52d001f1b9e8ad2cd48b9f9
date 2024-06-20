@@ -1,0 +1,33 @@
+package com.kosta.care.service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.sql.Date;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.kosta.care.dto.TestDto;
+import com.kosta.care.entity.Test;
+import com.kosta.care.repository.TestRepository;
+
+@Service
+public class TestServiceImpl implements TestService {
+
+    @Autowired
+    private TestRepository testRepository;
+
+    @Override
+    public List<TestDto> getTodayAcceptedTests(String dept2Name, String today) throws Exception {
+    	LocalDate localDate = LocalDate.parse(today);
+        List<Test> tests = testRepository.findAcceptedTestsByToday(Date.valueOf(localDate));
+
+        // Convert to DTO
+        return tests.stream()
+        		.filter(test -> test.getTestName().equals(dept2Name))
+	            .map(Test::toDto)
+	            .collect(Collectors.toList());
+    }
+}

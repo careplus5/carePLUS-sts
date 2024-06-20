@@ -1,0 +1,32 @@
+package com.kosta.care.service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.sql.Date;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.kosta.care.dto.TestDto;
+import com.kosta.care.entity.Test;
+import com.kosta.care.repository.TestRepository;
+
+@Service
+public class TestServiceImpl implements TestService {
+
+    @Autowired
+    private TestRepository testRepository;
+
+    @Override
+    public List<TestDto> getTodayAcceptedTests(String dept2Name,  Date today) throws Exception {
+        List<Test> tests = testRepository.findByTestNameAndTestStatusAndTestDate(dept2Name,"대기중",today);
+
+        // Convert to DTO
+        return tests.stream()
+        		.filter(test -> test.getTestName().equals(dept2Name))
+	            .map(Test::toDto)
+	            .collect(Collectors.toList());
+    }
+}
