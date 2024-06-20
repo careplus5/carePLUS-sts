@@ -40,7 +40,7 @@ public class AlarmServiceImpl implements AlarmService {
 
 	@Override
 	public void sendAlarmByEmpNum(Long empNum, String alarmCategory, String alarmContent) throws Exception {
-
+		System.out.println("sendAlarmService :"+empNum);
 		// empNum로 맞는 Repository를 찾아서 토큰 값 불러오기
 		String empNumString = empNum.toString();
 		String findJob = empNumString.substring(0, 2);
@@ -161,34 +161,39 @@ public class AlarmServiceImpl implements AlarmService {
 
 			}
 		}
-		Message message = Message.builder()
-				.setToken(FcmToken)
-				.setNotification(notification)
-				.build();
-
-		firebaseMessaging.send(message);
-		alarm.setAlarmDelivery(true);
+		try {
+			Message message = Message.builder()
+					.setToken(FcmToken)
+					.setNotification(notification)
+					.build();
+			
+			firebaseMessaging.send(message);
+			alarm.setAlarmDelivery(true);
+		}catch (Exception e) {
+			System.out.println("fcm토큰 없음");
+		}
 	}
 
 	@Override
 	public void sendAlarmListByJobNum(Long jobNum, String alarmContent, String alarmCategoy) throws Exception {
-		if (jobNum.equals("11")) {
-			List<Doctor> employeeList = doctorRepository.findByJobNum(jobNum);
+		System.out.println("알람리스트:"+jobNum+alarmContent);
+		if (jobNum==11) {
+			List<Doctor> employeeList = doctorRepository.findAll();
 			for (Doctor doctor : employeeList) {
 				sendAlarmByEmpNum(doctor.getDocNum(), alarmContent, alarmCategoy);
 			}
-		} else if (jobNum.equals("12")) {
-			List<Nurse> employeeList = nurseRepository.findByJobNum(jobNum);
+		} else if (jobNum==12) {
+			List<Nurse> employeeList = nurseRepository.findAll();;
 			for (Nurse nurse : employeeList) {
 				sendAlarmByEmpNum(nurse.getNurNum(), alarmContent, alarmCategoy);
 			}
-		} else if (jobNum.equals("13")) {
-			List<AdminHospital> employeeList = adminHospitalRepository.findByJobNum(jobNum);
+		} else if (jobNum==13) {
+			List<AdminHospital> employeeList = adminHospitalRepository.findAll();;
 			for (AdminHospital adminHospital : employeeList) {
 				sendAlarmByEmpNum(adminHospital.getAdmNum(), alarmContent, alarmCategoy);
 			}
-		} else if (jobNum.equals("14")) {
-			List<MedicalTechnician> employeeList = medicalTechnicianRepository.findByJobNum(jobNum);
+		} else if (jobNum==14) {
+			List<MedicalTechnician> employeeList = medicalTechnicianRepository.findAll();;
 			for (MedicalTechnician medicalTechnician : employeeList) {
 				sendAlarmByEmpNum(medicalTechnician.getMetNum(), alarmContent, alarmCategoy);
 			}

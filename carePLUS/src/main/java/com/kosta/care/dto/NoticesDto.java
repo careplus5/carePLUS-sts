@@ -20,7 +20,7 @@ public class NoticesDto {
 	private String noticeTitle;
 	private String noticeContent;
 	private Date noticeWriteDate;
-	private Long noticeViewCount;
+	private Integer noticeViewCount;
 	
 	public Notices ToNotices() {
 		
