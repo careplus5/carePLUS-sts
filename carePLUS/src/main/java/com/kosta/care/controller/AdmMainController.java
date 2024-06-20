@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.dto.TestRequestDto;
+import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.Department;
 import com.kosta.care.entity.DiagnosisDue;
+import com.kosta.care.entity.DocDiagnosis;
+import com.kosta.care.service.AdmService;
 import com.kosta.care.service.DepartmentService;
 import com.kosta.care.service.DiagnosisDueService;
 import com.kosta.care.service.DoctorService;
@@ -36,6 +39,9 @@ public class AdmMainController {
 	
 	@Autowired
 	private DiagnosisDueService diagnosisDueService;
+	
+	@Autowired
+	private AdmService admService;
 	
 	// 진료 부서 조회 (리액트에서 select option에 쓰임)
 	@GetMapping("/departments")
@@ -89,5 +95,29 @@ public class AdmMainController {
 			e.printStackTrace();
 			return new ResponseEntity<List<DiagnosisDue>>( HttpStatus.BAD_REQUEST);
 		}
+	}
+	
+	@PostMapping("/confirmDiagnosis")
+	public ResponseEntity<List<DocDiagnosis>> confirmDiagnosis(@RequestBody Map<String, Long> param) {
+		try {
+			List<DocDiagnosis> docDiagnosisList = admService.getConfirmDianosis(param.get("patNum"));
+			return new ResponseEntity<List<DocDiagnosis>>(docDiagnosisList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<DocDiagnosis>>( HttpStatus.BAD_REQUEST);
+		}
+		
+	}
+	
+	@PostMapping("/confirmAdmission")
+	public ResponseEntity<List<Admission>> confirmAdmission(@RequestBody Map<String, Long> param) {
+		try {
+			List<Admission> admissionList = admService.getConfirmAdmission(param.get("patNum"));
+			return new ResponseEntity<List<Admission>>(admissionList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<Admission>>( HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 }

@@ -58,20 +58,20 @@ public class PatientController {
 	}
 	
 	// 접수등록에서 환자 조회
-	@PostMapping("/patNumCheck")
-	public ResponseEntity<Patient> patNumCheck(@RequestBody Map<String,Long> param)  {
-		System.out.println(param);
-		try {
-            Optional<Patient> oPatient = patientService.getPatientById(param.get("patNum"));
-
-            if (oPatient.isPresent()) {
-                return new ResponseEntity<Patient>(oPatient.get(), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<Patient>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<Patient>(HttpStatus.BAD_REQUEST);
-        }
-	}
+//	@PostMapping("/patNumCheck")
+//	public ResponseEntity<Patient> patNumCheck(@RequestBody Map<String,Long> param)  {
+//		System.out.println(param);
+//		try {
+//            Optional<Patient> oPatient = patientService.getPatientById(param.get("patNum"));
+//
+//            if (oPatient.isPresent()) {
+//                return new ResponseEntity<Patient>(oPatient.get(), HttpStatus.OK);
+//            } else {
+//                return new ResponseEntity<Patient>(HttpStatus.NOT_FOUND);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<Patient>(HttpStatus.BAD_REQUEST);
+//        }
+//	}
 }

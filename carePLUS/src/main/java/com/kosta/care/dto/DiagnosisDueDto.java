@@ -26,7 +26,17 @@ public class DiagnosisDueDto {
 	
 	//진료예약을 위해 이름 필요추가 (김동현)
 	private String docName;
-	
+	 // 추가 (원무과) 
+    private String patName;
+    private String patJumin;
+    private String patGender;
+    private String patTel;
+    private String patHeight;
+    private String patWeight;
+    private String patAddress;
+    private String patHistory;
+    private String patBloodType;
+    
 	private Long docDiagnosisNum;
 	private Long diseaseNum;
     private String diagContent;
