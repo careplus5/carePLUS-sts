@@ -49,19 +49,7 @@ public class DocDiagnosisController {
 			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	@GetMapping("/prevDiagRecord")
-	public ResponseEntity<List<Map<String, Object>>> prevDiagRecord(@RequestParam("patNum") Long patNum) {
-		try {
-			List<Map<String, Object>> prevDiagList = diagnosisDueService.prevDiagListByPatNum(patNum);
-			System.out.println("prevDiagList: "+prevDiagList);
-			return new ResponseEntity<List<Map<String, Object>>>(prevDiagList, HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<List<Map<String, Object>>>(HttpStatus.BAD_REQUEST);
-		}
-	}
-	
+
 	@GetMapping("/diseaseList")
 	public ResponseEntity<List<Map<String, Object>>> diseaseList(@RequestParam("docNum") Long docNum) {
 		try {
@@ -120,6 +108,32 @@ public class DocDiagnosisController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Boolean>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/docDiagPatList")
+	public ResponseEntity<List<Map<String, Object>>> docDiagPatList(@RequestParam("docNum") Long docNum,
+										@RequestParam(name="searchType", required = false) String searchType, 
+										@RequestParam(name="searchKeyword", required = false) String searchKeyword) {
+		try {
+			List<Map<String, Object>> docPatList = diagnosisDueService.docPatListByDocNum(docNum, searchType, searchKeyword);
+			return new ResponseEntity<List<Map<String,Object>>>(docPatList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<Map<String,Object>>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/prevDiagRecord")
+	public ResponseEntity<List<Map<String, Object>>> prevDiagRecord(@RequestParam("patNum") Long patNum,
+										@RequestParam(name="searchType", required = false) String searchType,
+										@RequestParam(name="searchKeyword", required = false) String searchKeyword) {
+		try {
+			List<Map<String, Object>> patDiagList = diagnosisDueService.patDiagListByPatNum(patNum, searchType, searchKeyword);
+			return new ResponseEntity<List<Map<String,Object>>>(patDiagList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<Map<String,Object>>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	

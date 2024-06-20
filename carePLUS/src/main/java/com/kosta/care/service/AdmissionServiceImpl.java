@@ -213,12 +213,13 @@ public class AdmissionServiceImpl implements AdmissionService {
 		for(Tuple tuple : tuples) {
 			Admission admission = tuple.get(0, Admission.class);
 			Patient patient = tuple.get(1, Patient.class);
-			String docName = tuple.get(2, String.class);
+			Doctor doctor = tuple.get(2, Doctor.class);
 
 			Map<String, Object> map = objectMapper.convertValue(admission, Map.class);
 			map.put("patNum", patient.getPatNum());
 			map.put("patName", patient.getPatName());
-			map.put("docName", docName);
+			map.put("docName", doctor.getDocName());
+			map.put("deptNum", doctor.getDepartmentNum());
 			admDiagPatList.add(map);
 		}
 		
@@ -369,6 +370,7 @@ List<Map<String, Object>> dailyPrescList = new ArrayList<>();
 			testRequest.setDocNum(admDiagDto.getDocNum());
 			testRequest.setPatNum(admDiagDto.getPatNum());
 			testRequest.setTestRequestAcpt("검사요청");
+			testRequest.setDocDiagnosisNum(admDiagDto.getDocDiagnosisNum());
 			testRequestRepository.save(testRequest);
 			docDiag.setTestRequestNum(testRequest.getTestRequestNum());
 		}
@@ -379,6 +381,7 @@ List<Map<String, Object>> dailyPrescList = new ArrayList<>();
 			surRequest.setSurDate(admDiagDto.getSurDate());
 			surRequest.setSurPeriod(admDiagDto.getSurPeriod());
 			surRequest.setPatNum(admDiagDto.getPatNum());
+			surRequest.setDepartmentNum(admDiagDto.getDeptNum());
 			surgeryRequestRepository.save(surRequest);
 		}
 		

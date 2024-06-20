@@ -20,6 +20,7 @@ public class DocDiagnosisDto {
 	private Long docDiagnosisNum;
 	private Long docNum;
 	private Long patNum;
+	private Long deptNum;
 	private Long diseaseNum;
     private String diagContent;
     private boolean testChecked;

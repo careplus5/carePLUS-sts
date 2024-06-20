@@ -26,6 +26,9 @@ import com.kosta.care.entity.QTestRequest;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 
@@ -44,7 +47,7 @@ public class DiagnosisDslRepository {
 		QDiagnosisDue diagnosisDue = QDiagnosisDue.diagnosisDue;
 		QDocDiagnosis docDiagnosis = QDocDiagnosis.docDiagnosis;
 		
-		return jpaQueryFactory.select(diagnosisDue, patient.patName, docDiagnosis.docDiagnosisNum, docDiagnosis.docDiagnosisState)
+		return jpaQueryFactory.select(diagnosisDue, patient.patName, docDiagnosis.docDiagnosisNum, docDiagnosis.docDiagnosisState, doctor.departmentNum)
 					.from(diagnosisDue)
 					.join(patient).on(diagnosisDue.patNum.eq(patient.patNum))
 					.join(doctor).on(diagnosisDue.docNum.eq(doctor.docNum))
@@ -78,28 +81,6 @@ public class DiagnosisDslRepository {
 				.orderBy(diagnosisDue.diagnosisDueDate.desc())
 	            .limit(1)
 				.fetchOne();
-	}
-	
-	//외래진료-이전진료내역 조회
-	public List<Tuple> findPrevDiagRecord(Long patNum) {
-		QDoctor doctor = QDoctor.doctor;
-		QPrescription prescription = QPrescription.prescription;
-		QDocDiagnosis docDiagnosis = QDocDiagnosis.docDiagnosis;
-		QMedicine medicine = QMedicine.medicine;
-		QTestRequest testRequest = QTestRequest.testRequest;
-		QDisease disease = QDisease.disease;
-		
-		return jpaQueryFactory.select(docDiagnosis, prescription, doctor.docNum, doctor.docName, medicine.medicineKorName, testRequest.testPart, disease.diseaseName)
-					.from(docDiagnosis)
-					.join(prescription).on(docDiagnosis.prescriptionNum.eq(prescription.prescriptionNum))
-					.join(doctor).on(docDiagnosis.docNum.eq(doctor.docNum))
-					.join(medicine).on(medicine.medicineNum.eq(prescription.medicineNum))
-					.leftJoin(testRequest).on(testRequest.testRequestNum.eq(docDiagnosis.testRequestNum))
-					.join(disease).on(disease.diseaseNum.eq(docDiagnosis.diseaseNum))
-					.where(docDiagnosis.patNum.eq(patNum)
-							.and(docDiagnosis.docDiagnosisDate.before(Expressions.dateTemplate(Date.class, "CURDATE()"))))
-					.orderBy(docDiagnosis.docDiagnosisDate.desc())
-					.fetch();
 	}
 	
 	//외래진료-병명리스트 조회(부서별)
@@ -151,16 +132,91 @@ public class DiagnosisDslRepository {
 	
 	//담당환자
 	//담당환자- 담당환자 조회
-//	public List<Tuple> findDocDiagPatListByDocNum(Long docNum) {
-//		QDocDiagnosis docDiagnosis = QDocDiagnosis.docDiagnosis;
-//		QPatient patient = QPatient.patient;
-//		QDisease disease = QDisease.disease;
-//		QAdmission admission = QAdmission.admission;
-//		QSurgery surgery = QSurgery.surgery;
-//		
-//		return jpaQueryFactory.select(docDiagnosis, patient, disease.diseaseName, admission.admissionStatus, surgery.surgeryState)
-//				.from(docDiagnosis)
-//				.join(null)
-//	}
+	public List<Tuple> findDocDiagPatListByDocNum(Long docNum, String searchType, String searchKeyword) {
+		QDocDiagnosis docDiagnosis = QDocDiagnosis.docDiagnosis;
+		QPatient patient = QPatient.patient;
+		QDisease disease = QDisease.disease;
+		QAdmission admission = QAdmission.admission;
+		QSurgery surgery = QSurgery.surgery;
+		
+		QDocDiagnosis subDocDiagnosis = new QDocDiagnosis("subDocDiagnosis");
+		
+		JPAQuery<Tuple> query = jpaQueryFactory.select(docDiagnosis, patient, disease.diseaseName, admission.admissionStatus, surgery.surgeryState)
+					.from(docDiagnosis)
+					.join(patient).on(docDiagnosis.patNum.eq(patient.patNum))
+					.join(disease).on(docDiagnosis.diseaseNum.eq(disease.diseaseNum))
+					.leftJoin(admission).on(docDiagnosis.patNum.eq(admission.patNum))
+					.leftJoin(surgery).on(docDiagnosis.patNum.eq(surgery.patNum))
+					.where(docDiagnosis.docNum.eq(docNum)
+							.and(docDiagnosis.docDiagnosisDate.eq(
+									JPAExpressions.select(subDocDiagnosis.docDiagnosisDate.max())
+									.from(subDocDiagnosis)
+									.where(subDocDiagnosis.patNum.eq(docDiagnosis.patNum)
+											.and(subDocDiagnosis.docNum.eq(docNum)))
+									)));
+		
+		if("patNum".equals(searchType) && searchKeyword != null && !searchKeyword.isEmpty()) {
+			query.where(patient.patNum.like("%" + searchKeyword + "%"));
+		}
+		if("patName".equals(searchType) && searchKeyword != null && !searchKeyword.isEmpty()) {
+			query.where(patient.patName.like("%" + searchKeyword + "%"));
+		}
+		if("patJumin".equals(searchType) && searchKeyword != null && !searchKeyword.isEmpty()) {
+			query.where(patient.patJumin.like("%" + searchKeyword + "%"));
+		}
+		if("diseaseName".equals(searchType) && searchKeyword != null && !searchKeyword.isEmpty()) {
+			query.where(disease.diseaseName.like("%" + searchKeyword + "%"));
+		}
+		if("admState".equals(searchType) && searchKeyword != null && !searchKeyword.isEmpty()) {
+			query.where(admission.admissionStatus.like("%" + searchKeyword + "%"));
+		}
+		if("surState".equals(searchType) && searchKeyword != null && !searchKeyword.isEmpty()) {
+			query.where(surgery.surgeryState.like("%" + searchKeyword + "%"));
+		}
+		
+		return query.fetch();
+	}
+	
+	//담당환자,외래진료-환자 이전진료내역 조회, 검색
+		public List<Tuple> findPatDiagListByPatNum(Long patNum, String searchType, String searchKeyword) {
+			QDoctor doctor = QDoctor.doctor;
+			QPrescription prescription = QPrescription.prescription;
+			QDocDiagnosis docDiagnosis = QDocDiagnosis.docDiagnosis;
+			QMedicine medicine = QMedicine.medicine;
+			QTestRequest testRequest = QTestRequest.testRequest;
+			QDisease disease = QDisease.disease;
+			
+			JPAQuery<Tuple> query =  jpaQueryFactory.select(docDiagnosis, prescription, doctor.docNum, doctor.docName, medicine.medicineKorName, testRequest.testPart, disease.diseaseName)
+						.from(docDiagnosis)
+						.leftJoin(prescription).on(docDiagnosis.prescriptionNum.eq(prescription.prescriptionNum))
+						.join(doctor).on(docDiagnosis.docNum.eq(doctor.docNum))
+						.leftJoin(medicine).on(medicine.medicineNum.eq(prescription.medicineNum))
+						.leftJoin(testRequest).on(testRequest.testRequestNum.eq(docDiagnosis.testRequestNum))
+						.join(disease).on(disease.diseaseNum.eq(docDiagnosis.diseaseNum))
+						.where(docDiagnosis.patNum.eq((long) 88001)
+								.and(docDiagnosis.docDiagnosisDate.before(Expressions.dateTemplate(Date.class, "CURDATE()"))))
+						.orderBy(docDiagnosis.docDiagnosisDate.desc());
+
+			if("docNum".equals(searchType) && searchKeyword != null && !searchKeyword.isEmpty()) {
+				query.where(docDiagnosis.docNum.like("%" + searchKeyword + "%"));
+			}
+			if("docName".equals(searchType) && searchKeyword != null && !searchKeyword.isEmpty()) {
+				query.where(doctor.docName.like("%" + searchKeyword + "%"));
+			}
+			if("disName".equals(searchType) && searchKeyword != null && !searchKeyword.isEmpty()) {
+				query.where(disease.diseaseName.like("%" + searchKeyword + "%"));
+			}
+			if("preMed".equals(searchType) && searchKeyword != null && !searchKeyword.isEmpty()) {
+				query.where(medicine.medicineKorName.like("%" + searchKeyword + "%"));
+			}
+			if("testPart".equals(searchType) && searchKeyword != null && !searchKeyword.isEmpty()) {
+				query.where(testRequest.testPart.like("%" + searchKeyword + "%"));
+			}
+			if("diagKind".equals(searchType) && searchKeyword != null && !searchKeyword.isEmpty()) {
+				query.where(docDiagnosis.docDiagnosisKind.like("%" + searchKeyword + "%"));
+			}
+			
+			return query.fetch();
+		}
 	
 }

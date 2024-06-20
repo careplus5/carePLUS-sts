@@ -30,4 +30,6 @@ public class SurgeryRequest {
 	private String surReason;
 	@Column
 	private Date surDate;
+	@Column
+	private Long departmentNum;
 }
