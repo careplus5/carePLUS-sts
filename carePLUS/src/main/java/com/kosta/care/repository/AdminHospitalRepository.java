@@ -13,6 +13,7 @@ import com.kosta.care.entity.AdminHospital;
 
 @Repository
 public interface AdminHospitalRepository extends JpaRepository<AdminHospital,Long> {
+	
 	AdminHospital findByAdmNum(Long admNum);
 	List<AdminHospital> findByJobNum (Long jobNum);
 	

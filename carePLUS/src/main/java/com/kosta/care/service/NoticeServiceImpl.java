@@ -56,14 +56,21 @@ public class NoticeServiceImpl implements NoticeService {
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 5, Sort.by(Sort.Direction.DESC, "noticeNum"));
 		Page<Notices> pages = null;
 		// 목록 조회
+		System.out.println("serviceType: "+type);
+		System.out.println("serviceWord: "+word);
 		if (word == null || word.trim().equals("")) {
 			pages = noticesRepository.findAll(pageRequest);
-			System.out.println(pages);
 		} else {
 			if (type.equals("title")) {
-				pages = noticesRepository.findByNoticeCategoryContains(word, pageRequest);
-			} else if (type.equals("category")) {
 				pages = noticesRepository.findByNoticeTitleContains(word, pageRequest);
+			} else if (type.equals("category")) {
+				String searchWord = null;
+				if(word.equals("전체")) {searchWord = "99";}
+				else {
+					Long transfer = jobRepository.findByJobName(word).getJobNum();
+					searchWord = transfer.toString();
+				}
+				pages = noticesRepository.findByNoticeCategoryContains(searchWord, pageRequest);
 			} else if (type.equals("content")) {
 				pages = noticesRepository.findByNoticeContentContains(word, pageRequest);
 			}
@@ -103,15 +110,14 @@ public class NoticeServiceImpl implements NoticeService {
 
 	@Override
 	public void noticesModify(NoticesDto noticesDto) throws Exception {
+		Notices notices = noticesRepository.findById(noticesDto.getNoticeNum()).get();
 		
-		Notices notices = Notices.builder()
-				.noticeCategory(noticesDto.getNoticeCategory())
-				.noticeTitle(noticesDto.getNoticeTitle())
-				.noticeContent(noticesDto.getNoticeContent())
-				.noticeViewCount(noticesDto.getNoticeViewCount())
-				.build();
+		notices.setNoticeTitle(noticesDto.getNoticeTitle());
+		notices.setNoticeContent(noticesDto.getNoticeContent());
 		
-		Long jobNum = Long.parseLong(noticesDto.getNoticeCategory());
+		noticesRepository.save(notices);
+		System.out.println();
+		Long jobNum = Long.parseLong(notices.getNoticeCategory());
 		if(jobNum==99) {
 			alarmService.sendAlarmListByJobNum(11L, "공지사항", "[수정]"+noticesDto.getNoticeTitle());
 			alarmService.sendAlarmListByJobNum(12L, "공지사항", "[수정]"+noticesDto.getNoticeTitle());

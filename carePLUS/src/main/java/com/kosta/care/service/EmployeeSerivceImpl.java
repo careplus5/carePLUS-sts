@@ -1,6 +1,8 @@
 package com.kosta.care.service;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +47,7 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 	private final AdminHospitalRepository adminHospitalRepository;
 	private final ProfileRepository profileRepository;
 	private final EmployeeRepository empRepository;
+	private final SequenceService sequenceService;
 	@Autowired
 	EmployeeUtil employeeUtil;
 	@Autowired
@@ -62,52 +65,63 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 			profNum = pfile.getProfileNum();
 			employeeDto.setProfNum(profNum);
 		}
-
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy");
+		String year = LocalDate.now().format(formatter);
+		
+		System.out.println("serviceJobNum: "+employeeDto.getJobNum());
 		Long job = employeeDto.getJobNum();
-		String jobString = job.toString();
-		String findJob = jobString.substring(0, 2);
+		String findJob = job.toString();
 
-		// 중복체크를 위한 Optional생성
-		Optional<?> oemp = Optional.empty();
+	    // 직원번호 생성
+	    String empNumStr;
+	    Long empNum;
+	    if (findJob.equals("11")) {
+	        empNumStr = employeeDto.getJobNum()+"" + employeeDto.getDepartmentNum()+"" + year+"" + sequenceService.getNextSequence("sq_doc");
+	    } else if (findJob.equals("12")) {
+	    	employeeDto.setDepartmentNum(99L);
+	        empNumStr = employeeDto.getJobNum()+"" + employeeDto.getDepartmentNum()+"" + year+"" + sequenceService.getNextSequence("sq_nur");
+	    } else if (findJob.equals("13")) {
+	        empNumStr = employeeDto.getJobNum()+"" + employeeDto.getDepartmentNum()+"" + year+"" + sequenceService.getNextSequence("sq_adm");
+	    } else if (findJob.equals("14")) {
+	        empNumStr = employeeDto.getJobNum()+"" + employeeDto.getDepartmentNum()+"" + year+"" + sequenceService.getNextSequence("sq_met");
+	    } else {
+	        throw new IllegalArgumentException("Invalid job number");
+	    }
+	    
+	    System.out.println("serviceEmpStr: "+empNumStr);
+	    
+	    //생성한 empNum을 적용
+	    empNum = Long.parseLong(empNumStr);
+	    employeeDto.setEmpNum(empNum);
 
-		// 아이디 중복체크
-		if (findJob.equals("11")) {
-			oemp = doctorRepository.findById(employeeDto.getEmpNum());
-		} else if (findJob.equals("12")) {
-			oemp = nurseRepository.findById(employeeDto.getEmpNum());
-		} else if (findJob.equals("13")) {
-			oemp = adminHospitalRepository.findById(employeeDto.getEmpNum());
-		} else if (findJob.equals("14")) {
-			oemp = medicalTechnicianRepository.findById(employeeDto.getEmpNum());
-		}
-		// 중복시 오류메시지
-		if (oemp.isPresent())
-			throw new Exception("중복된 직원번호 입니다");
+	    // 비밀번호 암호화
+	    String rawPassword = employeeDto.getEmpPassword();
+	    String encodePassword = bCryptPasswordEncoder.encode(rawPassword);
+	    employeeDto.setEmpPassword(encodePassword);
+	    
+	    Object emp = null;
+	    // 맞는 위치에 저장
+	    switch (findJob) {
+	        case "11":
+	        	emp = employeeUtil.DtoToDoc(employeeDto);
+	            doctorRepository.save((Doctor)emp);
+	            break;
+	        case "12":
+	        	emp = employeeUtil.DtoToNur(employeeDto);
+	            nurseRepository.save((Nurse)emp);
+	            break;
+	        case "13":
+	        	emp = employeeUtil.DtoToAdm(employeeDto);
+	            adminHospitalRepository.save((AdminHospital) emp);
+	            break;
+	        case "14":
+	        	emp = employeeUtil.DtoToMet(employeeDto);
+	            medicalTechnicianRepository.save((MedicalTechnician) emp);
+	            break;
+	    }
 
-		// 비밀번호 암호화
-		String rawPassword = employeeDto.getEmpPassword();
-		String encodePassword = bCryptPasswordEncoder.encode(rawPassword);
-		employeeDto.setEmpPassword(encodePassword);
-
-		Object emp = employeeUtil.chooseEmpDto(employeeDto);
-
-		// 맞는 위치에 save
-		switch (findJob) {
-		case "11":
-			doctorRepository.save((Doctor) emp);
-			break;
-		case "12":
-			nurseRepository.save((Nurse) emp);
-			break;
-		case "13":
-			adminHospitalRepository.save((AdminHospital) emp);
-			break;
-		case "14":
-			medicalTechnicianRepository.save((MedicalTechnician) emp);
-			break;
-		}
-
-		return employeeDto.getEmpNum();
+	    return employeeDto.getEmpNum();
 	}
 
 	@Override

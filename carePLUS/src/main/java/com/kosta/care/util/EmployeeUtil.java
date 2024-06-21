@@ -47,6 +47,13 @@ public class EmployeeUtil {
 	}
 	
 	public EmployeeDto NurToEmpDto(Nurse nurse) throws Exception{
+		if(nurse.getNurPosition().equals("1")) {
+			nurse.setNurPosition("진료");
+		}else if(nurse.getNurPosition().equals("2")) {
+			nurse.setNurPosition("입원");
+		}else if(nurse.getNurPosition().equals("3")) {
+			nurse.setNurPosition("수술");
+		}
 		EmployeeDto empDto = EmployeeDto.builder()
 				.empNum(nurse.getNurNum())
 				.profNum(nurse.getProfNum())
@@ -85,6 +92,7 @@ public class EmployeeUtil {
 				.departmentNum(medicalTechnician.getDepartmentNum())
 				.jobNum(medicalTechnician.getJobNum())
 				.departmentName(medicalTechnician.getDepartmentName())
+				.department2Name(medicalTechnician.getMetDepartment2Name())
 				.jobName("의료기사")
 				.empPosition(medicalTechnician.getMetPosition())
 				.empName(medicalTechnician.getMetName())
@@ -95,10 +103,18 @@ public class EmployeeUtil {
 	}
 	
 	public Nurse DtoToNur(EmployeeDto employeeDto) {
+		if(employeeDto.getEmpPosition().equals("진료")) {
+			employeeDto.setEmpPosition("1");
+		}else if(employeeDto.getEmpPosition().equals("입원")) {
+			employeeDto.setEmpPosition("2");
+		}else if(employeeDto.getEmpPosition().equals("수술")) {
+			employeeDto.setEmpPosition("3");
+		}
 		Nurse nurse = Nurse.builder()
 				.nurNum(employeeDto.getEmpNum())
 				.profNum(employeeDto.getProfNum())
 				.departmentNum(employeeDto.getDepartmentNum())
+				.departmentName(employeeDto.getDepartmentName())
 				.jobNum(employeeDto.getJobNum())
 				.nurName(employeeDto.getEmpName())
 				.nurPassword(employeeDto.getEmpPassword())
@@ -115,6 +131,7 @@ public class EmployeeUtil {
 				.docNum(employeeDto.getEmpNum())
 				.profNum(employeeDto.getProfNum())
 				.departmentNum(employeeDto.getDepartmentNum())
+				.departmentName(employeeDto.getDepartmentName())
 				.jobNum(employeeDto.getJobNum())
 				.docName(employeeDto.getEmpName())
 				.docPassword(employeeDto.getEmpPassword())
@@ -130,6 +147,7 @@ public class EmployeeUtil {
 				.admNum(employeeDto.getEmpNum())
 				.profNum(employeeDto.getProfNum())
 				.departmentNum(employeeDto.getDepartmentNum())
+				.departmentName(employeeDto.getDepartmentName())
 				.jobNum(employeeDto.getJobNum())
 				.admName(employeeDto.getEmpName())
 				.admPassword(employeeDto.getEmpPassword())
@@ -145,6 +163,7 @@ public class EmployeeUtil {
 				.metNum(employeeDto.getEmpNum())
 				.profNum(employeeDto.getProfNum())
 				.departmentNum(employeeDto.getDepartmentNum())
+				.departmentName(employeeDto.getDepartmentName())
 				.jobNum(employeeDto.getJobNum())
 				.metName(employeeDto.getEmpName())
 				.metPassword(employeeDto.getEmpPassword())

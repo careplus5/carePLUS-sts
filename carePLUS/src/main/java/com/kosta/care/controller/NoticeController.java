@@ -53,11 +53,12 @@ public class NoticeController {
 		}
 	}
 	
-	@GetMapping("/noticeModify")
-	public ResponseEntity<String> noticeModify(NoticesDto noticesDto) {
+	@PostMapping("/noticeModify")
+	public ResponseEntity<String> noticeModify(@RequestBody NoticesDto noticesDto) {
 		try {
+			System.out.println(noticesDto);
 			noticeService.noticesModify(noticesDto);
-			return new ResponseEntity<String>("수정 성공", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>("수정 성공", HttpStatus.OK);
 		}catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("수정 실패", HttpStatus.BAD_REQUEST);

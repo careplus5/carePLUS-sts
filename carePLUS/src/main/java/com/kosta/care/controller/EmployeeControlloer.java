@@ -41,9 +41,8 @@ public class EmployeeControlloer {
 	public ResponseEntity<String> employeeAdd(@ModelAttribute EmployeeDto employeeDto, @RequestParam(name="file", required = false) MultipartFile file){
 		System.out.println(employeeDto.getEmpNum());
 		try {
-			System.out.println(employeeDto);
-			employeeSerivce.join(employeeDto,file);
-			return new ResponseEntity<String>("등록 완료", HttpStatus.OK);
+			Long empNum = employeeSerivce.join(employeeDto,file);
+			return new ResponseEntity<String>("직원번호는 "+"("+empNum+")"+"입니다.", HttpStatus.OK);
 		}catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("등록 실패", HttpStatus.BAD_REQUEST);
@@ -116,6 +115,7 @@ public class EmployeeControlloer {
 	@PostMapping("/employeeModify")
 	public ResponseEntity<String>EmployeeModify(@ModelAttribute EmployeeDto employeeDto, @RequestParam(name="file", required = false) MultipartFile file){
 		try {
+			System.out.println("controllerEmployee: "+employeeDto);
 			employeeSerivce.modify(employeeDto,file);
 			return new ResponseEntity<String>("수정성공", HttpStatus.OK);
 		}catch (Exception e) {
