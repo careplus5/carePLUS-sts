@@ -52,7 +52,7 @@ public interface AdmissionService {
 		List<Map<String,Object>> dailyPrescriptionList(Long patNum);
 		
 	// 처방 상태 업데이
-		Boolean updatePrescDiary(String patNum, String prescriptionNum, String buttonNum, String nurNum, String diaryStatus, Time diaryTime);
+		Boolean updatePrescDiary(String patNum, Long prescriptionNum, String buttonNum, String nurNum, String diaryStatus, Time diaryTime);
 		
 	//입원진료-초기진단기록 조회
 	Map<String, Object> firstDiagRecordInfo(Long patNum);

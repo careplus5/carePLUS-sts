@@ -69,7 +69,11 @@ public class AdmissionDslRepository {
 		QAdmission admission = QAdmission.admission;
 		QBeds beds = QBeds.beds;
 		
-		return null;
+		return jpaQueryFactory.select(admission,beds)
+				.from(beds)
+				.join(admission).on(beds.bedsNum.eq(admission.bedsNum))
+				.where(beds.bedsNum.eq(bedsNum))
+				.fetch();
 	}
 	
 	

@@ -31,6 +31,8 @@ public class PrescriptionDiary {
 	@Column
 	private Long nurNum;
 	@Column//내일, 모레꺼도 필요할지도 모르잖아..? 그래서 일단 curdate()같은거안했는데 service에서 하세요
+	private Long docNum;
+	@Column
 	private Date prescriptionDiaryDate;
 	@Column
 	private String prescriptionDiaryFre1;

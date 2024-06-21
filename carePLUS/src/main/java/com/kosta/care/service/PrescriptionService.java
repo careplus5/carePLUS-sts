@@ -4,6 +4,6 @@ import com.kosta.care.entity.Prescription;
 
 public interface PrescriptionService {
 	
-	public Prescription savePrescription(Prescription prescription);
+	public Boolean savePrescriptionDiary(Prescription prescription);
 
 }

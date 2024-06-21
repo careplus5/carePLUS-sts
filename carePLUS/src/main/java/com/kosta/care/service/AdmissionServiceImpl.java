@@ -176,7 +176,7 @@ public class AdmissionServiceImpl implements AdmissionService {
 	
 	 @Transactional
 	@Override
-	public Boolean updatePrescDiary(String patNum, String prescriptionNum, String buttonNum, String nurNum, String diaryStatus, Time diaryTime) {
+	public Boolean updatePrescDiary(String patNum, Long prescriptionNum, String buttonNum, String nurNum, String diaryStatus, Time diaryTime) {
 		try {
 //			Admission admission = admRepository.findByAdmissionNum(admissionNum);
 			// prescription , 버튼 수
@@ -197,13 +197,13 @@ public class AdmissionServiceImpl implements AdmissionService {
 			if(buttonNum.equals("1")) {
 				System.out.println(buttonNum+": 이상 무");
 				System.out.println(prescriptionDiaryFre1.toString());
-				diaryRepository.updateDiary1(Long.parseLong(prescriptionNum), prescriptionDiaryFre1);
+				diaryRepository.updateDiary1(prescriptionNum, prescriptionDiaryFre1);
 			} else if(buttonNum.equals("2")) {
 				diary.setPrescriptionDiaryFre2(diaryTime+", "+diaryStatus);
-				diaryRepository.updateDiary2(Long.parseLong(prescriptionNum),prescriptionDiaryFre1);
+				diaryRepository.updateDiary2(prescriptionNum,prescriptionDiaryFre1);
 			} else if(buttonNum.equals("3")) {
 				diary.setPrescriptionDiaryFre3(diaryTime+", "+diaryStatus);
-				diaryRepository.updateDiary3(Long.parseLong(prescriptionNum),prescriptionDiaryFre1);
+				diaryRepository.updateDiary3(prescriptionNum,prescriptionDiaryFre1);
 			}
 			return true;
 		} catch(Exception e) {

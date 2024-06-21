@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.care.dto.AdmDiagnosisDto;
-import com.kosta.care.dto.DocDiagnosisDto;
 import com.kosta.care.entity.AdmissionRecord;
+import com.kosta.care.entity.Prescription;
 import com.kosta.care.repository.NurseRepository;
 import com.kosta.care.service.AdmissionService;
+import com.kosta.care.service.PrescriptionService;
 
 @RestController
 public class AdmissionController {
@@ -30,6 +31,8 @@ public class AdmissionController {
 	private AdmissionService admService;
 	@Autowired 
 	private NurseRepository nurRepository;
+	@Autowired
+	private PrescriptionService prescService;
 	
 	@GetMapping("/wardPatientList")
 	public ResponseEntity<List<Map<String, Object>>> admPatientList(@RequestParam("nurNum") Long nurNum) {
@@ -181,7 +184,7 @@ public class AdmissionController {
 	      
 	      try {
 	         String patNum = params.get("patNum").toString();
-	            String prescriptionNum = (String) params.get("prescriptionNum");
+	            String prescriptionNum = params.get("prescriptionNum").toString();
 	            String buttonNum = params.get("buttonNum").toString();
 	              String nurNum = (String) params.get("nurNum");
 	              String diaryStatus = params.get("diaryStatus").toString();
@@ -195,7 +198,7 @@ public class AdmissionController {
 	         System.out.println("controller start: updatePrescriptionStatus: "+nurNum);
 	         System.out.println("controller start: updatePrescriptionStatus: "+diaryStatus);
 
-	         Boolean updatePrescStatus = admService.updatePrescDiary(patNum,prescriptionNum, buttonNum, nurNum, diaryStatus, dd);
+	         Boolean updatePrescStatus = admService.updatePrescDiary(patNum,Long.parseLong(prescriptionNum), buttonNum, nurNum, diaryStatus, dd);
 	         System.out.println(updatePrescStatus);
 	         return new ResponseEntity<Boolean>(updatePrescStatus, HttpStatus.OK);
 	      } catch (Exception e) {
@@ -242,6 +245,17 @@ public class AdmissionController {
 	public ResponseEntity<Boolean> admDiagnosisSubmit(@RequestBody AdmDiagnosisDto admDiagDto) {
 		try {
 			Boolean isSuccess = admService.submitAdmDiag(admDiagDto);
+			System.out.println("해당 환자에게 납품한 약은 "+admDiagDto.toString());
+			List<Prescription> list = admDiagDto.toListPrescription();
+			System.out.println("docNum: "+admDiagDto.getDocNum());
+			System.out.println("patNum: "+admDiagDto.getPatNum());
+			Long docNum = admDiagDto.getDocNum();
+			Long patNum = admDiagDto.getPatNum();
+			for(Prescription presc : list) {
+				presc.setDocNum(docNum);
+				presc.setPatNum(patNum);
+				Boolean isSuccess2 = prescService.savePrescriptionDiary(presc);	
+			}
 			return new ResponseEntity<Boolean>(isSuccess, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.List;
 
 import com.kosta.care.entity.AdmissionRecord;
+import com.kosta.care.entity.Prescription;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +35,7 @@ public class AdmDiagnosisDto {
     private String surPeriod;
     private List<PrescriptionDto> selectMedicine;
 
+   
     public AdmissionRecord toAdmDiagRecord() {
     	StringBuilder docDiagAddBuilder = new StringBuilder();
     	
@@ -56,4 +58,16 @@ public class AdmDiagnosisDto {
     				.admissionNum(admissionNum)
     				.build();
     }
+    
+    public List<Prescription> toListPrescription() {
+    	PrescriptionListDto listDto = new PrescriptionListDto();
+
+        for (PrescriptionDto prescriptionDto : selectMedicine) {
+        	listDto.addPrescriptionDto(prescriptionDto);
+        }
+
+        return listDto.build();
+    }
+    
+    
 }
