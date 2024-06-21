@@ -186,7 +186,7 @@ public class AdmissionServiceImpl implements AdmissionService {
 			diary.setPatNum(Long.parseLong(patNum));
 			System.out.println(patNum+": 이상 무");
 			System.out.println(diaryTime+": 이상 무");
-			diary.setPrescriptionNum(prescriptionNum);
+			diary.setPrescriptionNum(Long.parseLong(prescriptionNum));
 			System.out.println(prescriptionNum+": 이상 무");
 			  String prescriptionDiaryFre1 = diaryTime.toString()+", "+diaryStatus;
 			  System.out.println(prescriptionDiaryFre1+": 이상 무");

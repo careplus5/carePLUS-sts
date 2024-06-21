@@ -65,6 +65,13 @@ public class AdmissionDslRepository {
 		return entityManager.find(Admission.class, admissionNum);
 	}
 	
+	public List<Tuple> findByBedsNum(Long bedsNum){
+		QAdmission admission = QAdmission.admission;
+		QBeds beds = QBeds.beds;
+		
+		return null;
+	}
+	
 	
 	
 	// 의사 입퇴원 일지
