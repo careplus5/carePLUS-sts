@@ -28,7 +28,7 @@ public class DocDiagnosisDto {
     private String testRequest;
     private boolean admChecked;
     private String admReason;
-    private String admPeriod;
+    private Long admPeriod;
     private boolean surChecked;
     private String surReason;
     private Date surDate;

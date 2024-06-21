@@ -23,6 +23,6 @@ public class AdmissionRequestDto {
 	private Long docNum;  
 	private Long docName;  // 주치의 
 	private Long jobNum;  // 
-	private String admissionRequestPeriod;
+	private Long admissionRequestPeriod;
 	private String admissionRequestReason;
 }
