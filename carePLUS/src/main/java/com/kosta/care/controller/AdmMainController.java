@@ -97,16 +97,15 @@ public class AdmMainController {
 		}
 	}
 	
-	@PostMapping("/confirmDiagnosis")
-	public ResponseEntity<List<DocDiagnosis>> confirmDiagnosis(@RequestBody Map<String, Long> param) {
+	@PostMapping("/patDiagCheckList")
+	public ResponseEntity<List<Map<String, Object>>> patDiagCheckList(@RequestBody Map<String, Long> param) {
 		try {
-			List<DocDiagnosis> docDiagnosisList = admService.getConfirmDianosis(param.get("patNum"));
-			return new ResponseEntity<List<DocDiagnosis>>(docDiagnosisList, HttpStatus.OK);
+			List<Map<String, Object>> docDiagnosisList = admService.patDiagCheckListByPatNum(param.get("patNum"));
+			return new ResponseEntity<List<Map<String, Object>>>(docDiagnosisList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<List<DocDiagnosis>>( HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<List<Map<String, Object>>>( HttpStatus.BAD_REQUEST);
 		}
-		
 	}
 	
 	@PostMapping("/confirmAdmission")

@@ -1,15 +1,15 @@
 package com.kosta.care.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.entity.Admission;
-import com.kosta.care.entity.DocDiagnosis;
 
 public interface AdmService {
 	
 	// 진료확인 리스트 
-	List<DocDiagnosis> getConfirmDianosis(Long patNum) throws Exception;
+	List<Map<String, Object>> patDiagCheckListByPatNum(Long patNum);
 	
 	// 입원 확인 리스트
 	List<Admission> getConfirmAdmission(Long patNum) throws Exception;

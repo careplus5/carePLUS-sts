@@ -1,21 +1,26 @@
 package com.kosta.care.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.DiagnosisDue;
 import com.kosta.care.entity.DocDiagnosis;
 import com.kosta.care.entity.Patient;
+import com.kosta.care.repository.AdmDslRepository;
 import com.kosta.care.repository.AdmissionRepository;
 import com.kosta.care.repository.DiagnosisDueRepository;
 import com.kosta.care.repository.DocDiagnosisRepository;
 import com.kosta.care.repository.PatientRepository;
+import com.querydsl.core.Tuple;
 
 @Service
 public class AdmServiceImpl implements AdmService {
@@ -28,11 +33,35 @@ public class AdmServiceImpl implements AdmService {
 	private DiagnosisDueRepository diagnosisDueRepository;
 	@Autowired
 	private AdmissionRepository admissionRepository;
+	@Autowired
+	private AdmDslRepository admDslRepository;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@Override
-	public List<DocDiagnosis> getConfirmDianosis(Long patNum) throws Exception {
-		// TODO Auto-generated method stub
-		return docDiagnosisRepository.findByPatNumOrderByDocDiagnosisNumDesc(patNum);
+	public List<Map<String, Object>> patDiagCheckListByPatNum(Long patNum) {
+		List<Tuple> tuples = admDslRepository.findPatDiagCheckListByPatNum(patNum);
+		List<Map<String, Object>> patDiagCheckList = new ArrayList<>();
+		
+		for(Tuple tuple : tuples) {
+			DocDiagnosis docDiagnosis = tuple.get(0, DocDiagnosis.class);
+			String patName = tuple.get(1, String.class);
+			String docName = tuple.get(2, String.class);
+			String departmentName = tuple.get(3, String.class);
+			String testName = tuple.get(4, String.class);
+			
+			Map<String, Object> map = objectMapper.convertValue(docDiagnosis, Map.class);
+			map.put("patName", patName);
+			map.put("docName", docName);
+			map.put("deptName", departmentName);
+			map.put("testName", testName);
+			patDiagCheckList.add(map);
+		}
+		
+		if(patDiagCheckList.isEmpty()) return null;
+		
+		return patDiagCheckList;
 	}
 	
 	@Override
