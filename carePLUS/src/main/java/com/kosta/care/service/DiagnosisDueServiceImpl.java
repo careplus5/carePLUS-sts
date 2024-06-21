@@ -260,9 +260,9 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			prescription.setMedicineNum(preDto.getMedicineNum());
 			prescription.setPatNum(docDiagDto.getPatNum());
 			prescription.setDocNum(docDiagDto.getDocNum());
-			prescription.setPrescriptionDosage(preDto.getPreDosage());
-			prescription.setPrescriptionDosageTimes(preDto.getPreDosageTimes());
-			prescription.setPrescriptionDosageTotal(preDto.getPreDosageTotal());
+			prescription.setPrescriptionDosage(preDto.getPreDosage().toString());
+			prescription.setPrescriptionDosageTimes(preDto.getPreDosageTimes().toString());
+			prescription.setPrescriptionDosageTotal(preDto.getPreDosageTotal().toString());
 			prescription.setPrescriptionHowTake(preDto.getPreHowTake());
 			prescription.setPrescriptionDate(new Date(System.currentTimeMillis()));
 			prescriptionRepository.save(prescription);

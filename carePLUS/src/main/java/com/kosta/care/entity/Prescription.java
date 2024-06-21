@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 public class Prescription {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private String prescriptionNum;
+	private Long prescriptionNum;
 	@Column
 	private String medicineNum;
 	@Column
@@ -31,11 +31,11 @@ public class Prescription {
 	@Column
 	private Long docNum;
 	@Column
-	private Long prescriptionDosage;
+	private String prescriptionDosage;
 	@Column
-	private Long prescriptionDosageTimes;
+	private String prescriptionDosageTimes;
 	@Column
-	private Long prescriptionDosageTotal;
+	private String prescriptionDosageTotal;
 	@Column
 	private String prescriptionHowTake;
 	@Column

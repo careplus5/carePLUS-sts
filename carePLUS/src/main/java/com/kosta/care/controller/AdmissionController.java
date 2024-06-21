@@ -60,22 +60,18 @@ public class AdmissionController {
 			return new ResponseEntity<List<Map<String, Object>>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	// 처방 일지 환자 선택 시
-	@GetMapping("/prescList")
-	public ResponseEntity<List<Map<String, Object>>> prescList(@RequestParam("patNum") Long patNum) {
-		System.out.println("리스트 가져오기 준비");
-		try {
-			System.out.println("리스트 가져오기 시작");
-			//처방전 리스트 ... 
-			List<Map<String, Object>> dailyPrescriptionList = admService.dailyPrescriptionList(patNum);
-			return new ResponseEntity<List<Map<String, Object>>>(dailyPrescriptionList, HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<List<Map<String, Object>>>(HttpStatus.BAD_REQUEST);
-		}
-	}
-	
+
+    // 환자의 모든 처방전 리스트를 JSON 형태로 반환하는 API 엔드포인트
+    @GetMapping("/prescList")
+    public ResponseEntity<List<Map<String, Object>>> prescList(@RequestParam("patNum") Long patNum) {
+        try {
+            List<Map<String, Object>> dailyPrescriptionList = admService.dailyPrescriptionList(patNum);
+            return new ResponseEntity<>(dailyPrescriptionList, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 //	@GetMapping("/nurPatientInfo")
 //	public ResponseEntity<List<Map<String, Object>>> admPatientDoctorRecordList(@RequestParam("admissionNum") Long admissionNum) {
 //		System.out.println("doctor record 리스트 가져오기 준비");
@@ -186,7 +182,7 @@ public class AdmissionController {
 	      try {
 	         String patNum = params.get("patNum").toString();
 	            String prescriptionNum = (String) params.get("prescriptionNum");
-	             String buttonNum = (String) params.get("buttonNum");
+	            String buttonNum = params.get("buttonNum").toString();
 	              String nurNum = (String) params.get("nurNum");
 	              String diaryStatus = params.get("diaryStatus").toString();
 	              String diaryTimeStr = params.get("diaryTime").toString();

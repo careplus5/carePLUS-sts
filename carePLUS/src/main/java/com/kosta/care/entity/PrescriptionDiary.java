@@ -9,9 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Entity
 @Data
 @AllArgsConstructor
@@ -24,6 +26,8 @@ public class PrescriptionDiary {
 	private String prescriptionNum;
 	@Column
 	private Long patNum;
+	@Column
+	private String medicineNum;
 	@Column
 	private Long nurNum;
 	@Column//내일, 모레꺼도 필요할지도 모르잖아..? 그래서 일단 curdate()같은거안했는데 service에서 하세요

@@ -21,13 +21,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class PrescriptionDto {
-	private String prescriptionNum;
+	private Long prescriptionNum;
 	private String medicineNum;
 	private Long patNum;
 	private Long docNum;
-	private Long preDosage;
-	private Long preDosageTimes;
-	private Long preDosageTotal;
+	private String preDosage;
+	private String preDosageTimes;
+	private String preDosageTotal;
 	private String preHowTake;
 	private Date prescriptionDate;
 	

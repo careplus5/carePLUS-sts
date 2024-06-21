@@ -86,13 +86,17 @@ public class AdmissionServiceImpl implements AdmissionService {
 			String docDepartment = tuple.get(1, String.class);
 			String docName = tuple.get(2,String.class);
 			String patName = tuple.get(3,String.class);
+			String jumin= tuple.get(4,String.class);
+			System.out.println(jumin);
 			System.out.println("부서는"+docDepartment);
 			System.out.println("이름은"+docName);
 			  Map<String, Object> map = new HashMap<>();
 			map.put("admission", admission);
 		map.put("docDepartment", docDepartment);
+		map.put("patJumin", jumin.split("-")[0]);
 			map.put("docName", docName);
 			map.put("patName", patName);
+
 			admList.add(map);
 		}
 		
@@ -112,11 +116,13 @@ public class AdmissionServiceImpl implements AdmissionService {
 			
 			AdmissionRecord record = tuple.get(0,AdmissionRecord.class);
 			Long docNum = tuple.get(1,Long.class);
+			String docName = tuple.get(2,String.class);
 			System.out.println("의사 진단 결과: "+docNum);
 //			System.out.println("이름은"+docName);
 			  Map<String, Object> map = new HashMap<>();
 			map.put("record", record);
 			map.put("docNum", docNum);
+			map.put("docName", docName);
 			recordList.add(map);
 		}
 		
@@ -156,6 +162,7 @@ public class AdmissionServiceImpl implements AdmissionService {
 				admission.setAdmissionDischargeDate(admissionDischargeDate);
 				admission.setAdmissionDischargeOpinion(admissionDischargeOpinion);
 				admission.setAdmissionStatus("end");
+				admission.setAdmissionDiagState("end");
 				admRepository.save(admission);
 				return true;
 			}
@@ -183,18 +190,20 @@ public class AdmissionServiceImpl implements AdmissionService {
 			System.out.println(prescriptionNum+": 이상 무");
 			  String prescriptionDiaryFre1 = diaryTime.toString()+", "+diaryStatus;
 			  System.out.println(prescriptionDiaryFre1+": 이상 무");
+			  
+			  System.out.println(buttonNum+"번째 버튼입니다.");
 
 			System.out.println(prescriptionDiaryFre1);
 			if(buttonNum.equals("1")) {
 				System.out.println(buttonNum+": 이상 무");
 				System.out.println(prescriptionDiaryFre1.toString());
-				diaryRepository.updateDiary1(prescriptionNum, prescriptionDiaryFre1);
+				diaryRepository.updateDiary1(Long.parseLong(prescriptionNum), prescriptionDiaryFre1);
 			} else if(buttonNum.equals("2")) {
 				diary.setPrescriptionDiaryFre2(diaryTime+", "+diaryStatus);
-				diaryRepository.updateDiary2(prescriptionNum,prescriptionDiaryFre1);
+				diaryRepository.updateDiary2(Long.parseLong(prescriptionNum),prescriptionDiaryFre1);
 			} else if(buttonNum.equals("3")) {
 				diary.setPrescriptionDiaryFre3(diaryTime+", "+diaryStatus);
-				diaryRepository.updateDiary3(prescriptionNum,prescriptionDiaryFre1);
+				diaryRepository.updateDiary3(Long.parseLong(prescriptionNum),prescriptionDiaryFre1);
 			}
 			return true;
 		} catch(Exception e) {
@@ -277,7 +286,7 @@ public class AdmissionServiceImpl implements AdmissionService {
 		// 처방전 테이블, 처방 일지 테이블
 
 		List<Tuple> tuples = admRepository.findDailyPrescriptionListByPatNum(patNum);
-		System.out.println(tuples.toString()+"zz");
+		System.out.println("해당 환자의 처방 리스트입니다: "+tuples.toString());
 		
 //		Admission admission = tuple.get(0, Admission.class);
 //		Patient patient = tuple.get(1, Patient.class);
@@ -303,6 +312,7 @@ List<Map<String, Object>> dailyPrescList = new ArrayList<>();
 		
 		return dailyPrescList;
 	}
+	
 	
 	@Override
 	public Map<String, Object> firstDiagRecordInfo(Long patNum) {
@@ -388,9 +398,9 @@ List<Map<String, Object>> dailyPrescList = new ArrayList<>();
 			prescription.setMedicineNum(preDto.getMedicineNum());
 			prescription.setPatNum(admDiagDto.getPatNum());
 			prescription.setDocNum(admDiagDto.getDocNum());
-			prescription.setPrescriptionDosage(preDto.getPreDosage());
-			prescription.setPrescriptionDosageTimes(preDto.getPreDosageTimes());
-			prescription.setPrescriptionDosageTotal(preDto.getPreDosageTotal());
+			prescription.setPrescriptionDosage(preDto.getPreDosage().toString());
+			prescription.setPrescriptionDosageTimes(preDto.getPreDosageTimes().toString());
+			prescription.setPrescriptionDosageTotal(preDto.getPreDosageTotal().toString());
 			prescription.setPrescriptionHowTake(preDto.getPreHowTake());
 			prescription.setPrescriptionDate(new Date(System.currentTimeMillis()));
 			prescriptionRepository.save(prescription);

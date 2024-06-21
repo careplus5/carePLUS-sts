@@ -49,22 +49,15 @@ public class AdmissionDslRepository {
 		QDoctor doctor = QDoctor.doctor;
 		QAdmission admission = QAdmission.admission;
 			System.out.println("해당 리스트는 "+nurNum+"의 리스트입니다.");
-		// 입원 번호, 환자 번호, 환자 이름(성별/나이), 입원 예정일, 입원일, 담당과, 담당의, 병실 일련 번호, 퇴원 예정일
-		// patient : 환자 번호, 환자 이름, 환자 성별, 환자 나이
-		//admission.admissionDate,admission.patNum,patient.patName,admission.admissionDueDate,
-		//admission.admissionDate, doctor.departmentName, doctor.docName, admission.bedsNum, admission.admissionDischargeDueDate,
-		//admission.admissionDischargeDate,admission.admissionStatus
-		
-		// 담당 간호사 nurse(nurNum) = admission(nurNum)이 일치하면 다 갖고 오기
 		
 		
-		return jpaQueryFactory.select(admission, doctor.departmentName, doctor.docName, patient.patName)
+		return jpaQueryFactory.select(admission, doctor.departmentName, doctor.docName, patient.patName, patient.patJumin)
 				.from(admission)
-				.join(nurse).on(admission.nurNum.eq(nurse.nurNum))
-				.join(patient).on(admission.patNum.eq(patient.patNum))
-				.join(doctor).on(admission.docNum.eq(doctor.docNum))
-				.where(admission.nurNum.eq(nurse.nurNum))
-				.fetch();
+                .join(patient).on(admission.patNum.eq(patient.patNum))
+                .join(doctor).on(admission.docNum.eq(doctor.docNum))
+                .join(nurse).on(admission.nurNum.eq(nurse.nurNum))
+                .where(admission.nurNum.eq(nurNum))
+                .fetch();
 		
 	}
 	
@@ -83,10 +76,11 @@ public class AdmissionDslRepository {
 			QDocDiagnosis docDiagnosis = QDocDiagnosis.docDiagnosis;
 			
 			
-			return jpaQueryFactory.select(record,docDiagnosis.docNum)
+			return jpaQueryFactory.select(record,docDiagnosis.docNum,doctor.docName)
 					.from(record)
 					.join(docDiagnosis).on(record.docDiagnosisNum.eq(docDiagnosis.docDiagnosisNum))
 					.join(admission).on(record.admissionNum.eq(admission.admissionNum))
+					.join(doctor).on(admission.docNum.eq(doctor.docNum))
 					.where(record.admissionNum.eq(admissionNum))
 					.fetch();
 		}
@@ -132,8 +126,8 @@ public class AdmissionDslRepository {
 		QPatient patient = QPatient.patient;
 		QAdmission admission = QAdmission.admission;
 		QAdmissionRequest admissionRequest = QAdmissionRequest.admissionRequest;
-		
-		return jpaQueryFactory.select(admission, patient, admissionRequest)
+		QDocDiagnosis docDiagnosis = QDocDiagnosis.docDiagnosis;
+		return jpaQueryFactory.select(admission, patient, admissionRequest,patient.patJumin)
 					.from(admission)
 					.join(patient).on(admission.patNum.eq(patient.patNum))
 					.join(admissionRequest).on(admission.admissionRequestNum.eq(admissionRequest.admissionRequestNum))
@@ -146,17 +140,21 @@ public class AdmissionDslRepository {
 		public List<Tuple> findDailyPrescriptionListByPatNum(Long patNum) {
 			System.out.println("조회해보자");
 			
-			QPrescription prescription = QPrescription.prescription;
-			QPrescriptionDiary diary = QPrescriptionDiary.prescriptionDiary;
-			QDocDiagnosis diag = QDocDiagnosis.docDiagnosis;
-			
-			
-			return jpaQueryFactory.select(prescription,diary)
-					.from(prescription)
-					 .join(diary).on(prescription.prescriptionNum.eq(diary.prescriptionNum))
-					.where(prescription.patNum.eq(patNum))
-					.fetch();
-		}
+		     QPrescription prescription = QPrescription.prescription;
+		        QPrescriptionDiary diary = QPrescriptionDiary.prescriptionDiary;
+
+		       List<Tuple> tuple = jpaQueryFactory.select(prescription, diary)
+		                .from(prescription)
+		                .join(diary).on(prescription.prescriptionNum.eq(diary.prescriptionNum))
+		                .where(prescription.patNum.eq(patNum))
+		                .fetch();
+		       System.out.println("search tuple: "+tuple.toString());
+		        return jpaQueryFactory.select(prescription, diary)
+		                .from(prescription)
+		                .join(diary).on(prescription.prescriptionNum.eq(diary.prescriptionNum))
+		                .where(prescription.patNum.eq(patNum))
+		                .fetch();
+		    }
 		
 	//입원진료-초기진단기록 조회
 	public Tuple findFirstDiagRecordByPatNum(Long patNum) {
