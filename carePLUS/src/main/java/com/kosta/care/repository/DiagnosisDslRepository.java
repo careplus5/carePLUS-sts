@@ -194,7 +194,7 @@ public class DiagnosisDslRepository {
 						.leftJoin(testRequest).on(testRequest.testRequestNum.eq(docDiagnosis.testRequestNum))
 						.join(disease).on(disease.diseaseNum.eq(docDiagnosis.diseaseNum))
 						.where(docDiagnosis.patNum.eq(patNum)
-								.and(docDiagnosis.docDiagnosisDate.before(Expressions.dateTemplate(Date.class, "CURDATE()"))))
+								.and(docDiagnosis.docDiagnosisDate.loe(Expressions.dateTemplate(Date.class, "CURDATE()"))))
 						.orderBy(docDiagnosis.docDiagnosisDate.desc());
 
 			if("docNum".equals(searchType) && searchKeyword != null && !searchKeyword.isEmpty()) {
