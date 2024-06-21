@@ -228,7 +228,11 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			surgeryRequestRepository.save(surgeryRequest);
 		}
     	
-		StringBuilder docDiagAddBuilder = new StringBuilder();
+		StringBuilder medNumAdd = new StringBuilder();
+		StringBuilder preDosageAdd = new StringBuilder();
+		StringBuilder preDosageTimesAdd = new StringBuilder();
+		StringBuilder preDosageTotalAdd = new StringBuilder();
+		StringBuilder preHowTakeAdd = new StringBuilder();
 		
 		for(PrescriptionDto preDto : docDiagDto.getSelectMedicine()) {
 			Prescription prescription = new Prescription();
@@ -241,14 +245,42 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			prescription.setPrescriptionHowTake(preDto.getPreHowTake());
 			prescription.setPrescriptionDate(new Date(System.currentTimeMillis()));
 			prescriptionRepository.save(prescription);
-			docDiagAddBuilder.append(prescription.getPrescriptionNum()+",");
+			medNumAdd.append(preDto.getMedicineNum()+",");
+			preDosageAdd.append(preDto.getPreDosage()+",");
+			preDosageTimesAdd.append(preDto.getPreDosageTimes()+",");
+			preDosageTotalAdd.append(preDto.getPreDosageTotal()+",");
+			preHowTakeAdd.append(preDto.getPreHowTake()+",");
 		}
 		//마지막 콤마 제거
-		if(docDiagAddBuilder.length() > 0) { 
-			docDiagAddBuilder.deleteCharAt(docDiagAddBuilder.length() - 1);
+		if(medNumAdd.length() > 0) { 
+			medNumAdd.deleteCharAt(medNumAdd.length() - 1);
 		}
-		docDiagnosis.setPrescriptionNum(docDiagAddBuilder.toString());
+		if(preDosageAdd.length() > 0) { 
+			preDosageAdd.deleteCharAt(preDosageAdd.length() - 1);
+		}
+		if(preDosageTimesAdd.length() > 0) { 
+			preDosageTimesAdd.deleteCharAt(preDosageTimesAdd.length() - 1);
+		}
+		if(preDosageTotalAdd.length() > 0) { 
+			preDosageTotalAdd.deleteCharAt(preDosageTotalAdd.length() - 1);
+		}
+		if(preHowTakeAdd.length() > 0) { 
+			preHowTakeAdd.deleteCharAt(preHowTakeAdd.length() - 1);
+		}
 		
+		Prescription prescription = new Prescription();
+		prescription.setMedicineNum(medNumAdd.toString());
+		prescription.setPatNum(docDiagDto.getPatNum());
+		prescription.setDocNum(docDiagDto.getDocNum());
+		prescription.setPrescriptionDosage(preDosageAdd.toString());
+		prescription.setPrescriptionDosageTimes(preDosageTimesAdd.toString());
+		prescription.setPrescriptionDosageTotal(preDosageTotalAdd.toString());
+		prescription.setPrescriptionHowTake(preHowTakeAdd.toString());
+		prescription.setPrescriptionDate(new Date(System.currentTimeMillis()));
+		prescriptionRepository.save(prescription);
+		
+		docDiagnosis.setPrescriptionNum(prescription.getPrescriptionNum());
+
 		DocDiagnosis updateDocDiag = docDiagnosisRepository.save(docDiagnosis);
 		
 		return updateDocDiag != null;

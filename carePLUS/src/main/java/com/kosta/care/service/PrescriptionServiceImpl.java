@@ -25,7 +25,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 	        String[] medicineNums = savedPrescription.getMedicineNum().split(",");
 	        for (String medicineNum : medicineNums) {
 	            PrescriptionDiary prescriptionDiary = PrescriptionDiary.builder()
-	                    .prescriptionNum(savedPrescription.getPrescriptionNum().toString())
+	                    .prescriptionNum(savedPrescription.getPrescriptionNum())
 	                    .patNum(savedPrescription.getPatNum())
 	                    .nurNum(null) // 필요한 경우 적절히 설정
 	                    .prescriptionDiaryDate(null) // 필요한 경우 적절히 설정

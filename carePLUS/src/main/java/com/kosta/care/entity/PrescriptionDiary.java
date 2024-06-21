@@ -23,7 +23,7 @@ public class PrescriptionDiary {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long prescriptionDiaryNum;
 	@Column
-	private String prescriptionNum;
+	private Long prescriptionNum;
 	@Column
 	private Long patNum;
 	@Column

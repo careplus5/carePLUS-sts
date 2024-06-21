@@ -185,7 +185,6 @@ public class DiagnosisDslRepository {
 			QMedicine medicine = QMedicine.medicine;
 			QTestRequest testRequest = QTestRequest.testRequest;
 			QDisease disease = QDisease.disease;
-			
 			JPAQuery<Tuple> query =  jpaQueryFactory.select(docDiagnosis, prescription, doctor.docNum, doctor.docName, medicine.medicineKorName, testRequest.testPart, disease.diseaseNum, disease.diseaseName)
 						.from(docDiagnosis)
 						.leftJoin(prescription).on(docDiagnosis.prescriptionNum.eq(prescription.prescriptionNum))

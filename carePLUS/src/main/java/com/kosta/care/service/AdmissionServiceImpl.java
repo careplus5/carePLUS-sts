@@ -186,7 +186,7 @@ public class AdmissionServiceImpl implements AdmissionService {
 			diary.setPatNum(Long.parseLong(patNum));
 			System.out.println(patNum+": 이상 무");
 			System.out.println(diaryTime+": 이상 무");
-			diary.setPrescriptionNum(prescriptionNum);
+//			diary.setPrescriptionNum(prescriptionNum);
 			System.out.println(prescriptionNum+": 이상 무");
 			  String prescriptionDiaryFre1 = diaryTime.toString()+", "+diaryStatus;
 			  System.out.println(prescriptionDiaryFre1+": 이상 무");
@@ -397,7 +397,12 @@ List<Map<String, Object>> dailyPrescList = new ArrayList<>();
 			surgeryRequestRepository.save(surRequest);
 		}
 		
-		StringBuilder docDiagAddBuilder = new StringBuilder();
+		StringBuilder medNumAdd = new StringBuilder();
+		StringBuilder preDosageAdd = new StringBuilder();
+		StringBuilder preDosageTimesAdd = new StringBuilder();
+		StringBuilder preDosageTotalAdd = new StringBuilder();
+		StringBuilder preHowTakeAdd = new StringBuilder();
+		
 		for(PrescriptionDto preDto : admDiagDto.getSelectMedicine()) {
 			Prescription prescription = new Prescription();
 			prescription.setMedicineNum(preDto.getMedicineNum());
@@ -409,13 +414,41 @@ List<Map<String, Object>> dailyPrescList = new ArrayList<>();
 			prescription.setPrescriptionHowTake(preDto.getPreHowTake());
 			prescription.setPrescriptionDate(new Date(System.currentTimeMillis()));
 			prescriptionRepository.save(prescription);
-			docDiagAddBuilder.append(prescription.getPrescriptionNum()+",");
+			medNumAdd.append(preDto.getMedicineNum()+",");
+			preDosageAdd.append(preDto.getPreDosage()+",");
+			preDosageTimesAdd.append(preDto.getPreDosageTimes()+",");
+			preDosageTotalAdd.append(preDto.getPreDosageTotal()+",");
+			preHowTakeAdd.append(preDto.getPreHowTake()+",");
 		}
 		//마지막 콤마 제거
-		if(docDiagAddBuilder.length() > 0) { 
-			docDiagAddBuilder.deleteCharAt(docDiagAddBuilder.length() - 1);
+		if(medNumAdd.length() > 0) { 
+			medNumAdd.deleteCharAt(medNumAdd.length() - 1);
 		}
-		docDiag.setPrescriptionNum(docDiagAddBuilder.toString());
+		if(preDosageAdd.length() > 0) { 
+			preDosageAdd.deleteCharAt(preDosageAdd.length() - 1);
+		}
+		if(preDosageTimesAdd.length() > 0) { 
+			preDosageTimesAdd.deleteCharAt(preDosageTimesAdd.length() - 1);
+		}
+		if(preDosageTotalAdd.length() > 0) { 
+			preDosageTotalAdd.deleteCharAt(preDosageTotalAdd.length() - 1);
+		}
+		if(preHowTakeAdd.length() > 0) { 
+			preHowTakeAdd.deleteCharAt(preHowTakeAdd.length() - 1);
+		}
+		
+		Prescription prescription = new Prescription();
+		prescription.setMedicineNum(medNumAdd.toString());
+		prescription.setPatNum(admDiagDto.getPatNum());
+		prescription.setDocNum(admDiagDto.getDocNum());
+		prescription.setPrescriptionDosage(preDosageAdd.toString());
+		prescription.setPrescriptionDosageTimes(preDosageTimesAdd.toString());
+		prescription.setPrescriptionDosageTotal(preDosageTotalAdd.toString());
+		prescription.setPrescriptionHowTake(preHowTakeAdd.toString());
+		prescription.setPrescriptionDate(new Date(System.currentTimeMillis()));
+		prescriptionRepository.save(prescription);
+		
+		docDiag.setPrescriptionNum(prescription.getPrescriptionNum());
 		docDiag.setDocDiagnosisState("end");
 		
 		docDiagnosisRepository.save(docDiag);
