@@ -67,11 +67,13 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			String patName = tuple.get(1, String.class);
 			Long docDiagNum = tuple.get(2, Long.class);
 			String docDiagState = tuple.get(3, String.class);
+			Long deptNum = tuple.get(4, Long.class);
 
 			Map<String, Object> map = objectMapper.convertValue(diagDue, Map.class);
 			map.put("patName", patName);
 			map.put("docDiagNum", docDiagNum);
 			map.put("docDiagState", docDiagState);
+			map.put("deptNum", deptNum);
 			diagDueList.add(map);
 		}
 		
@@ -105,38 +107,6 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 		diagnosisRepository.modifyDocDiagnosisState(docDiagNum, newState);
 	}
 	
-	@Override
-	public List<Map<String, Object>> prevDiagListByPatNum(Long patNum) {
-		List<Tuple> tuples = diagnosisRepository.findPrevDiagRecord(patNum);
-		List<Map<String, Object>> prevDiagList = new ArrayList<>();
-		
-		for(Tuple tuple : tuples) {
-			DocDiagnosis docDiag = tuple.get(0, DocDiagnosis.class);
-			Prescription prescription = tuple.get(1, Prescription.class);
-			Long docNum = tuple.get(2, Long.class);
-			String docName = tuple.get(3, String.class);
-			String medName = tuple.get(4, String.class);
-			String testPart = tuple.get(5, String.class);
-			String diseaseName = tuple.get(6, String.class);
-			
-			Map<String, Object> map = objectMapper.convertValue(docDiag, Map.class);
-			map.put("preDosage", prescription.getPrescriptionDosage());
-			map.put("preDosageTime", prescription.getPrescriptionDosageTimes());
-			map.put("preDosageTotal", prescription.getPrescriptionDosageTotal());
-			map.put("preHowTake", prescription.getPrescriptionHowTake());
-			map.put("docNum", docNum);
-			map.put("docName", docName);
-			map.put("medName", medName);
-			map.put("testPart", testPart);
-			map.put("diseaseName", diseaseName);
-			prevDiagList.add(map);
-		}
-		
-		if(prevDiagList.isEmpty()) {
-			return null;
-		}
-		return prevDiagList;
-	}
 
 	@Override
 	public List<Map<String, Object>> diseaseListByDeptNum(Long docNum) throws Exception {
@@ -230,6 +200,7 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			testRequest.setDocNum(docDiagDto.getDocNum());
 			testRequest.setPatNum(docDiagDto.getPatNum());
 			testRequest.setTestRequestAcpt("검사요청");
+			testRequest.setDocDiagnosisNum(docDiagDto.getDocDiagnosisNum());
 			testRequestRepository.save(testRequest);
 			docDiagnosis.setTestRequestNum(testRequest.getTestRequestNum());
 		}
@@ -241,6 +212,7 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			admissionRequest.setPatNum(docDiagDto.getPatNum());
 			admissionRequest.setDocNum(docDiagDto.getDocNum());
 			admissionRequest.setDiagnosisNum(docDiagDto.getDocDiagnosisNum());
+			admissionRequest.setAdmissionRequestAcpt("wait");
             admissionRequestRepository.save(admissionRequest);
 		}
 		
@@ -249,7 +221,10 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			surgeryRequest.setSurReason(docDiagDto.getSurReason());
 			surgeryRequest.setSurDate(docDiagDto.getSurDate());
 			surgeryRequest.setSurPeriod(docDiagDto.getSurPeriod());
+			surgeryRequest.setDepartmentNum(docDiagDto.getDeptNum());
 			surgeryRequest.setPatNum(docDiagDto.getPatNum());
+			surgeryRequest.setDocNum(docDiagDto.getDocNum());
+			surgeryRequest.setSurgeryRequestAcpt("wait");
 			surgeryRequestRepository.save(surgeryRequest);
 		}
     	
@@ -304,5 +279,68 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			doctorDiagnosisDueList.add(diagnosisDueDtoList);
 		}
 		return doctorDiagnosisDueList;
+	}
+
+	@Override
+	public List<Map<String, Object>> docPatListByDocNum(Long docNum, String searchType, String searchKeyword) {
+		List<Tuple> tuples = diagnosisRepository.findDocDiagPatListByDocNum(docNum, searchType, searchKeyword);
+		List<Map<String, Object>> docPatList = new ArrayList<>();
+		
+		for(Tuple tuple : tuples) {
+			DocDiagnosis docDiagnosis = tuple.get(0, DocDiagnosis.class);
+			Patient patient = tuple.get(1, Patient.class);
+			String diseaseName = tuple.get(2, String.class);
+			String admState = tuple.get(3, String.class);
+			String surState = tuple.get(4, String.class);
+
+			Map<String, Object> map = objectMapper.convertValue(docDiagnosis, Map.class);
+			map.put("patName", patient.getPatName());
+			map.put("patJumin", patient.getPatJumin());
+			map.put("patGender", patient.getPatGender());
+			map.put("diseaseName", diseaseName);
+			map.put("admState", admState);
+			map.put("surState", surState);
+			docPatList.add(map);
+		}
+		
+		if(docPatList.isEmpty()) {
+			return null;
+		}
+		return docPatList;
+	}
+
+	@Override
+	public List<Map<String, Object>> patDiagListByPatNum(Long patNum, String searchType, String searchKeyword) {
+		List<Tuple> tuples = diagnosisRepository.findPatDiagListByPatNum(patNum, searchType, searchKeyword);
+		List<Map<String, Object>> patDiagList = new ArrayList<>();
+		
+		for(Tuple tuple : tuples) {
+			DocDiagnosis docDiag = tuple.get(0, DocDiagnosis.class);
+			Prescription prescription = tuple.get(1, Prescription.class);
+			Long docNum = tuple.get(2, Long.class);
+			String docName = tuple.get(3, String.class);
+			String medName = tuple.get(4, String.class);
+			String testPart = tuple.get(5, String.class);
+			Long diseaseNum = tuple.get(6, Long.class);
+			String diseaseName = tuple.get(7, String.class);
+			
+			Map<String, Object> map = objectMapper.convertValue(docDiag, Map.class);
+			map.put("preDosage", prescription==null? null:prescription.getPrescriptionDosage());
+			map.put("preDosageTime", prescription==null? null:prescription.getPrescriptionDosageTimes());
+			map.put("preDosageTotal", prescription==null? null:prescription.getPrescriptionDosageTotal());
+			map.put("preHowTake", prescription==null? null:prescription.getPrescriptionHowTake());
+			map.put("docNum", docNum);
+			map.put("docName", docName);
+			map.put("medName", medName);
+			map.put("testPart", testPart);
+			map.put("diseaseNum", diseaseNum);
+			map.put("diseaseName", diseaseName);
+			patDiagList.add(map);
+		}
+		
+		if(patDiagList.isEmpty()) {
+			return null;
+		}
+		return patDiagList;
 	}
 }

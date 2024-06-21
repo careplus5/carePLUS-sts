@@ -42,6 +42,8 @@ public class Surgery {
 	@Column
 	private Date surgeryDueDate;
 	@Column
+	private String surgeryDueStartTime;  //수술시작예정시간 (원무과는 여기에 예약시간 insert)
+	@Column
 	private Time surgeryStartTime;
 	@Column
 	private Time surgeryPeriodTime;

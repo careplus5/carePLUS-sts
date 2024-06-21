@@ -33,7 +33,7 @@ public class TestRequestServiceImpl implements TestRequestService {
 	}
 	
 	@Override
-	public void updateStatus(Long testRequestNum, String testRequestAcpt) throws Exception {
+	public void updateRequestStatus(Long testRequestNum, String testRequestAcpt) throws Exception {
 	    Optional<TestRequest> optionalTestRequest = testRequestRepository.findById(testRequestNum);
 	    if (optionalTestRequest.isPresent()) {
 	        TestRequest testRequest = optionalTestRequest.get();

@@ -8,6 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.kosta.care.dto.TestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,10 +31,12 @@ public class Test{
 	private Long docDiagnosisNum;
 	@Column
 	private Long metNum;
-	@Column
-	private Long patNum;
-	@Column
-	private Long testRequestNum;
+	@ManyToOne
+    @JoinColumn(name = "patNum", referencedColumnName = "patNum", insertable = false, updatable = false)
+	private Patient patient;
+	@ManyToOne
+    @JoinColumn(name = "testRequestNum", referencedColumnName = "testRequestNum", insertable = false, updatable = false)
+	private TestRequest testRequest;
 	@Column
 	private Long docNum;
 	@Column
@@ -52,7 +58,32 @@ public class Test{
 	@Column
 	private String testOutInspectRecord;
 	@Column
-	private Date testAppointmentTime;
+	private Time testAppointmentTime;
+	
+	 public TestDto toDto() {
+	        return TestDto.builder()
+	            .testNum(this.testNum)
+	            .docDiagnosisNum(this.docDiagnosisNum)
+	            .metNum(this.metNum)
+	            .patNum(this.patient != null ? this.patient.getPatNum() : null)
+	            .testRequestNum(this.testRequest != null ? this.testRequest.getTestRequestNum() : null)
+	            .docNum(this.docNum)
+	            .testFileNum(this.testFileNum)
+	            .testName(this.testRequest != null ? this.testRequest.getTestName() : null)
+	            .testPart(this.testRequest != null ? this.testRequest.getTestPart() : null)
+	            .testResult(this.testResult)
+	            .testDate(this.testDate)
+	            .testNotice(this.testNotice)
+	            .testStatus(this.testStatus)
+	            .testAppointmentDate(this.testAppointmentDate)
+	            .testOutInspectRecord(this.testOutInspectRecord)
+	            .testAppointmentTime(this.testAppointmentTime)
+	            .patName(this.patient != null ? this.patient.getPatName() : null)
+	            .patGender(this.patient != null ? this.patient.getPatGender() : null)
+	            .patJumin(this.patient != null ? this.patient.getPatJumin() : null)
+	            .patBloodType(this.patient != null ? this.patient.getPatBloodType() : null)
+	            .build();
+	    }
 
 	
 }

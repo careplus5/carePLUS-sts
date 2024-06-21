@@ -107,11 +107,12 @@ public class AdmissionDslRepository {
 		QPatient patient = QPatient.patient;
 		QDoctor doctor = QDoctor.doctor;
 		
-		 return jpaQueryFactory.select(admission, patient, doctor.docName)
+		 return jpaQueryFactory.select(admission, patient, doctor)
 			 	.from(admission)
 			 	.join(patient).on(admission.patNum.eq(patient.patNum))
 			 	.join(doctor).on(admission.docNum.eq(doctor.docNum))
-			 	.where(admission.docNum.eq(docNum))
+			 	.where(admission.docNum.eq(docNum)
+			 			.and(admission.admissionStatus.eq("ing")))
 			 	.orderBy(
 			 			new CaseBuilder()
 			 				.when(admission.admissionDiagState.eq("ing")).then(1)

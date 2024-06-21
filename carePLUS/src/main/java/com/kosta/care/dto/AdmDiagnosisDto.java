@@ -24,6 +24,7 @@ public class AdmDiagnosisDto {
 	
 	private Long docNum;
 	private Long patNum;
+	private Long deptNum;
 	private boolean testChecked;
     private String testType;
     private String testRequest;

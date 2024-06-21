@@ -35,4 +35,6 @@ public class AdmissionRequest {
 	private String admissionRequestPeriod;
 	@Column
 	private String admissionRequestReason;
+	@Column
+	private String admissionRequestAcpt;
 }
