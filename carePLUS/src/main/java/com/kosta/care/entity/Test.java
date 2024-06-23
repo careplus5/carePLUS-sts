@@ -2,14 +2,18 @@ package com.kosta.care.entity;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.kosta.care.dto.TestDto;
 
@@ -40,8 +44,6 @@ public class Test{
 	@Column
 	private Long docNum;
 	@Column
-	private Long testFileNum;
-	@Column
 	private String testName;
 	@Column
 	private String testPart;
@@ -60,6 +62,9 @@ public class Test{
 	@Column
 	private Time testAppointmentTime;
 	
+//	@OneToMany(mappedBy="test", fetch=FetchType.LAZY)
+//	private List<TestFile> testFileList = new ArrayList<>();
+	
 	 public TestDto toDto() {
 	        return TestDto.builder()
 	            .testNum(this.testNum)
@@ -67,8 +72,7 @@ public class Test{
 	            .metNum(this.metNum)
 	            .patNum(this.patient != null ? this.patient.getPatNum() : null)
 	            .testRequestNum(this.testRequest != null ? this.testRequest.getTestRequestNum() : null)
-	            .docNum(this.docNum)
-	            .testFileNum(this.testFileNum)
+	            .docNum(this.testRequest != null ? this.testRequest.getDocNum() : null)
 	            .testName(this.testRequest != null ? this.testRequest.getTestName() : null)
 	            .testPart(this.testRequest != null ? this.testRequest.getTestPart() : null)
 	            .testResult(this.testResult)

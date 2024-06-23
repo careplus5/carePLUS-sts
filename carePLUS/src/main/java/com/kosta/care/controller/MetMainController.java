@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.care.dto.TestRequestDto;
+import com.kosta.care.entity.TestFile;
 import com.kosta.care.dto.TestDto;
 import com.kosta.care.service.TestRequestService;
 import com.kosta.care.service.TestService;
@@ -61,7 +63,6 @@ public class MetMainController {
 	@PostMapping("/updateTestStatus")
     public ResponseEntity<Boolean> updateTestStatus(@RequestBody Map<String, Object> param) {
         try {
-        	System.out.println(param);
             testService.updateTestStatus(
             		Long.valueOf(String.valueOf(param.get("id"))), String.valueOf(param.get("testStatus")));
             return new ResponseEntity<Boolean>(true, HttpStatus.OK); // 업데이트 성공 시 200 OK 응답
@@ -79,8 +80,9 @@ public class MetMainController {
         try {
          	
         	List<TestDto> testDtos =  testService.getTodayAcceptedTests(dept2Name, Date.valueOf(today));
-            return new ResponseEntity<List<TestDto>>(testDtos, HttpStatus.OK); // 요청 성공 시 200 OK 응답과 함께 데이터 반환
+        	return new ResponseEntity<List<TestDto>>(testDtos, HttpStatus.OK); // 요청 성공 시 200 OK 응답과 함께 데이터 반환
         } catch (Exception e) {
+        	e.printStackTrace();
             // 예외 처리: 다른 모든 예외
             return new ResponseEntity<List<TestDto>>(HttpStatus.BAD_REQUEST);
         }
@@ -94,8 +96,48 @@ public class MetMainController {
             return new ResponseEntity<List<TestDto>>(testDtos, HttpStatus.OK); // 요청 성공 시 200 OK 응답과 함께 데이터 반환
         } catch (Exception e) {
             // 예외 처리: 다른 모든 예외
+        	e.printStackTrace();
             return new ResponseEntity<List<TestDto>>(HttpStatus.BAD_REQUEST);
         }
     }
+	
+	@PostMapping("/uploadTestFile")
+    public ResponseEntity<Boolean> uploadTestFile(@RequestParam("image") MultipartFile file,
+                                              @RequestParam("testNum") Long testNum,
+                                              @RequestParam("metNum") Long metNum) {
+        try {
+        	testService.uploadTestFile(file, testNum, metNum);
+            return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+        } catch (Exception e) {
+        	e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/getTestFile")
+    public ResponseEntity<List<TestFile>> getTestFile(@RequestParam("testNum") Long testNum) {
+        try {
+        	List<TestFile> testFileList = testService.getTestFile(testNum);
+            return new ResponseEntity<List<TestFile>>(testFileList,HttpStatus.OK);
+        } catch (Exception e) {
+        	e.printStackTrace();
+            return new ResponseEntity<List<TestFile>>(HttpStatus.NOT_FOUND);
+        }
+    }
+    
+	@PostMapping("/uploadTestNotice")
+    public ResponseEntity<Boolean> uploadTestNotice(@RequestParam("testNum") Long testNum,
+                                              @RequestParam("metNum") Long metNum,
+                                              @RequestParam("testNotice") String testNotice) {
+		System.out.println(testNum);
+        try {
+        	testService.uploadTestNotice(testNum, metNum, testNotice);
+            return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+        } catch (Exception e) {
+        	e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+	
 	
 }
