@@ -20,4 +20,6 @@ public interface NurseRepository extends JpaRepository<Nurse, Long> {
 	Page<Nurse> findByJobNumContains(String jobNum, PageRequest pageRequest);
 	Page<Nurse> findByDepartmentNameContains(String jobName, PageRequest pageRequest);
 	Page<Nurse> findByNurNameContains(String jobName, PageRequest pageRequest);
+	List<Nurse> findByNurPositionAndDepartmentNum(String nurPosition, Long departmentNum);
+
 }

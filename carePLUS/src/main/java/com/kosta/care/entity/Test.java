@@ -44,7 +44,11 @@ public class Test{
 	@Column
 	private Long docNum;
 	@Column
+	private Long testFileNum;
+	@Column
 	private String testName;
+	@Column
+	private Long testRequestNum;
 	@Column
 	private String testPart;
 	@Column

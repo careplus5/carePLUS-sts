@@ -1,6 +1,7 @@
 package com.kosta.care.controller;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.util.List;
 import java.util.Map;
 
@@ -8,22 +9,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.care.dto.DiagnosisDueDto;
+import com.kosta.care.dto.SurgeryRequestDto;
 import com.kosta.care.dto.TestRequestDto;
-import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.Department;
 import com.kosta.care.entity.DiagnosisDue;
-import com.kosta.care.entity.DocDiagnosis;
+import com.kosta.care.entity.Prescription;
+import com.kosta.care.entity.Surgery;
+import com.kosta.care.entity.Test;
 import com.kosta.care.service.AdmService;
+import com.kosta.care.service.AdmissionService;
 import com.kosta.care.service.DepartmentService;
 import com.kosta.care.service.DiagnosisDueService;
 import com.kosta.care.service.DoctorService;
+import com.kosta.care.service.PrescriptionService;
 import com.kosta.care.service.TestRequestService;
+import com.querydsl.core.Tuple;
 
 @RestController
 public class AdmMainController {
@@ -42,6 +50,12 @@ public class AdmMainController {
 	
 	@Autowired
 	private AdmService admService;
+	
+	@Autowired
+	private AdmissionService admissionService;
+	
+	@Autowired
+	private PrescriptionService prescriptionService;
 	
 	// 진료 부서 조회 (리액트에서 select option에 쓰임)
 	@GetMapping("/departments")
@@ -156,5 +170,141 @@ public class AdmMainController {
 			return new ResponseEntity<List<Map<String,Object>>>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	// 진료 예약 등록
+	@PostMapping("/patientDiagnosisDueRegist")
+	public ResponseEntity<String> patientDiagnosisDueRegist (@RequestBody DiagnosisDueDto diagnosisDueDto) {
+	    try {
+	    	System.out.println(diagnosisDueDto);
+	        diagnosisDueService.diagnosisRegister(diagnosisDueDto);
+	        System.out.println(diagnosisDueDto);
+	        return new ResponseEntity<String>("진료예약 성공", HttpStatus.OK);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return new ResponseEntity<String>("진료예약 실패", HttpStatus.BAD_REQUEST);
+	    }
+	}
+	
+	// 퇴원 관련해서 해당 환자 조회
+	@GetMapping("/patientAdmissionState")
+	public ResponseEntity<Tuple> patientAdmissionState(@RequestParam("patNum") Long patNum) {
+		
+		try {
+			
+			Tuple tuple = admissionService.patientDischargeRegist(patNum);
+			if (tuple != null) {
+				return new ResponseEntity<Tuple>(tuple, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<Tuple>(HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Tuple>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	// 처방천 뽑기전 처방 테이블에 해당 환자 조회
+	@GetMapping("/patNumPrescriptionList")
+	public ResponseEntity<List<Prescription>> patNumPrescriptionList(@RequestParam("patNum") Long patNum) {
+		try {
+//				Long patNum = Long.parseLong((String)patNum);
+//				System.out.println(patNum.TYPE);
+			List<Prescription> prescriptionList = prescriptionService.patientPrescriptionList(patNum);
+			return new ResponseEntity<List<Prescription>>(prescriptionList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<Prescription>>(HttpStatus.BAD_REQUEST);
+			
+		}
+	}
+	
+	@PostMapping("/testRequestList")
+	public ResponseEntity<List<TestRequestDto>> getTestRequestList(@RequestBody Map<String,Long> param) {
+		System.out.println(param);
+		try {
+			List<TestRequestDto> testRequestdto = admService.getTestRequestListByPatNum(param.get("patNum"));
+			if (testRequestdto != null) {
+				return new ResponseEntity<List<TestRequestDto>> (testRequestdto,HttpStatus.OK);
+			} else {
+				return new ResponseEntity<List<TestRequestDto>> (HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<TestRequestDto>> (HttpStatus.BAD_REQUEST);
+		}
+	}	
+	
+	@GetMapping("/testTimeList")
+	public ResponseEntity<List<Time>> testList(@RequestParam("testName") String testName,
+			@RequestParam("testDate") String date) {
+		try {
+			List<Time> timeList = admService.getTestList(testName,  Date.valueOf(date));
+			return new ResponseEntity<List<Time>>(timeList, HttpStatus.OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<Time>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping("/testReserve")
+	public ResponseEntity<Boolean> testReserve(@ModelAttribute Test test, 
+			@RequestParam(required = false) MultipartFile testFile) {
+		try {
+			Boolean reserve = admService.testReserve(test, testFile);
+			return new ResponseEntity<Boolean>(reserve, HttpStatus.OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Boolean>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@PostMapping("/surgeryRequest")
+	public ResponseEntity<SurgeryRequestDto> surgeryRequest(@RequestBody Map<String,Long> param) {
+		try {
+			SurgeryRequestDto surgeryRequestDto = admService.getSurgeryRequest(param.get("patNum"));
+			return new ResponseEntity<SurgeryRequestDto>(surgeryRequestDto, HttpStatus.OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<SurgeryRequestDto>(HttpStatus.BAD_REQUEST);			
+		}
+	}
+	
+	@PostMapping("/opRoomUseCheck")
+	public ResponseEntity<Map<String,Object>> operationRoomUseCheck(@RequestBody Map<String,Date> param) {
+		try {
+			Map<String, Object> res = admService.operationRoomUse(param.get("date"));
+			return new ResponseEntity<Map<String,Object>>(res, HttpStatus.OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping("/surNurseList")
+	public ResponseEntity<Map<String,Object>> surNurseList(@RequestBody Map<String,Object> param) {
+		try {
+			Map<String,Object> res = admService.sureryNurList(
+					Long.valueOf(String.valueOf(param.get("departmentNum"))), 
+					Date.valueOf(String.valueOf(param.get("surDate"))));
+			return new ResponseEntity<Map<String,Object>>(res, HttpStatus.OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping("/reserveSurgery") 
+	public ResponseEntity<Boolean> reserveSurgery(@RequestBody Surgery surgery) {
+		try {
+			System.out.println(surgery);
+			admService.reserveSurgery(surgery);
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Boolean>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+
 	
 }

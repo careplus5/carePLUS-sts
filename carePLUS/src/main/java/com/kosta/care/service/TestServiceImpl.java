@@ -89,7 +89,7 @@ public class TestServiceImpl implements TestService {
                                             .test(test)
                                             .testFileType(file.getContentType())
                                             .testFilePath(filePath)
-                                            .testFileSize(String.valueOf(file.getSize()))
+                                            .testFileSize(file.getSize())
                                             .testFileUploadDate(new Date(System.currentTimeMillis()))
                                             .testMetNum(metNum)
                                             .build();

@@ -9,6 +9,7 @@ import com.kosta.care.dto.AdmDiagnosisDto;
 import com.kosta.care.dto.DocDiagnosisDto;
 import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.AdmissionRecord;
+import com.querydsl.core.Tuple;
 
 public interface AdmissionService {
 	
@@ -65,4 +66,7 @@ public interface AdmissionService {
 	
 	//입원진료-입원진료 내용 전송
 	Boolean submitAdmDiag(AdmDiagnosisDto admDiagDto);
+	
+	// 환자 정보 조회
+	Tuple patientDischargeRegist(Long patNum) throws Exception;
 }

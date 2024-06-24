@@ -1,5 +1,7 @@
 package com.kosta.care.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,5 +44,11 @@ public class PrescriptionServiceImpl implements PrescriptionService {
        
         return true;
     }
+    
+ // 환자 번호로 처방 리스트 출력
+ 	@Override
+ 	public List<Prescription> patientPrescriptionList(Long patNum) throws Exception {
+ 		return prescriptionRepository.findByPatNum(patNum);
+ 	}
 
 }

@@ -16,10 +16,12 @@ public class TestRequestDto {
 	private String patName;
 	private String patJumin;
 	private String patGender;
-	private String patBloodType;
 	private Long docNum;
 	private String docName;
+	private String patBloodType;
 	private String testName;  // 검사 종류 (CT, MRI, X-Ray) 
 	private String testRequestAcpt;  // 검사 승인 여부
 	private String testPart;  // 검사 부위
+	private String departmentName; //요청과명
+	private Long docDiagnosisNum; //진료번호	
 }

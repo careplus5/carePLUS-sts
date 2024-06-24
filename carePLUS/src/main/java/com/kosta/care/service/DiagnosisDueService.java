@@ -44,4 +44,7 @@ public interface DiagnosisDueService {
 	// 전체 진료예약 조회
 	List<DiagnosisDue> diagSearchAll();
 	List<List<DiagnosisDueDto>> doctorDiagnosisDueList(Long departmentNum,Date date) throws Exception;
+	
+	// 진료예약 등록( 환자등록 및 의사진단 )
+	void diagnosisRegister(DiagnosisDueDto diagnosisDueDto) throws Exception;
 }
