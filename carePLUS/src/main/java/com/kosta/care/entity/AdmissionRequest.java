@@ -32,6 +32,8 @@ public class AdmissionRequest {
 	@Column
 	private Long jobNum;
 	@Column
+	private Long departmentNum;
+	@Column
 	private Long admissionRequestPeriod;
 	@Column
 	private String admissionRequestReason;

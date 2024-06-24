@@ -212,6 +212,7 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			admissionRequest.setPatNum(docDiagDto.getPatNum());
 			admissionRequest.setDocNum(docDiagDto.getDocNum());
 			admissionRequest.setDiagnosisNum(docDiagDto.getDocDiagnosisNum());
+			admissionRequest.setDepartmentNum(docDiagDto.getDeptNum());
 			admissionRequest.setAdmissionRequestAcpt("wait");
             admissionRequestRepository.save(admissionRequest);
 		}
