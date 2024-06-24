@@ -235,16 +235,6 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 		StringBuilder preHowTakeAdd = new StringBuilder();
 		
 		for(PrescriptionDto preDto : docDiagDto.getSelectMedicine()) {
-			Prescription prescription = new Prescription();
-			prescription.setMedicineNum(preDto.getMedicineNum());
-			prescription.setPatNum(docDiagDto.getPatNum());
-			prescription.setDocNum(docDiagDto.getDocNum());
-			prescription.setPrescriptionDosage(preDto.getPreDosage().toString());
-			prescription.setPrescriptionDosageTimes(preDto.getPreDosageTimes().toString());
-			prescription.setPrescriptionDosageTotal(preDto.getPreDosageTotal().toString());
-			prescription.setPrescriptionHowTake(preDto.getPreHowTake());
-			prescription.setPrescriptionDate(new Date(System.currentTimeMillis()));
-			prescriptionRepository.save(prescription);
 			medNumAdd.append(preDto.getMedicineNum()+",");
 			preDosageAdd.append(preDto.getPreDosage()+",");
 			preDosageTimesAdd.append(preDto.getPreDosageTimes()+",");
@@ -356,14 +346,28 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			Long diseaseNum = tuple.get(6, Long.class);
 			String diseaseName = tuple.get(7, String.class);
 			
+			String[] medNums = prescription==null ? null : prescription.getMedicineNum().split(",");
+			StringBuilder medNameAdd = new StringBuilder();
+			if(medNums != null) {
+				for(String med : medNums) {
+					Optional<Medicine> omed = medicineRepository.findById(med);
+					medName = omed.get().getMedicineKorName();
+					medNameAdd.append(medName+",");
+				}
+				//마지막 콤마 제거
+				if(medNameAdd.length() > 0) { 
+					medNameAdd.deleteCharAt(medNameAdd.length() - 1);
+				}
+			}
+			
 			Map<String, Object> map = objectMapper.convertValue(docDiag, Map.class);
-			map.put("preDosage", prescription==null? null:prescription.getPrescriptionDosage());
-			map.put("preDosageTime", prescription==null? null:prescription.getPrescriptionDosageTimes());
-			map.put("preDosageTotal", prescription==null? null:prescription.getPrescriptionDosageTotal());
-			map.put("preHowTake", prescription==null? null:prescription.getPrescriptionHowTake());
+			map.put("preDosage", prescription==null? null : prescription.getPrescriptionDosage());
+			map.put("preDosageTime", prescription==null? null : prescription.getPrescriptionDosageTimes());
+			map.put("preDosageTotal", prescription==null? null : prescription.getPrescriptionDosageTotal());
+			map.put("preHowTake", prescription==null? null : prescription.getPrescriptionHowTake());
 			map.put("docNum", docNum);
 			map.put("docName", docName);
-			map.put("medName", medName);
+			map.put("medName", medNameAdd.toString());
 			map.put("testPart", testPart);
 			map.put("diseaseNum", diseaseNum);
 			map.put("diseaseName", diseaseName);

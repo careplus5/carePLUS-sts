@@ -174,7 +174,7 @@ public class AdmissionDslRepository {
 		QAdmission admission = QAdmission.admission;
 		QDisease disease = QDisease.disease;
 		
-		return jpaQueryFactory.select(disease.diseaseName, docDiagnosis.docDiagnosisContent)
+		return jpaQueryFactory.select(disease.diseaseName, docDiagnosis.docDiagnosisContent, disease.diseaseNum)
 					.from(docDiagnosis)
 					.join(admission).on(docDiagnosis.patNum.eq(admission.patNum))
 					.join(disease).on(docDiagnosis.diseaseNum.eq(disease.diseaseNum))
