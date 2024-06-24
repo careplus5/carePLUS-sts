@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
 				.allowedOrigins("http://localhost:3000")
 				.allowedMethods("GET", "POST", "PUT", "DELETE");
 	}
-	
+	//http://43.202.168.140
 //	@Bean
 //	public BCryptPasswordEncoder encodePassword() {
 //		return new BCryptPasswordEncoder();

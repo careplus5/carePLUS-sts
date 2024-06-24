@@ -112,4 +112,10 @@ public class AdmServiceImpl implements AdmService {
 		    docDiagnosisRepository.save(docDiagnosis);
 		}
 
+		@Override
+		public List<Map<String, Object>> getPrescriptionList(Long patNum) throws Exception {
+			
+			return null;
+		}
+
 }

@@ -38,5 +38,6 @@ public class AdmDslRepository {
 					.orderBy(docDiagnosis.docDiagnosisDate.desc())
 					.fetch();
 	}
+	
 
 }

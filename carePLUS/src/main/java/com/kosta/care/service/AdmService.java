@@ -15,5 +15,8 @@ public interface AdmService {
 	List<Admission> getConfirmAdmission(Long patNum) throws Exception;
 	// 진료예약 등록( 환자등록 및 의사진단 )
 	void diagnosisRegister(DiagnosisDueDto diagnosisDueDto) throws Exception;
+	
+	// 환자의 처방전 리스트
+	List<Map<String, Object>> getPrescriptionList(Long patNum) throws Exception;
 
 }

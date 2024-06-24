@@ -57,6 +57,11 @@ public class AdmMainController {
 		}
 	}
 	
+//	@GetMapping("/searchPatientPrescription")
+//	public ResponseEntity<List<Map<String, Object>>> searchPatientPrescription(){
+//		
+//	}
+//	
 	// 환자 조회 검사 (검사예약)
 	@PostMapping("/testRequestPatientLatest")
 	public ResponseEntity<TestRequestDto> getLatestTestRequestByPatient(@RequestBody Map<String,Long> param) {
