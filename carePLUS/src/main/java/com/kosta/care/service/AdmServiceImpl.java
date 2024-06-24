@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import javax.transaction.Transactional;
 
@@ -17,9 +15,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.DiagnosisDue;
-import com.kosta.care.entity.Disease;
 import com.kosta.care.entity.DocDiagnosis;
+import com.kosta.care.entity.Medicine;
 import com.kosta.care.entity.Patient;
+import com.kosta.care.entity.Prescription;
 import com.kosta.care.repository.AdmDslRepository;
 import com.kosta.care.repository.AdmissionRepository;
 import com.kosta.care.repository.DiagnosisDueRepository;
@@ -147,8 +146,30 @@ public class AdmServiceImpl implements AdmService {
 
 		@Override
 		public List<Map<String, Object>> getPrescriptionList(Long patNum) throws Exception {
+			List<Tuple> tuples = admDslRepository.findPatPrescListByPatNum(patNum);
+			List<Map<String, Object>> patPrescList = new ArrayList<>();
+
+			for(Tuple tuple : tuples) {
+				Prescription prescription = tuple.get(0, Prescription.class);
+//				Medicine medicine = tuple.get(1, Medicine.class);
+//				DocDiagnosis docDiagnosis = tuple.get(2, DocDiagnosis.class);
+				String patName = tuple.get(3, String.class);
+//				String docName = tuple.get(4, String.class);
+//				String departmentName = tuple.get(5, String.class);
+//				
+				Map<String, Object> map = new HashMap<>();
+
+				// tuple에서 데이터 추출하여 map에 넣기
+				map.put("prescription", tuple.get(0, Prescription.class));
+//				map.put("medicine", tuple.get(1, Medicine.class));
+//				map.put("docDiagnosis", tuple.get(2, DocDiagnosis.class));
+				map.put("patName", tuple.get(3, String.class));
+//				map.put("docName", tuple.get(4, String.class));
+//				map.put("departmentName", tuple.get(5, String.class));
+				patPrescList.add(map);
+			}
 			
-			return null;}
+			return patPrescList;}
 
 		public Map<String, Object> patDiagCheckInfoByDocDiagNum(Long docDiagNum) {
 			Tuple tuple = admDslRepository.findPatDiagCheckInfoByDocDiagNum(docDiagNum);

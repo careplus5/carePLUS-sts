@@ -57,11 +57,19 @@ public class AdmMainController {
 		}
 	}
 	
-//	@GetMapping("/searchPatientPrescription")
-//	public ResponseEntity<List<Map<String, Object>>> searchPatientPrescription(){
-//		
-//	}
-//	
+	// 처방전 리스트에 담길 내용: 처방 번호, 환자 이름, 처방 일자, 처방 상태
+	@PostMapping("/patNumPrescriptionList")
+	public ResponseEntity<List<Map<String, Object>>> searchPatientPrescription(@RequestBody Long patNum){
+		System.out.println("search드가자"+patNum);
+		try {
+			List<Map<String, Object>> prescriptionList = admService.getPrescriptionList(patNum);
+			return new ResponseEntity<List<Map<String, Object>>>(prescriptionList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<Map<String, Object>>>( HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	// 환자 조회 검사 (검사예약)
 	@PostMapping("/testRequestPatientLatest")
 	public ResponseEntity<TestRequestDto> getLatestTestRequestByPatient(@RequestBody Map<String,Long> param) {

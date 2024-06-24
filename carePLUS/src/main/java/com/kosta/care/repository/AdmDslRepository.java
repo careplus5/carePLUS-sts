@@ -11,8 +11,10 @@ import com.kosta.care.entity.QDepartment;
 import com.kosta.care.entity.QDisease;
 import com.kosta.care.entity.QDocDiagnosis;
 import com.kosta.care.entity.QDoctor;
+import com.kosta.care.entity.QMedicine;
 import com.kosta.care.entity.QNurse;
 import com.kosta.care.entity.QPatient;
+import com.kosta.care.entity.QPrescription;
 import com.kosta.care.entity.QTestRequest;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -42,6 +44,24 @@ public class AdmDslRepository {
 					.orderBy(docDiagnosis.docDiagnosisDate.desc())
 					.fetch();
 	}
+	
+	
+	//원무과-처방전 발급-처방전 목록 조회
+		public List<Tuple> findPatPrescListByPatNum(Long patNum) {
+			QDocDiagnosis docDiagnosis = QDocDiagnosis.docDiagnosis;
+			QDoctor doctor = QDoctor.doctor;
+			QDepartment department = QDepartment.department;
+			QPatient patient = QPatient.patient;
+			QPrescription prescription = QPrescription.prescription;
+			QMedicine medicine = QMedicine.medicine;
+			
+			return jpaQueryFactory.select(prescription, patient.patName)
+						.from(prescription)
+						.join(patient).on(prescription.patNum.eq(patient.patNum))
+						.where(prescription.patNum.eq(patNum))
+						.orderBy(prescription.prescriptionDate.desc())
+						.fetch();
+		}
 
 	//원무과-기타문서발급-진료확인서 정보 조회
 	public Tuple findPatDiagCheckInfoByDocDiagNum(Long docDiagNum) {
