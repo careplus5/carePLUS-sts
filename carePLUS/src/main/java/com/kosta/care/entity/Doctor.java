@@ -67,6 +67,9 @@ public class Doctor implements Employee{
 				.empTel(docTel)
 				.empPosition(docPosition)
 				.empEmail(docEmail)
+				.isNoticeAlarmOk(isNoticeAlarmOk)
+				.isDiagnosAlarmOk(isDiagnosAlarmOk)
+				.isSurgeryAlarmOk(isSurgeryAlarmOk)
 				.build();
 		 return emp;
 	}

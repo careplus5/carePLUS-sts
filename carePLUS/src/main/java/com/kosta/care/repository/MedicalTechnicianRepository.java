@@ -16,6 +16,7 @@ public interface MedicalTechnicianRepository extends JpaRepository<MedicalTechni
 	MedicalTechnician findByMetNum(Long metNum);
 	List<MedicalTechnician> findByJobNum(Long jobNum);
 	
+	Page<MedicalTechnician> findByMetDepartment2NameContains(String metDepartment2Name, PageRequest pageRequest);
 	Page<MedicalTechnician> findByMetNumContains(Long metNum, PageRequest pageRequest);
 	Page<MedicalTechnician> findByJobNumContains(String jobNum, PageRequest pageRequest);
 	Page<MedicalTechnician> findByDepartmentNameContains(String jobName, PageRequest pageRequest);

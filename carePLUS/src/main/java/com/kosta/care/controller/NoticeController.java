@@ -65,7 +65,7 @@ public class NoticeController {
 		}
 	}
 	
-	@GetMapping("noticeDelete")
+	@GetMapping("noticeDelete/")
 	public ResponseEntity<String> noticeModify(@RequestParam("noticeNum") Long noticeNum){
 		try {
 			noticeService.noticeDelete(noticeNum);

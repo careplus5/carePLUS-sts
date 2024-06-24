@@ -69,6 +69,8 @@ public class MedicalTechnician implements Employee{
 				.empTel(metTel)
 				.empPosition(metPosition)
 				.empEmail(metEmail)
+				.isNoticeAlarmOk(isNoticeAlarmOk)
+				.isTestAlarmOk(isTestAlarmOk)
 				.build();
 		 return emp;
 	}

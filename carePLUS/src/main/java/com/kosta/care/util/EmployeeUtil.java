@@ -102,6 +102,22 @@ public class EmployeeUtil {
 		return empDto;
 	}
 	
+	public Doctor DtoToDoc(EmployeeDto employeeDto) {
+		Doctor doctor = Doctor.builder()
+				.docNum(employeeDto.getEmpNum())
+				.profNum(employeeDto.getProfNum())
+				.departmentNum(employeeDto.getDepartmentNum())
+				.departmentName(employeeDto.getDepartmentName())
+				.jobNum(employeeDto.getJobNum())
+				.docName(employeeDto.getEmpName())
+				.docPassword(employeeDto.getEmpPassword())
+				.docTel(employeeDto.getEmpTel())
+				.docPosition(employeeDto.getEmpPosition())
+				.docEmail(employeeDto.getEmpEmail())
+				.build();
+		return doctor;
+	}
+	
 	public Nurse DtoToNur(EmployeeDto employeeDto) {
 		if(employeeDto.getEmpPosition().equals("진료")) {
 			employeeDto.setEmpPosition("1");
@@ -124,22 +140,6 @@ public class EmployeeUtil {
 				.nurDepartment2Name(employeeDto.getDepartment2Name())
 				.build();
 		return nurse;
-	}
-	
-	public Doctor DtoToDoc(EmployeeDto employeeDto) {
-		Doctor doctor = Doctor.builder()
-				.docNum(employeeDto.getEmpNum())
-				.profNum(employeeDto.getProfNum())
-				.departmentNum(employeeDto.getDepartmentNum())
-				.departmentName(employeeDto.getDepartmentName())
-				.jobNum(employeeDto.getJobNum())
-				.docName(employeeDto.getEmpName())
-				.docPassword(employeeDto.getEmpPassword())
-				.docTel(employeeDto.getEmpTel())
-				.docPosition(employeeDto.getEmpPosition())
-				.docEmail(employeeDto.getEmpEmail())
-				.build();
-		return doctor;
 	}
 
 	public AdminHospital DtoToAdm(EmployeeDto employeeDto) {
@@ -173,6 +173,96 @@ public class EmployeeUtil {
 				.metDepartment2Name(employeeDto.getDepartment2Name())
 				.build();
 		return met;
+	}
+	
+	public Doctor modifyDtoToDoc(EmployeeDto employeeDto, EmployeeDto beforeEmployeeDto) {
+	    Doctor doctor = Doctor.builder()
+	            .docNum(employeeDto.getEmpNum())
+	            .profNum(employeeDto.getProfNum())
+	            .departmentNum(employeeDto.getDepartmentNum())
+	            .departmentName(employeeDto.getDepartmentName())
+	            .jobNum(employeeDto.getJobNum())
+	            .docName(employeeDto.getEmpName())
+	            .docPassword(employeeDto.getEmpPassword())
+	            .docTel(employeeDto.getEmpTel())
+	            .docPosition(employeeDto.getEmpPosition())
+	            .docEmail(employeeDto.getEmpEmail())
+	            .isDiagnosAlarmOk(beforeEmployeeDto.getIsDiagnosAlarmOk())
+	            .isNoticeAlarmOk(beforeEmployeeDto.getIsNoticeAlarmOk()) 
+	            .isSurgeryAlarmOk(beforeEmployeeDto.getIsSurgeryAlarmOk())
+	            .build();
+
+	    return doctor;
+	}
+
+	public Nurse modifyDtoToNur(EmployeeDto employeeDto, EmployeeDto beforeEmployeeDto) {
+	    // 직위에 따른 직종 설정
+	    if (employeeDto.getEmpPosition().equals("진료")) {
+	        employeeDto.setEmpPosition("1");
+	    } else if (employeeDto.getEmpPosition().equals("입원")) {
+	        employeeDto.setEmpPosition("2");
+	    } else if (employeeDto.getEmpPosition().equals("수술")) {
+	        employeeDto.setEmpPosition("3");
+	    }
+
+	    Nurse nurse = Nurse.builder()
+	            .nurNum(employeeDto.getEmpNum())
+	            .profNum(employeeDto.getProfNum())
+	            .departmentNum(employeeDto.getDepartmentNum())
+	            .departmentName(employeeDto.getDepartmentName())
+	            .jobNum(employeeDto.getJobNum())
+	            .nurName(employeeDto.getEmpName())
+	            .nurPassword(employeeDto.getEmpPassword())
+	            .nurTel(employeeDto.getEmpTel())
+	            .nurPosition(employeeDto.getEmpPosition())
+	            .nurEmail(employeeDto.getEmpEmail())
+	            .isAdmissionAlarmOk(beforeEmployeeDto.getIsAdmissionAlarmOk()) // 간호사에 맞는 AlarmOk 속성 설정
+	            .isNoticeAlarmOk(beforeEmployeeDto.getIsNoticeAlarmOk()) // 간호사에 맞는 AlarmOk 속성 설정
+	            .isRequestAlarmOk(beforeEmployeeDto.getIsRequestAlarmOk()) // 간호사에 맞는 AlarmOk 속성 설정
+	            .isSurgeryAlarmOk(beforeEmployeeDto.getIsSurgeryAlarmOk()) // 간호사에 맞는 AlarmOk 속성 설정
+	            .build();
+
+	    return nurse;
+	}
+
+	public AdminHospital modifyDtoToAdm(EmployeeDto employeeDto, EmployeeDto beforeEmployeeDto) {
+	    AdminHospital adm = AdminHospital.builder()
+	            .admNum(employeeDto.getEmpNum())
+	            .profNum(employeeDto.getProfNum())
+	            .departmentNum(employeeDto.getDepartmentNum())
+	            .departmentName(employeeDto.getDepartmentName())
+	            .jobNum(employeeDto.getJobNum())
+	            .admName(employeeDto.getEmpName())
+	            .admPassword(employeeDto.getEmpPassword())
+	            .admTel(employeeDto.getEmpTel())
+	            .admPosition(employeeDto.getEmpPosition())
+	            .admEmail(employeeDto.getEmpEmail())
+	            .isDischargeAlarmOk(beforeEmployeeDto.getIsDischargeAlarmOk()) // 병원 관리자에 맞는 AlarmOk 속성 설정
+	            .isNoticeAlarmOk(beforeEmployeeDto.getIsNoticeAlarmOk()) // 병원 관리자에 맞는 AlarmOk 속성 설정
+	            .isPrescriptionAlarmOk(beforeEmployeeDto.getIsPrescriptionAlarmOk()) // 병원 관리자에 맞는 AlarmOk 속성 설정
+	            .build();
+
+	    return adm;
+	}
+
+	public MedicalTechnician modifyDtoToMet(EmployeeDto employeeDto, EmployeeDto beforeEmployeeDto) {
+	    MedicalTechnician met = MedicalTechnician.builder()
+	            .metNum(employeeDto.getEmpNum())
+	            .profNum(employeeDto.getProfNum())
+	            .departmentNum(employeeDto.getDepartmentNum())
+	            .departmentName(employeeDto.getDepartmentName())
+	            .jobNum(employeeDto.getJobNum())
+	            .metName(employeeDto.getEmpName())
+	            .metPassword(employeeDto.getEmpPassword())
+	            .metTel(employeeDto.getEmpTel())
+	            .metPosition(employeeDto.getEmpPosition())
+	            .metEmail(employeeDto.getEmpEmail())
+	            .isNoticeAlarmOk(beforeEmployeeDto.getIsNoticeAlarmOk()) // 의료 기술자에 맞는 AlarmOk 속성 설정
+	            .isTestAlarmOk(beforeEmployeeDto.getIsTestAlarmOk()) // 의료 기술자에 맞는 AlarmOk 속성 설정
+	            .metDepartment2Name(employeeDto.getDepartment2Name()) // 예시로 추가된 속성 설정
+	            .build();
+
+	    return met;
 	}
 	
 }

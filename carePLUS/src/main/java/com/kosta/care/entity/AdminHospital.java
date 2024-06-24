@@ -65,6 +65,9 @@ public class AdminHospital implements Employee {
 				.empTel(admTel)
 				.empPosition(admPosition)
 				.empEmail(admEmail)
+				.isNoticeAlarmOk(isNoticeAlarmOk)
+				.isPrescriptionAlarmOk(isPrescriptionAlarmOk)
+				.isDischargeAlarmOk(isDischargeAlarmOk)
 				.build();
 		 return emp;
 	}

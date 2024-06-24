@@ -61,17 +61,28 @@ public class NoticeServiceImpl implements NoticeService {
 		if (word == null || word.trim().equals("")) {
 			pages = noticesRepository.findAll(pageRequest);
 		} else {
-			if (type.equals("title")) {
+			if (type.contains("title")) {
 				pages = noticesRepository.findByNoticeTitleContains(word, pageRequest);
-			} else if (type.equals("category")) {
+			} else if (type.contains("category")) {
 				String searchWord = null;
-				if(word.equals("전체")) {searchWord = "99";}
+				if(word.contains("전체")) {searchWord = "99";}
 				else {
-					Long transfer = jobRepository.findByJobName(word).getJobNum();
-					searchWord = transfer.toString();
+					List<String> jobList = new ArrayList<>();
+			        jobList.add("의사");
+			        jobList.add("간호사");
+			        jobList.add("원무과");
+			        jobList.add("의료기사");
+			        
+			        for (String job : jobList) {
+			            if (job.contains(word)) {
+			            	Long searchCategory = jobRepository.findByJobName(job).getJobNum();
+			            	System.out.println("searchCategory: "+searchCategory);
+			                searchWord = searchCategory.toString();
+			            }
+			        }
 				}
 				pages = noticesRepository.findByNoticeCategoryContains(searchWord, pageRequest);
-			} else if (type.equals("content")) {
+			} else if (type.contains("content")) {
 				pages = noticesRepository.findByNoticeContentContains(word, pageRequest);
 			}
 		}
