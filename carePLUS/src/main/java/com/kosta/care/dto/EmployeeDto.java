@@ -27,5 +27,13 @@ public class EmployeeDto {
 	private String empTel;
 	private String empEmail;
 	private String empPassword;
-	
+	private Boolean isDiagnosAlarmOk;
+	private Boolean isNoticeAlarmOk;
+	private Boolean isSurgeryAlarmOk;
+	private Boolean isPrescriptionAlarmOk;
+	private Boolean isTestAlarmOk;
+	private Boolean isDischargeAlarmOk;
+	private Boolean isRequestAlarmOk;
+	private Boolean isAdmissionAlarmOk;
+
 }

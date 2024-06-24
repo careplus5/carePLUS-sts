@@ -72,6 +72,10 @@ public class Nurse implements Employee {
 					.empTel(nurTel)
 					.empPosition(nurPosition)
 					.empEmail(nurEmail)
+					.isNoticeAlarmOk(isNoticeAlarmOk)
+					.isSurgeryAlarmOk(isSurgeryAlarmOk)
+					.isAdmissionAlarmOk(isAdmissionAlarmOk)
+					.isRequestAlarmOk(isRequestAlarmOk)
 					.build();
 			 return emp;
 	}

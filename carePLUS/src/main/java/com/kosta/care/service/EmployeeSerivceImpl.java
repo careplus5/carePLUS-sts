@@ -65,63 +65,67 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 			profNum = pfile.getProfileNum();
 			employeeDto.setProfNum(profNum);
 		}
-		
+
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy");
 		String year = LocalDate.now().format(formatter);
-		
-		System.out.println("serviceJobNum: "+employeeDto.getJobNum());
+
+		System.out.println("serviceJobNum: " + employeeDto.getJobNum());
 		Long job = employeeDto.getJobNum();
 		String findJob = job.toString();
 
-	    // 직원번호 생성
-	    String empNumStr;
-	    Long empNum;
-	    if (findJob.equals("11")) {
-	        empNumStr = employeeDto.getJobNum()+"" + employeeDto.getDepartmentNum()+"" + year+"" + sequenceService.getNextSequence("sq_doc");
-	    } else if (findJob.equals("12")) {
-	    	employeeDto.setDepartmentNum(99L);
-	        empNumStr = employeeDto.getJobNum()+"" + employeeDto.getDepartmentNum()+"" + year+"" + sequenceService.getNextSequence("sq_nur");
-	    } else if (findJob.equals("13")) {
-	        empNumStr = employeeDto.getJobNum()+"" + employeeDto.getDepartmentNum()+"" + year+"" + sequenceService.getNextSequence("sq_adm");
-	    } else if (findJob.equals("14")) {
-	        empNumStr = employeeDto.getJobNum()+"" + employeeDto.getDepartmentNum()+"" + year+"" + sequenceService.getNextSequence("sq_met");
-	    } else {
-	        throw new IllegalArgumentException("Invalid job number");
-	    }
-	    
-	    System.out.println("serviceEmpStr: "+empNumStr);
-	    
-	    //생성한 empNum을 적용
-	    empNum = Long.parseLong(empNumStr);
-	    employeeDto.setEmpNum(empNum);
+		// 직원번호 생성
+		String empNumStr;
+		Long empNum;
+		if (findJob.equals("11")) {
+			empNumStr = employeeDto.getJobNum() + "" + employeeDto.getDepartmentNum() + "" + year + ""
+					+ sequenceService.getNextSequence("sq_doc");
+		} else if (findJob.equals("12")) {
+			empNumStr = employeeDto.getJobNum() + "" + employeeDto.getDepartmentNum() + "" + year + ""
+					+ sequenceService.getNextSequence("sq_nur");
+		} else if (findJob.equals("13")) {
+			employeeDto.setDepartmentNum(99L);
+			empNumStr = employeeDto.getJobNum() + "" + employeeDto.getDepartmentNum() + "" + year + ""
+					+ sequenceService.getNextSequence("sq_adm");
+		} else if (findJob.equals("14")) {
+			empNumStr = employeeDto.getJobNum() + "" + employeeDto.getDepartmentNum() + "" + year + ""
+					+ sequenceService.getNextSequence("sq_met");
+		} else {
+			throw new IllegalArgumentException("Invalid job number");
+		}
 
-	    // 비밀번호 암호화
-	    String rawPassword = employeeDto.getEmpPassword();
-	    String encodePassword = bCryptPasswordEncoder.encode(rawPassword);
-	    employeeDto.setEmpPassword(encodePassword);
-	    
-	    Object emp = null;
-	    // 맞는 위치에 저장
-	    switch (findJob) {
-	        case "11":
-	        	emp = employeeUtil.DtoToDoc(employeeDto);
-	            doctorRepository.save((Doctor)emp);
-	            break;
-	        case "12":
-	        	emp = employeeUtil.DtoToNur(employeeDto);
-	            nurseRepository.save((Nurse)emp);
-	            break;
-	        case "13":
-	        	emp = employeeUtil.DtoToAdm(employeeDto);
-	            adminHospitalRepository.save((AdminHospital) emp);
-	            break;
-	        case "14":
-	        	emp = employeeUtil.DtoToMet(employeeDto);
-	            medicalTechnicianRepository.save((MedicalTechnician) emp);
-	            break;
-	    }
+		System.out.println("serviceEmpStr: " + empNumStr);
 
-	    return employeeDto.getEmpNum();
+		// 생성한 empNum을 적용
+		empNum = Long.parseLong(empNumStr);
+		employeeDto.setEmpNum(empNum);
+
+		// 비밀번호 암호화
+		String rawPassword = employeeDto.getEmpPassword();
+		String encodePassword = bCryptPasswordEncoder.encode(rawPassword);
+		employeeDto.setEmpPassword(encodePassword);
+
+		Object emp = null;
+		// 맞는 위치에 저장
+		switch (findJob) {
+		case "11":
+			emp = employeeUtil.DtoToDoc(employeeDto);
+			doctorRepository.save((Doctor) emp);
+			break;
+		case "12":
+			emp = employeeUtil.DtoToNur(employeeDto);
+			nurseRepository.save((Nurse) emp);
+			break;
+		case "13":
+			emp = employeeUtil.DtoToAdm(employeeDto);
+			adminHospitalRepository.save((AdminHospital) emp);
+			break;
+		case "14":
+			emp = employeeUtil.DtoToMet(employeeDto);
+			medicalTechnicianRepository.save((MedicalTechnician) emp);
+			break;
+		}
+
+		return employeeDto.getEmpNum();
 	}
 
 	@Override
@@ -197,24 +201,45 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 			employeeDto.setProfNum(beforeEmployeeDto.getProfNum());
 		}
 
-		// 새로 가져온 emp Entity로 만들어주기
-		Employee emp = empRepository.identifyJob(Long.toString(employeeDto.getEmpNum()));
-
 		String StringEmpNum = employeeDto.getEmpNum().toString();
 		String findJob = StringEmpNum.substring(0, 2);
-
-		// 맞는 테이블에 저장
+		
+		if (!employeeDto.getEmpPassword().isEmpty() && employeeDto.getEmpPassword() != null) {
+			String rawPassword = employeeDto.getEmpPassword();
+			String encodePassword = bCryptPasswordEncoder.encode(rawPassword);
+			employeeDto.setEmpPassword(encodePassword);
+		}
+		
+		System.out.println("modifydName: " + employeeDto.getDepartmentName());
+		Object emp = null;
+		// 맞는 위치에 저장
 		switch (findJob) {
 		case "11":
+			emp = employeeUtil.modifyDtoToDoc(employeeDto,beforeEmployeeDto);
+			if (employeeDto.getEmpPassword() == null && employeeDto.getEmpPassword().trim().equals("")) {
+				employeeDto.setEmpPassword(beforeEmployeeDto.getEmpPassword());
+			}
 			doctorRepository.save((Doctor) emp);
 			break;
 		case "12":
+			emp = employeeUtil.modifyDtoToNur(employeeDto,beforeEmployeeDto);
+			if (employeeDto.getEmpPassword() == null && employeeDto.getEmpPassword().trim().equals("")) {
+				employeeDto.setEmpPassword(beforeEmployeeDto.getEmpPassword());
+			}
 			nurseRepository.save((Nurse) emp);
 			break;
 		case "13":
+			emp = employeeUtil.modifyDtoToAdm(employeeDto,beforeEmployeeDto);
+			if (employeeDto.getEmpPassword() == null && employeeDto.getEmpPassword().trim().equals("")) {
+				employeeDto.setEmpPassword(beforeEmployeeDto.getEmpPassword());
+			}
 			adminHospitalRepository.save((AdminHospital) emp);
 			break;
 		case "14":
+			emp = employeeUtil.modifyDtoToMet(employeeDto,beforeEmployeeDto);
+			if (employeeDto.getEmpPassword() == null && employeeDto.getEmpPassword().trim().equals("")) {
+				employeeDto.setEmpPassword(beforeEmployeeDto.getEmpPassword());
+			}
 			medicalTechnicianRepository.save((MedicalTechnician) emp);
 			break;
 		}
@@ -228,11 +253,12 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 		return employeeDto;
 	}
 
-	public List<EmployeeDto> employeeListByPage(String jobName, PageInfo pageInfo, String type, String word) throws Exception {
+	public List<EmployeeDto> employeeListByPage(String jobName, PageInfo pageInfo, String type, String word)
+			throws Exception {
 
 		Page<?> pages = null;
 		List<EmployeeDto> employeeDtoList = new ArrayList<>();
-		System.out.println("service:"+jobName);
+		System.out.println("service:" + jobName);
 		if (jobName.equals("11")) {
 			PageRequest docPageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 5,
 					Sort.by(Sort.Direction.DESC, "docNum"));
@@ -258,13 +284,32 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 				employeeDtoList.add(employeeUtil.DocToEmpDto((Doctor) employee));
 			}
 		} else if (jobName.equals("12")) {
-			PageRequest nurPageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 5,Sort.by(Sort.Direction.DESC, "nurNum"));
-				System.out.println("serviceNurPageRequest:"+nurPageRequest);
+			PageRequest nurPageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 5,
+					Sort.by(Sort.Direction.DESC, "nurNum"));
+			System.out.println("serviceNurPageRequest:" + nurPageRequest);
 			if (word == null || word.trim().equals("")) {
 				pages = (nurseRepository.findAll(nurPageRequest));
 			} else {
 				if (type.contains("departmentName")) {
 					pages = (nurseRepository.findByDepartmentNameContains(word, nurPageRequest));
+				} else if (type.contains("empPosition")) {
+					String searchWord = null;
+					List<String> positionList = new ArrayList<>();
+					positionList.add("진료");
+					positionList.add("입원");
+					positionList.add("수술");
+					for (String position : positionList) {
+						if (position.contains(word)) {
+							if (position.equals("진료")) {
+								searchWord = "1";
+							} else if (position.equals("입원")) {
+								searchWord = "2";
+							} else if (position.equals("수술")) {
+								searchWord = "3";
+							}
+						}
+					}
+					pages = (nurseRepository.findByNurPositionContains(searchWord, nurPageRequest));
 				} else if (type.contains("empName")) {
 					pages = (nurseRepository.findByNurNameContains(word, nurPageRequest));
 				}
@@ -288,9 +333,7 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 			if (word == null || word.trim().equals("")) {
 				pages = (adminHospitalRepository.findAll(admPageRequest));
 			} else {
-				if (type.contains("departmentName")) {
-					pages = (adminHospitalRepository.findByDepartmentNameContains(word, admPageRequest));
-				} else if (type.contains("empName")) {
+				if (type.contains("empName")) {
 					pages = (adminHospitalRepository.findByAdmNameContains(word, admPageRequest));
 				}
 			}
@@ -313,8 +356,8 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 			if (word == null || word.trim().equals("")) {
 				pages = (medicalTechnicianRepository.findAll(metPageRequest));
 			} else {
-				if (type.contains("departmentName")) {
-					pages = (medicalTechnicianRepository.findByDepartmentNameContains(word, metPageRequest));
+				if (type.contains("department2Name")) {
+					pages = (medicalTechnicianRepository.findByMetDepartment2NameContains(word, metPageRequest));
 				} else if (type.contains("empName")) {
 					pages = (medicalTechnicianRepository.findByMetNameContains(word, metPageRequest));
 				}
@@ -330,10 +373,10 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 			for (Object employee : pages.getContent()) {
 				employeeDtoList.add(employeeUtil.MetToEmpDto((MedicalTechnician) employee));
 			}
-		}else {
+		} else {
 			System.out.println("정상입니다 안심하세요");
 		}
-		System.out.println("serviceDto:"+employeeDtoList);
+		System.out.println("serviceDto:" + employeeDtoList);
 		return employeeDtoList;
 	}
 }

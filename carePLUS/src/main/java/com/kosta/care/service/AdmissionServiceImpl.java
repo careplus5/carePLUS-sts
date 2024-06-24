@@ -265,11 +265,16 @@ public class AdmissionServiceImpl implements AdmissionService {
 		admissionRepository.save(admission);
 		
 		//의사진료에 입원진료 insert
+		Tuple tuple2 = admRepository.findFirstDiagRecordByPatNum(patient.getPatNum());
+		Long diseaseNum = tuple2.get(2, Long.class);
+
 		DocDiagnosis docDiag = new DocDiagnosis();
 		docDiag.setDocDiagnosisKind("adm");
 		docDiag.setDocDiagnosisState("ing");
 		docDiag.setDocNum(admission.getDocNum());
 		docDiag.setPatNum(admission.getPatNum());
+		docDiag.setDiseaseNum(diseaseNum);
+		
 		docDiagnosisRepository.save(docDiag);
 		map.put("admDiagNum", docDiag.getDocDiagnosisNum());
 		
@@ -404,16 +409,6 @@ List<Map<String, Object>> dailyPrescList = new ArrayList<>();
 		StringBuilder preHowTakeAdd = new StringBuilder();
 		
 		for(PrescriptionDto preDto : admDiagDto.getSelectMedicine()) {
-			Prescription prescription = new Prescription();
-			prescription.setMedicineNum(preDto.getMedicineNum());
-			prescription.setPatNum(admDiagDto.getPatNum());
-			prescription.setDocNum(admDiagDto.getDocNum());
-			prescription.setPrescriptionDosage(preDto.getPreDosage().toString());
-			prescription.setPrescriptionDosageTimes(preDto.getPreDosageTimes().toString());
-			prescription.setPrescriptionDosageTotal(preDto.getPreDosageTotal().toString());
-			prescription.setPrescriptionHowTake(preDto.getPreHowTake());
-			prescription.setPrescriptionDate(new Date(System.currentTimeMillis()));
-			prescriptionRepository.save(prescription);
 			medNumAdd.append(preDto.getMedicineNum()+",");
 			preDosageAdd.append(preDto.getPreDosage()+",");
 			preDosageTimesAdd.append(preDto.getPreDosageTimes()+",");
