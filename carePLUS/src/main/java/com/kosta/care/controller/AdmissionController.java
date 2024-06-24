@@ -245,10 +245,7 @@ public class AdmissionController {
 	public ResponseEntity<Boolean> admDiagnosisSubmit(@RequestBody AdmDiagnosisDto admDiagDto) {
 		try {
 			Boolean isSuccess = admService.submitAdmDiag(admDiagDto);
-			System.out.println("해당 환자에게 납품한 약은 "+admDiagDto.toString());
 			List<Prescription> list = admDiagDto.toListPrescription();
-			System.out.println("docNum: "+admDiagDto.getDocNum());
-			System.out.println("patNum: "+admDiagDto.getPatNum());
 			Long docNum = admDiagDto.getDocNum();
 			Long patNum = admDiagDto.getPatNum();
 			for(Prescription presc : list) {

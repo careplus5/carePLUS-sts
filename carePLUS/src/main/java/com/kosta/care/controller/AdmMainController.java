@@ -108,15 +108,48 @@ public class AdmMainController {
 		}
 	}
 	
-	@PostMapping("/confirmAdmission")
-	public ResponseEntity<List<Admission>> confirmAdmission(@RequestBody Map<String, Long> param) {
+	@PostMapping("/patAdmCheckList")
+	public ResponseEntity<List<Map<String, Object>>> patAdmCheckList(@RequestBody Map<String, Long> param) {
 		try {
-			List<Admission> admissionList = admService.getConfirmAdmission(param.get("patNum"));
-			return new ResponseEntity<List<Admission>>(admissionList, HttpStatus.OK);
+			List<Map<String, Object>> admCheckList = admService.patAdmCheckListByPatNum(param.get("patNum"));
+			return new ResponseEntity<List<Map<String, Object>>>(admCheckList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<List<Admission>>( HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<List<Map<String, Object>>>( HttpStatus.BAD_REQUEST);
 		}
-		
 	}
+	
+	@GetMapping("/patDiagCheckInfo")
+	public ResponseEntity<Map<String, Object>> patDiagCheckInfo(@RequestParam("docDiagNum") Long docDiagNum) {
+		try {
+			Map<String, Object> diagCheckInfo = admService.patDiagCheckInfoByDocDiagNum(docDiagNum);
+			return new ResponseEntity<Map<String,Object>>(diagCheckInfo, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/patAdmCheckInfo")
+	public ResponseEntity<Map<String, Object>> patAdmCheckInfo(@RequestParam("admNum") Long admNum) {
+		try {
+			Map<String, Object> admCheckInfo = admService.patAdmCheckInfoByAdmNum(admNum);
+			return new ResponseEntity<Map<String,Object>>(admCheckInfo, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/patAdmDiagList")
+	public ResponseEntity<List<Map<String, Object>>> patAdmDiagList(@RequestParam("admNum") Long amdNum) {
+		try {
+			List<Map<String, Object>> admDiagList = admService.patAdmDiagListByAdmNum(amdNum);
+			return new ResponseEntity<List<Map<String,Object>>>(admDiagList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<Map<String,Object>>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 }

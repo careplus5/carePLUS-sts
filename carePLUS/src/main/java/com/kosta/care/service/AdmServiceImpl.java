@@ -1,8 +1,12 @@
 package com.kosta.care.service;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import javax.transaction.Transactional;
 
@@ -13,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.DiagnosisDue;
+import com.kosta.care.entity.Disease;
 import com.kosta.care.entity.DocDiagnosis;
 import com.kosta.care.entity.Patient;
 import com.kosta.care.repository.AdmDslRepository;
@@ -43,13 +48,19 @@ public class AdmServiceImpl implements AdmService {
 	public List<Map<String, Object>> patDiagCheckListByPatNum(Long patNum) {
 		List<Tuple> tuples = admDslRepository.findPatDiagCheckListByPatNum(patNum);
 		List<Map<String, Object>> patDiagCheckList = new ArrayList<>();
-		
+		Map<Long, Date> firstDiagDateMap = new HashMap<>();
+
 		for(Tuple tuple : tuples) {
 			DocDiagnosis docDiagnosis = tuple.get(0, DocDiagnosis.class);
 			String patName = tuple.get(1, String.class);
 			String docName = tuple.get(2, String.class);
 			String departmentName = tuple.get(3, String.class);
 			String testName = tuple.get(4, String.class);
+			
+			Date thisDate = docDiagnosis.getDocDiagnosisDate();
+			//map에 존재하는 날짜를 thisDate와 비교해 더 작은 값을 반환 (초기 진단 날짜)
+			firstDiagDateMap.merge(patNum, thisDate, (existingDate, newDate) -> 
+	            existingDate.before(newDate) ? existingDate : newDate);
 			
 			Map<String, Object> map = objectMapper.convertValue(docDiagnosis, Map.class);
 			map.put("patName", patName);
@@ -58,6 +69,9 @@ public class AdmServiceImpl implements AdmService {
 			map.put("testName", testName);
 			patDiagCheckList.add(map);
 		}
+		for (Map<String, Object> map : patDiagCheckList) {
+	        map.put("firstDiagDate", firstDiagDateMap.get(patNum));
+	    }
 		
 		if(patDiagCheckList.isEmpty()) return null;
 		
@@ -65,9 +79,28 @@ public class AdmServiceImpl implements AdmService {
 	}
 	
 	@Override
-	public List<Admission> getConfirmAdmission(Long patNum) throws Exception {
-		// TODO Auto-generated method stub
-		return admissionRepository.findByPatNumOrderByAdmissionNumDesc(patNum);
+	public List<Map<String, Object>> patAdmCheckListByPatNum(Long patNum) {
+		List<Tuple> tuples = admDslRepository.findPatAdmCheckListByPatNum(patNum);
+		List<Map<String, Object>> patAdmCheckList = new ArrayList<>();
+
+		for(Tuple tuple : tuples) {
+			Admission admission = tuple.get(0, Admission.class);
+			String patName = tuple.get(1, String.class);
+			String docName = tuple.get(2, String.class);
+			String departmentName = tuple.get(3, String.class);
+			String nurName = tuple.get(4, String.class);
+			
+			Map<String, Object> map = objectMapper.convertValue(admission, Map.class);
+			map.put("patName", patName);
+			map.put("docName", docName);
+			map.put("deptName", departmentName);
+			map.put("nurName", nurName);
+			patAdmCheckList.add(map);
+		}
+		
+		if(patAdmCheckList.isEmpty()) return null;
+		
+		return patAdmCheckList;
 	}
 
 	// 진료예약 및 환자등록 및 의사테이블 저장
@@ -110,6 +143,86 @@ public class AdmServiceImpl implements AdmService {
 		    docDiagnosis.setDocDiagnosisState("wait");  // 진료상태
 
 		    docDiagnosisRepository.save(docDiagnosis);
+		}
+
+		@Override
+		public Map<String, Object> patDiagCheckInfoByDocDiagNum(Long docDiagNum) {
+			Tuple tuple = admDslRepository.findPatDiagCheckInfoByDocDiagNum(docDiagNum);
+			
+			DocDiagnosis docDiag = tuple.get(0, DocDiagnosis.class);
+			Patient patient = tuple.get(1, Patient.class);
+			String docName = tuple.get(2, String.class);
+			String deptName = tuple.get(3, String.class);
+			String diseaseName = tuple.get(4, String.class);
+			String admDiagContent = tuple.get(5, String.class);
+			
+			Map<String, Object> map = objectMapper.convertValue(docDiag, Map.class);
+			map.put("patName", patient.getPatName());
+			map.put("patGender", patient.getPatGender());
+			map.put("patJumin", patient.getPatJumin());
+			map.put("patTel", patient.getPatTel());
+			map.put("patHistory", patient.getPatHistory());
+			map.put("patAddress", patient.getPatAddress());
+			map.put("docName", docName);
+			map.put("deptName", deptName);
+			map.put("diseaseName", diseaseName);
+			if(docDiag.getDocDiagnosisContent() == null) {
+				map.put("docDiagnosisContent", admDiagContent);
+			}
+			
+			return map;
+		}
+
+		@Override
+		public Map<String, Object> patAdmCheckInfoByAdmNum(Long admNum) {
+			Tuple tuple = admDslRepository.findPatAdmCheckInfoByAdmNum(admNum);
+			
+			Admission admission = tuple.get(0, Admission.class);
+			Patient patient = tuple.get(1, Patient.class);
+			String docName = tuple.get(2, String.class);
+			
+			 //입원 기간 계산
+		    Date admissionDate = admission.getAdmissionDate();
+		    Date dischargeDate = admission.getAdmissionDischargeDate();
+		    long diffMillies = dischargeDate.getTime() - admissionDate.getTime();
+		    long admPeriod = diffMillies / (1000 * 60 * 60 * 24);
+			
+			Map<String, Object> map = objectMapper.convertValue(admission, Map.class);
+			map.put("patName", patient.getPatName());
+			map.put("patGender", patient.getPatGender());
+			map.put("patJumin", patient.getPatJumin());
+			map.put("patTel", patient.getPatTel());
+			map.put("patAddress", patient.getPatAddress());
+			map.put("docName", docName);
+			map.put("admPeriod", admPeriod);
+			
+			return map;
+		}
+
+		@Override
+		public List<Map<String, Object>> patAdmDiagListByAdmNum(Long admNum) {
+			List<Tuple> tupes = admDslRepository.findPatAdmDiagInfoByAdmNum(admNum);
+			List<Map<String, Object>> admDiagList = new ArrayList<>();
+			
+			for(Tuple tuple : tupes) {
+				Long admRecordNum = tuple.get(0, Long.class);
+				String admRecord = tuple.get(1, String.class);
+				Date diagDate = tuple.get(2, Date.class);
+				String deptName = tuple.get(3, String.class);
+				String diseaseName = tuple.get(4, String.class);
+				
+				Map<String, Object> map = new HashMap<>();
+				map.put("admRecordNum", admRecordNum);
+				map.put("admRecord", admRecord);
+				map.put("diagDate", diagDate);
+				map.put("deptName", deptName);
+				map.put("diseaseName", diseaseName);
+				admDiagList.add(map);
+			}
+			
+			if(admDiagList.isEmpty()) return null;
+			
+			return admDiagList;
 		}
 
 }
