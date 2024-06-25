@@ -33,9 +33,11 @@ public class TestFile {
 	@Column
 	private String testFileType;
 	@Column
+	private String testFileName;
+	@Column
 	private String testFilePath;
 	@Column
-	private String testFileSize;
+	private Long testFileSize;
 	@Column
 	private Long testMetNum;
 	@Column

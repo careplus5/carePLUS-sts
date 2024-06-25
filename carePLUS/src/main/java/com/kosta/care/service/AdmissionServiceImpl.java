@@ -460,4 +460,10 @@ List<Map<String, Object>> dailyPrescList = new ArrayList<>();
 		
 		return updateAdmDiag != null;
 	}
+	
+	@Override
+	public Tuple patientDischargeRegist(Long patNum) throws Exception {
+		
+		return admRepository.findByPatNum(patNum);
+	}
 }

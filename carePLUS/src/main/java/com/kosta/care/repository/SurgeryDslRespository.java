@@ -1,11 +1,15 @@
 package com.kosta.care.repository;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.kosta.care.dto.SurgeryRequestDto;
 import com.kosta.care.entity.QDepartment;
 import com.kosta.care.entity.QDoctor;
 import com.kosta.care.entity.QNurse;
@@ -13,6 +17,7 @@ import com.kosta.care.entity.QPatient;
 import com.kosta.care.entity.QSurgery;
 import com.kosta.care.entity.QSurgeryRequest;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -95,5 +100,66 @@ public class SurgeryDslRespository {
 		
 		return combineResult;
 	}
+	
+	public SurgeryRequestDto findSurgeryRequest(Long patNum) throws Exception {
+		QSurgeryRequest surgeryRequest = QSurgeryRequest.surgeryRequest;
+		QDepartment department = QDepartment.department;
+		QDoctor doctor = QDoctor.doctor;
+		
+		return jpaQueryFactory.select(
+			Projections.bean(SurgeryRequestDto.class,
+					surgeryRequest.surgeryRequestNum,
+					surgeryRequest.patNum,
+					surgeryRequest.surPeriod,
+					surgeryRequest.surReason,
+					surgeryRequest.surDate,
+					surgeryRequest.departmentNum,
+					department.departmentName,
+					surgeryRequest.docNum,
+					doctor.docName
+				))
+			.from(surgeryRequest)
+			.join(department)
+			.on(surgeryRequest.departmentNum.eq(department.departmentNum))
+			.join(doctor)
+			.on(surgeryRequest.docNum.eq(doctor.docNum))
+			.where(surgeryRequest.surgeryRequestAcpt.eq("wait").and(surgeryRequest.patNum.eq(patNum)))
+			.fetchFirst();
+	}
+
+	public List<Map<String,Object>> findBySurNurseByOpDate(Long departmentNum, Date surDate) throws Exception {
+		QSurgery surgery = QSurgery.surgery;
+		List<Tuple> surNurList = jpaQueryFactory.select(surgery.nurNum1,surgery.nurNum2, surgery.nurNum3, surgery.surgeryDueStartTime)
+				.from(surgery)
+				.where(surgery.departmentNum.eq(departmentNum).and(surgery.surgeryDueDate.eq(surDate)))
+				.fetch();
+		List<Map<String,Object>> res = new ArrayList<>();
+		for(Tuple tu : surNurList) {
+			Long nur1 =  tu.get(0, Long.class);
+			Long nur2 =  tu.get(1, Long.class);
+			Long nur3 =  tu.get(2, Long.class);
+			String time = tu.get(3, String.class);
+			if(nur1!=null) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("nurNum", nur1);
+				map.put("time", time);
+				res.add(map);
+			}
+			if(nur2!=null) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("nurNum", nur2);
+				map.put("time", time);
+				res.add(map);
+			}
+			if(nur3!=null) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("nurNum", nur3);
+				map.put("time", time);
+				res.add(map);
+			}
+		}
+		return res;
+	}
+
 	
 }

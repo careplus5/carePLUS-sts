@@ -1,47 +1,90 @@
 package com.kosta.care.service;
 
+import java.io.File;
 import java.sql.Date;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.util.Value;
 import com.kosta.care.dto.DiagnosisDueDto;
+import com.kosta.care.dto.SurgeryRequestDto;
+import com.kosta.care.dto.TestRequestDto;
 import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.DiagnosisDue;
 import com.kosta.care.entity.DocDiagnosis;
-import com.kosta.care.entity.Medicine;
+import com.kosta.care.entity.Nurse;
+import com.kosta.care.entity.OperationUseCheck;
+//github.com/careplus5/carePLUS-sts.git
 import com.kosta.care.entity.Patient;
 import com.kosta.care.entity.Prescription;
+import com.kosta.care.entity.Surgery;
+import com.kosta.care.entity.SurgeryRequest;
+import com.kosta.care.entity.Test;
+import com.kosta.care.entity.TestFile;
+import com.kosta.care.entity.TestRequest;
 import com.kosta.care.repository.AdmDslRepository;
 import com.kosta.care.repository.AdmissionRepository;
+import com.kosta.care.repository.BedsRepository;
 import com.kosta.care.repository.DiagnosisDueRepository;
 import com.kosta.care.repository.DocDiagnosisRepository;
+import com.kosta.care.repository.NurseRepository;
+import com.kosta.care.repository.OperationRoomRepository;
+import com.kosta.care.repository.OperationUseCheckRepository;
 import com.kosta.care.repository.PatientRepository;
+import com.kosta.care.repository.SurgeryDslRespository;
+import com.kosta.care.repository.SurgeryRepository;
+import com.kosta.care.repository.SurgeryRequestRepository;
+import com.kosta.care.repository.TestDslRepository;
+import com.kosta.care.repository.TestFileRepository;
+import com.kosta.care.repository.TestRepository;
+import com.kosta.care.repository.TestRequestDslRepository;
+import com.kosta.care.repository.TestRequestRepository;
 import com.querydsl.core.Tuple;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class AdmServiceImpl implements AdmService {
 	
-	@Autowired
-	private DocDiagnosisRepository docDiagnosisRepository;
-	@Autowired
-	private PatientRepository patientRepository;
-	@Autowired
-	private DiagnosisDueRepository diagnosisDueRepository;
-	@Autowired
-	private AdmissionRepository admissionRepository;
-	@Autowired
-	private AdmDslRepository admDslRepository;
+	private final DocDiagnosisRepository docDiagnosisRepository;
+	private final PatientRepository patientRepository;
+	private final DiagnosisDueRepository diagnosisDueRepository;
+	private final AdmissionRepository admissionRepository;
+	private final AdmDslRepository admDslRepository;
+	private final TestRequestDslRepository testRequestDslRepository;
+	private final TestRepository testRepository;
+	private final TestRequestRepository testRequestRepository;
+	private final TestDslRepository testDslRepository;
+	private final TestFileRepository testFileRepository;
+	private final SurgeryRepository surgeryRespository;
+	private final SurgeryRequestRepository surgeryRequestRepository;
+	private final SurgeryDslRespository surgeryDslRespository; 
+	private final OperationRoomRepository operationRoomRepository; 
+	private final OperationUseCheckRepository operationUseCheckRepository;
+	private final NurseRepository nurseRepository; 
+	private final BedsRepository bedsRepository; 
+
 	
 	@Autowired
 	private ObjectMapper objectMapper;
+	
+	@Value("${upload.path}")
+	private String uploadPath;
 
 	@Override
 	public List<Map<String, Object>> patDiagCheckListByPatNum(Long patNum) {
@@ -148,24 +191,15 @@ public class AdmServiceImpl implements AdmService {
 		public List<Map<String, Object>> getPrescriptionList(Long patNum) throws Exception {
 			List<Tuple> tuples = admDslRepository.findPatPrescListByPatNum(patNum);
 			List<Map<String, Object>> patPrescList = new ArrayList<>();
-
+			
 			for(Tuple tuple : tuples) {
 				Prescription prescription = tuple.get(0, Prescription.class);
-//				Medicine medicine = tuple.get(1, Medicine.class);
-//				DocDiagnosis docDiagnosis = tuple.get(2, DocDiagnosis.class);
-				String patName = tuple.get(3, String.class);
-//				String docName = tuple.get(4, String.class);
-//				String departmentName = tuple.get(5, String.class);
-//				
-				Map<String, Object> map = new HashMap<>();
-
-				// tuple에서 데이터 추출하여 map에 넣기
+				String patName = tuple.get(1, String.class);
+				Map<String, Object> map = objectMapper.convertValue(prescription, Map.class);
 				map.put("prescription", tuple.get(0, Prescription.class));
-//				map.put("medicine", tuple.get(1, Medicine.class));
-//				map.put("docDiagnosis", tuple.get(2, DocDiagnosis.class));
-				map.put("patName", tuple.get(3, String.class));
-//				map.put("docName", tuple.get(4, String.class));
-//				map.put("departmentName", tuple.get(5, String.class));
+//				
+				map.put("patName", tuple.get(1, String.class));
+			
 				patPrescList.add(map);
 			}
 			
@@ -249,5 +283,84 @@ public class AdmServiceImpl implements AdmService {
 			
 			return admDiagList;
 		}
+		
+		@Override
+		public List<TestRequestDto> getTestRequestListByPatNum(Long patNum) throws Exception {
+			return testRequestDslRepository.findTestRequestList(patNum);
+		}
+		
+		@Override
+		public List<Time> getTestList(String testName, Date testDate) throws Exception {
+
+			return testDslRepository.findByTestTimeByTestNameAndTestDate(testName, testDate);
+		}
+
+		@Override
+		public Boolean testReserve(Test test, MultipartFile testFile) throws Exception {
+			if(testFile!=null && !testFile.isEmpty()) {
+				TestFile tFile = TestFile.builder()
+									.testFileName(testFile.getOriginalFilename())
+									.testFileSize(testFile.getSize())
+									.testFileType(testFile.getContentType())
+									.build();
+				testFileRepository.save(tFile);
+				
+				File upFile = new File(uploadPath,tFile.getTestFileNum()+"");
+				testFile.transferTo(upFile); //file upload
+				
+				test.setTestFileNum(tFile.getTestFileNum());
+				test.setTestOutInspectRecord(testFile.getOriginalFilename());
+				
+			}
+			testRepository.save(test);
+			Optional<TestRequest> otestRequest = testRequestRepository.findById(test.getTestRequestNum());
+			if(otestRequest.isPresent()) {
+				TestRequest testRequest = otestRequest.get();
+				testRequest.setTestRequestAcpt("reserve");
+				testRequestRepository.save(testRequest);
+			}
+			return true;
+		}
+		
+		@Override
+		public SurgeryRequestDto getSurgeryRequest(Long patNum) throws Exception {
+			return surgeryDslRespository.findSurgeryRequest(patNum);
+		}
+		
+		@Override
+		public Map<String, Object> operationRoomUse(Date useDate) throws Exception {
+			Map<String,Object> res = new HashMap<>();
+			List<Long> opRoomList = operationRoomRepository.findAll().stream()
+					.map((or)->or.getOperationRoomNum())
+					.collect(Collectors.toList());
+			res.put("opRoomList", opRoomList);
+			
+			List<OperationUseCheck> opUseCheckList = operationUseCheckRepository.findByUseDate(useDate);
+			res.put("opUseCheckList", opUseCheckList);
+			return res;
+		}
+
+		@Override
+		public Map<String, Object> sureryNurList(Long departmentNum, Date surDate) throws Exception {
+			System.out.println(departmentNum);
+			System.out.println(surDate);
+			Map<String, Object> res = new HashMap<>();
+			List<Nurse> nurseList =  nurseRepository.findByNurPositionAndDepartmentNum("3", departmentNum);
+			res.put("nurseList", nurseList);
+			List<Map<String,Object>> surNurList = surgeryDslRespository.findBySurNurseByOpDate(departmentNum, surDate);
+			res.put("surNurList", surNurList);
+			return res;
+		}
+
+		@Override
+		public Boolean reserveSurgery(Surgery surgery) throws Exception {
+			surgeryRespository.save(surgery);
+			//수술요청 테이블 상태 변경 : wait->reserved
+			SurgeryRequest surgeryRequest = surgeryRequestRepository.findById(surgery.getSurgeryRequestNum()).get();
+			surgeryRequest.setSurgeryRequestAcpt("reserved");
+			surgeryRequestRepository.save(surgeryRequest);
+			return true;
+		}
+
 
 }

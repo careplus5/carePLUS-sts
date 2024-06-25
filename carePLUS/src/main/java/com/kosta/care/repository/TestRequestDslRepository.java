@@ -1,5 +1,7 @@
 package com.kosta.care.repository;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import com.kosta.care.entity.QPatient;
 import com.kosta.care.entity.QTestRequest;
 import com.kosta.care.entity.TestRequest;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @Repository
@@ -62,5 +65,34 @@ public class TestRequestDslRepository {
 	    } else {
 	        return null;
 	    }
-	} 
+	}
+	
+	public List<TestRequestDto> findTestRequestList(Long patNum) {
+		QTestRequest testRequest = QTestRequest.testRequest;
+		QPatient patient = QPatient.patient;
+		QDoctor doctor = QDoctor.doctor;
+		List<TestRequestDto> testRequestList = jpaQueryFactory.select(
+				Projections.bean(TestRequestDto.class, testRequest.testRequestNum,
+										testRequest.patNum,
+										patient.patName, 
+										patient.patJumin, 
+										patient.patGender, 
+										testRequest.docNum,
+										doctor.docName,
+										testRequest.testName,
+										testRequest.testRequestAcpt,
+										testRequest.testPart,
+										doctor.departmentName,
+										testRequest.docDiagnosisNum))
+            	.from(testRequest)
+            	.join(patient)
+            	.on(testRequest.patNum.eq(patient.patNum))
+            	.join(doctor)
+            	.on(testRequest.docNum.eq(doctor.docNum))
+				.where(testRequest.patNum.eq(patNum).and(testRequest.testRequestAcpt.eq("accept")))
+            	.orderBy(testRequest.testRequestNum.desc())
+            	.fetch();
+		return testRequestList;
+	}
+
 }

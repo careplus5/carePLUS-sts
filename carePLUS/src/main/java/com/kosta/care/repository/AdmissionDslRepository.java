@@ -13,6 +13,7 @@ import com.kosta.care.entity.QAdmission;
 import com.kosta.care.entity.QAdmissionRecord;
 import com.kosta.care.entity.QAdmissionRequest;
 import com.kosta.care.entity.QBeds;
+import com.kosta.care.entity.QDepartment;
 import com.kosta.care.entity.QDisease;
 import com.kosta.care.entity.QDocDiagnosis;
 import com.kosta.care.entity.QDoctor;
@@ -217,5 +218,26 @@ public class AdmissionDslRepository {
 				.orderBy(admissionRecord.admissionRecordDate.desc())
 				.fetch();
 	}
+	
+	// 환자 퇴원시 정보 보기 (기타 정보를 가지고 오기)
+	public Tuple findByPatNum(Long patNum) {
+		QPatient patient = QPatient.patient;
+		QAdmission admission = QAdmission.admission;
+		QDoctor doctor = QDoctor.doctor;
+		QDepartment department = QDepartment.department;
+		
+		return jpaQueryFactory.select(admission, patient, doctor, department)
+					.from(admission)
+					.join(patient)
+					.on(admission.patNum.eq(patient.patNum))
+					.join(doctor)
+					.on(admission.docNum.eq(doctor.docNum))
+					.join(department)
+					.on(doctor.departmentNum.eq(department.departmentNum))
+					.where(admission.patNum.eq(patNum))
+					.orderBy(admission.admissionNum.desc())
+					.fetchOne();
+	}
+
 
 }
