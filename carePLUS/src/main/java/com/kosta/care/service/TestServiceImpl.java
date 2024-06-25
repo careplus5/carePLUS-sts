@@ -1,14 +1,12 @@
 package com.kosta.care.service;
 
+import java.io.File;
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
-
-import java.io.File;
-import java.sql.Date;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,8 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kosta.care.dto.TestDto;
 import com.kosta.care.entity.Test;
 import com.kosta.care.entity.TestFile;
-import com.kosta.care.repository.TestRepository;
 import com.kosta.care.repository.TestFileRepository;
+import com.kosta.care.repository.TestRepository;
 
 @Service
 public class TestServiceImpl implements TestService {
@@ -85,13 +83,8 @@ public class TestServiceImpl implements TestService {
                 TestFile testFile = TestFile.builder()
                                             .test(test)
                                             .testFileType(file.getContentType())
-<<<<<<< Updated upstream
-                                            .testFilePath(filePath)
-                                            .testFileSize(file.getSize())
-=======
                                             .testFilePath(uploadPath)
-                                            .testFileSize(String.valueOf(file.getSize()))
->>>>>>> Stashed changes
+                                            .testFileSize(file.getSize())
                                             .testFileUploadDate(new Date(System.currentTimeMillis()))
                                             .testMetNum(metNum)
                                             .build();

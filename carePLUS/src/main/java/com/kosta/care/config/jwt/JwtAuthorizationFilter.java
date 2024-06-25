@@ -40,36 +40,22 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
 	@Override
 	protected void doFilterInternal (HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-		// super.doFilterInternal(request, response, chain);
-//	String uri = request.getRequestURI(); //로그인이 필요없으면 그냥 흐르게
-//	System.out.println("1 인가 확인 중:"+uri);
-//	// 로그인(인증)이 필요없는 요청은 그대로 진행
-//	if(!(uri.contains("/login") || uri.contains("/") || uri.contains("/*"))) {
-//		System.out.println("로그인이 필요 없는 요청");
-//		chain.doFilter(request, response);
-//		return;
-//	}
 		
 		String authentication = request.getHeader(JwtProperties.HEADER_STRING);
-//		Long nurNum = Long.parseLong(request.getParameter("nurNum"));
-//		System.out.println(nurNum);
 		String uri = request.getRequestURI();      
 	      if(uri.contains("/")) {
 	          chain.doFilter(request, response);
 	          return;
 	       }
 	      System.out.println("인가 확인 중: "+uri);
+	      
+	      
 	
 	// authentication이없음 ..
 	System.out.println(authentication);
 	
 	// token을 갖고왔는지 안 갖고왔는지의 여부를 확인해야 함
 	// 토큰이 없거나 PREFIX가 Bearer가 아니거나
-	if(authentication==null) {
-		response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"로그인했는데 또 나와서 열받쥬? 하지만 해야하쥬?");
-		System.out.println("authentication: "+authentication);
-		return;
-	}
 	
 
 	

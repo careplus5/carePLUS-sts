@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.filter.CorsFilter;
 
 import com.kosta.care.config.jwt.JwtAuthenticationFilter;
@@ -18,11 +19,8 @@ import com.kosta.care.repository.EmployeeRepository;
 
 @Configuration  // IoC 빈 (bean) 등록 
 @EnableWebSecurity  // 필터 체인 관리 시작 어노테이
-// 컨트롤러로 가기 전에 가로 채서 
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	// extends 는 클래스 (broswer)
-	// include 는 인터페이스 (add interface \)
 	
 	@Autowired
 	private CorsFilter corsFilter;
@@ -34,15 +32,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public BCryptPasswordEncoder encodePassword() {
 		return new BCryptPasswordEncoder();
 	}
-	
-	// Using generated security password: 6b03047f-0587-4454-97bb-1e4907502b67 이것이 비밀번호
-	// 아이디 : user 
-	// 로그인 하면 세션처리가 된다 
-	
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.addFilter(corsFilter) // 다른 도메인 접근 허용 
-		.csrf().disable(); // csrf 공격 비활성화
+		http
+		.addFilter(corsFilter) // 다른 도메인 접근 허용 
+		.csrf()
+		.disable();
 		
 		//login
 		http
@@ -50,15 +46,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.httpBasic().disable() // httpBasicdms header에 username, password를 암호화하지 않은 상태로 주고받는다. 이를 사용하지 않겠다는 의미
 		.addFilterAt(new JwtAuthenticationFilter(authenticationManager()),UsernamePasswordAuthenticationFilter.class);
 		
-//		//Oauth2 Login
-//		http
-//			.oauth2Login()
-//			.authorizationEndpoint().baseUri("/oauth2/authorization")
-//			.and()
-//			.redirectionEndpoint().baseUri("/oauth2/callback/*")
-//			.and()
-//			.userInfoEndpoint().userService(null);
-//		
 		//token
 		http
 			.addFilter(new JwtAuthorizationFilter(authenticationManager(),empRepository))

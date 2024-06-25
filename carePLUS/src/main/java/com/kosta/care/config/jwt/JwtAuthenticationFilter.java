@@ -51,7 +51,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	public void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
 		 PrincipalDetails emp = (PrincipalDetails)authResult.getPrincipal();
 //		   UserDetails user = (UserDetails) authResult.getPrincipal();
-
+		 System.out.println("생기긴 했냐?");
 		String accessToken = JWT.create()
                 .withSubject(emp.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESS_EXPIRATION_TIME))
