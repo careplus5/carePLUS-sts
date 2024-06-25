@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.dto.DocDiagnosisDto;
+import com.kosta.care.dto.PatientDto;
 import com.kosta.care.entity.DiagnosisDue;
 import com.kosta.care.entity.Medicine;
 

@@ -42,7 +42,7 @@ public class DocDiagnosis {
 	private Long testRequestNum;
 	@Column
 	private String docDiagnosisOrder;
-	@Column
+	@Column(columnDefinition = "VARCHAR(255) default 'wait'")
 	private String docDiagnosisState;
 	@Column
 	@CreationTimestamp

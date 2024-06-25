@@ -24,6 +24,6 @@ public interface BedsRepository extends JpaRepository<Beds, Long> {
 	    
 	    @Query("SELECT DISTINCT b.bedsBed FROM Beds b WHERE b.bedsRoom = :room")
 	    List<Integer> findDistinctBedsByRoom(@Param("room") Integer room);
-
-
+	    
+	    List<Beds> findByBedsDeptOrderByBedsWardAscBedsRoomAscBedsNum(Long deptNum);
 }

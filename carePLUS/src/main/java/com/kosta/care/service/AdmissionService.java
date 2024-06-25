@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.kosta.care.dto.AdmDiagnosisDto;
 import com.kosta.care.dto.DocDiagnosisDto;
@@ -69,4 +70,5 @@ public interface AdmissionService {
 	
 	// 환자 정보 조회
 	Tuple patientDischargeRegist(Long patNum) throws Exception;
+
 }

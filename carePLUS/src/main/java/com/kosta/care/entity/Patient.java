@@ -1,11 +1,10 @@
 package com.kosta.care.entity;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 import com.kosta.care.dto.PatientDto;
 
@@ -20,8 +19,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Patient {
-	@Id
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long patNum;
+	
 	@Column
 	private String patName;
 	@Column

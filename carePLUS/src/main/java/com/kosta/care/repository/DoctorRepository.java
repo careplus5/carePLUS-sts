@@ -1,6 +1,7 @@
 package com.kosta.care.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,4 +21,5 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 //	 
 	List<Doctor> findByDepartmentNum (Long departmentNum );
 	List<Doctor> findByJobNum (Long jobNum);
+	
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.care.dto.DocDiagnosisDto;
+import com.kosta.care.dto.PatientDto;
 import com.kosta.care.entity.Medicine;
 import com.kosta.care.repository.DoctorRepository;
 import com.kosta.care.service.DiagnosisDueService;

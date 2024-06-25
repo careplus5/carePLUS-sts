@@ -5,20 +5,27 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.kosta.care.dto.PatientDto;
+import com.kosta.care.entity.Admission;
+import com.kosta.care.entity.DocDiagnosis;
 import com.kosta.care.entity.Patient;
+import com.kosta.care.repository.AdmissionRepository;
+import com.kosta.care.repository.DocDiagnosisRepository;
 import com.kosta.care.repository.PatientRepository;
-import com.kosta.care.util.PageInfo;
 
 @Service
 public class PatientServiceImpl implements PatientService {
 
 	@Autowired
 	private PatientRepository patientRepository;
+	
+	@Autowired
+	private AdmissionRepository admissionRepository;
+	
+	@Autowired
+	private DocDiagnosisRepository docDiagnosisRepository;
 
 	// 환자 번호로 환자 조회
 	@Override
@@ -60,7 +67,6 @@ public class PatientServiceImpl implements PatientService {
                     patientDto.setPatWeight(patient.getPatWeight());
                     patientDto.setPatBloodType(patient.getPatBloodType());
                     patientDto.setPatHistory(patient.getPatHistory());
-
                     patientDtoList.add(patientDto);
                 }
             } catch (NumberFormatException e) {
@@ -71,12 +77,44 @@ public class PatientServiceImpl implements PatientService {
         return patientDtoList;
     }
 
-
-
 	@Override
-	public Patient joinPatient(PatientDto patientDto) throws Exception {
+	public PatientDto getPatientStorage(Long patNum) throws Exception {
+		
+		Optional<Patient> oPatient = patientRepository.findById(patNum);
+		
+        if (oPatient.isPresent()) {
+            List<Admission> admissionList;
+            List<DocDiagnosis> docDiagnosisList;
+            
+            try {
+                admissionList = admissionRepository.findByPatNum(patNum);
+                docDiagnosisList = docDiagnosisRepository.findByPatNum(patNum);
+            } catch (Exception e) {
+                throw new Exception("환자의 입원 정보 또는 진단 정보를 조회하는 중 에러가 발생했습니다.");
+            }
+    
+            PatientDto patientDto = PatientDto.builder()
+                    		.patNum(oPatient.get().getPatNum())
+                    		.patName(oPatient.get().getPatName())
+                    		.patJumin(oPatient.get().getPatJumin())
+                    		.patGender(oPatient.get().getPatGender())
+                    		.patAddress(oPatient.get().getPatAddress())
+                    		.patTel(oPatient.get().getPatTel())
+                    		.patHeight(oPatient.get().getPatHeight())
+                    		.patWeight(oPatient.get().getPatWeight())
+                    		.patBloodType(oPatient.get().getPatBloodType())
+                    		.patHistory(oPatient.get().getPatHistory())
+                    		.admissionList(admissionList)
+                    		.docDiagnosisList(docDiagnosisList)
+                    		.build();
+            
+            return patientDto;
+            
+        } else {
+            throw new Exception("해당 환자를 찾을 수 없습니다: ");
+        }
 
-		return patientRepository.save(patientDto.patientEntity());
 	}
+
 
 }
