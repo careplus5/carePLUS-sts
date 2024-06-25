@@ -21,7 +21,7 @@ import com.kosta.care.dto.AdmissionRequestDto;
 import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.dto.SurgeryRequestDto;
 import com.kosta.care.dto.TestRequestDto;
-import com.kosta.care.entity.AdmissionRequest;
+import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.Beds;
 import com.kosta.care.entity.Department;
 import com.kosta.care.entity.DiagnosisDue;
@@ -257,21 +257,6 @@ public class AdmMainController {
 			}
 		}
 		
-		@PostMapping("/admissionRequest")
-		public ResponseEntity<Map<String,Object>> admissionRequest(@RequestBody Map<String, Long> param) {
-			try {
-				Map<String,Object> res = new HashMap<>();
-				AdmissionRequestDto admissionRequestDto = admService.admissionRequest(param.get("patNum"));
-				res.put("admissionRequest", admissionRequestDto);
-				List<Beds> bedsList = admService.findByBedsListByDeptnum(admissionRequestDto.getDepartmentNum()/10);
-				res.put("bedsList", bedsList);
-				return new ResponseEntity<Map<String,Object>>(res, HttpStatus.OK);
-			} catch(Exception e) {
-				e.printStackTrace();
-				return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
-			}
-		}
-	
 	@PostMapping("/patDiagCheckList")
 	public ResponseEntity<List<Map<String, Object>>> patDiagCheckList(@RequestBody Map<String, Long> param) {
 		try {
@@ -418,6 +403,39 @@ public class AdmMainController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@PostMapping("/admissionRequest")
+	public ResponseEntity<Map<String,Object>> admissionRequest(@RequestBody Map<String, Long> param) {
+		try {
+			System.out.println(param);
+			Map<String,Object> res = new HashMap<>();
+			AdmissionRequestDto admissionRequestDto = admService.admissionRequest(param.get("patNum"));
+			if(admissionRequestDto==null) {
+				throw new Exception();
+			}
+			res.put("admissionRequest", admissionRequestDto);
+			List<Beds> bedsList = admService.findByBedsListByDeptnum(admissionRequestDto.getDepartmentNum());
+			res.put("bedsList", bedsList);
+			return new ResponseEntity<Map<String,Object>>(res, HttpStatus.OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping("/admission")
+	public ResponseEntity<Boolean> procAdmission(@RequestBody Admission admission) {
+		try {
+			System.out.println(admission);
+			admService.procAdmission(admission);
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Boolean>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+
 	
 	
 }

@@ -26,4 +26,5 @@ public interface BedsRepository extends JpaRepository<Beds, Long> {
 	    List<Integer> findDistinctBedsByRoom(@Param("room") Integer room);
 	    
 	    List<Beds> findByBedsDeptOrderByBedsWardAscBedsRoomAscBedsNum(Long deptNum);
+	    
 }

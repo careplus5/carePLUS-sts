@@ -68,15 +68,18 @@ public interface AdmService {
 //	Map<String,Object> operationRoomUse(Date useDate) throws Exception;
 //	Map<String,Object> sureryNurList(Long departmentNum, Date surDate) throws Exception;
 //	Boolean reserveSurgery(Surgery surgery) throws Exception;
-	AdmissionRequestDto admissionRequest(Long patNum) throws Exception;
-	List<Beds> findByBedsListByDeptnum(Long departmentNum) throws Exception;
-	
+
 	AdmissionRequestDto getSearchAdmissionRequestPatient(Long patNum) throws Exception;
 	
 //	void getPatientAdmissionRegist(Long docNum, String admissionRequestReason, Long patNum, Long admissionRequestPeriod,
 //			Long bedsDept, Long bedsWard, Long bedsRoom, Long bedsBed)throws Exception;
 	
 	void getPatientAdmissionRegist(AdmissionRequestDto admissionRequestDto)throws Exception;
+	
+	AdmissionRequestDto admissionRequest(Long patNum) throws Exception;
 
+	List<Beds> findByBedsListByDeptnum(Long departmentNum) throws Exception;
+	
+	Boolean procAdmission(Admission admission) throws Exception;
 
 }

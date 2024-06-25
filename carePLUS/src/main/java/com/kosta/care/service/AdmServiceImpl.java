@@ -40,6 +40,7 @@ import com.kosta.care.entity.TestRequest;
 import com.kosta.care.repository.AdmDslRepository;
 import com.kosta.care.repository.AdmissionDslRepository;
 import com.kosta.care.repository.AdmissionRepository;
+import com.kosta.care.repository.AdmissionRequestDslRepository;
 import com.kosta.care.repository.AdmissionRequestRepository;
 import com.kosta.care.repository.BedsRepository;
 import com.kosta.care.repository.DiagnosisDueRepository;
@@ -83,6 +84,7 @@ public class AdmServiceImpl implements AdmService {
 	private final BedsRepository bedsRepository;
 	private final AdmissionDslRepository admissionDslRepository;
 	private final AdmissionRequestRepository admissionRequestRepository;
+	private final AdmissionRequestDslRepository admissionRequestDslRepository;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -280,18 +282,6 @@ public class AdmServiceImpl implements AdmService {
 		return testRequestDslRepository.findTestRequestList(patNum);
 	}
 
-
-
-	@Override
-	public AdmissionRequestDto admissionRequest(Long patNum) throws Exception {
-		return admissionDslRepository.findAdmissionRequestByPatNum(patNum);
-	}
-
-	@Override
-	public List<Beds> findByBedsListByDeptnum(Long departmentNum) throws Exception {
-		return bedsRepository.findByBedsDeptOrderByBedsWardAscBedsRoomAscBedsNum(departmentNum);
-	}
-
 	@Override
 	public AdmissionRequestDto getSearchAdmissionRequestPatient(Long patNum) throws Exception {
 		Tuple tuple = admDslRepository.findAdmissionRequestByPatNum(patNum);
@@ -483,5 +473,32 @@ public class AdmServiceImpl implements AdmService {
 			surgeryRequestRepository.save(surgeryRequest);
 			return true;
 		}
+		
+		@Override
+		public AdmissionRequestDto admissionRequest(Long patNum) throws Exception {
+			return admissionRequestDslRepository.findAdmissionRequestByPatNum(patNum);	
+		}
+
+		@Override
+		public List<Beds> findByBedsListByDeptnum(Long departmentNum) throws Exception {
+			return bedsRepository.findByBedsDeptOrderByBedsWardAscBedsRoomAscBedsNum(departmentNum);
+		}
+
+		@Override
+		public Boolean procAdmission(Admission admission) throws Exception {
+			admission.setAdmissionDiagState("wait");
+			Optional<Beds> obeds = bedsRepository.findById(admission.getBedsNum());
+			if(obeds.isPresent()) {
+				Beds beds = obeds.get();
+				beds.setBedsIsUse(true);
+				bedsRepository.save(beds);
+			}
+			admissionRepository.save(admission);
+			AdmissionRequest admissionRequest = admissionRequestRepository.findById(admission.getAdmissionRequestNum()).get();
+			admissionRequest.setAdmissionRequestAcpt("reserved");
+			admissionRequestRepository.save(admissionRequest);
+			return true;
+		}	
+
 
 }
