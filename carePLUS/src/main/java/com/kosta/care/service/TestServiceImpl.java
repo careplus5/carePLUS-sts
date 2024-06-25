@@ -56,7 +56,7 @@ public class TestServiceImpl implements TestService {
 	}
     @Override
     public List<TestDto> getPatientAllTestList(String dept2Name,  Long patNum) throws Exception {
-        List<Test> tests = testRepository.findByTestNameAndTestStatusAndPatient_PatNum(dept2Name,"완료",patNum);
+        List<Test> tests = testRepository.findByTestNameAndTestStatusAndPatient_PatNum(dept2Name,"complete",patNum);
         System.out.println(tests);
         // Convert to DTO
         return tests.stream()

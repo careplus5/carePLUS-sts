@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kosta.care.dto.AdmissionRequestDto;
 import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.dto.SurgeryRequestDto;
 import com.kosta.care.dto.TestRequestDto;
@@ -317,5 +318,23 @@ public class AdmMainController {
 	}
 
 
+	@PostMapping("/patientAdmissionRegist")
+    public ResponseEntity<String> patientAdmissionRegist(@RequestBody AdmissionRequestDto admissionRequestDto) {
+        try {
+			admService.getPatientAdmissionRegist(
+						admissionRequestDto.getDocNum(),
+						admissionRequestDto.getAdmissionRequestReason(),
+						admissionRequestDto.getPatNum(),
+						admissionRequestDto.getAdmissionRequestPeriod(),
+						admissionRequestDto.getBedsDept(),
+						admissionRequestDto.getBedsWard(),
+						admissionRequestDto.getBedsRoom(),
+						admissionRequestDto.getBedsBed()
+					);
+	        return new ResponseEntity<String>(HttpStatus.OK);
+	    } catch (Exception e) {
+	    	return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+	    }
+    }
 	
 }
