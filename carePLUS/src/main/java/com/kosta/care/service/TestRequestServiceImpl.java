@@ -51,27 +51,6 @@ public class TestRequestServiceImpl implements TestRequestService {
 
 	@Override
 	public List<TestRequestDto> getAllTestRequests(String dept2Name) throws Exception {
-	    // findPendingTestRequests 메서드를 사용해 '검사요청' 상태인 TestRequest 객체들을 가져옴
-//	    List<TestRequest> testRequests = testRequestRepository.findPendingTestRequests();
-	    // 가져온 TestRequest 객체들을 TestRequestDto 객체로 변환하고, 조건에 맞는 것만 필터링하여 반환
-//	    return testRequests.stream()
-//	                       .filter(testRequest -> testRequest.getTestName().equals(dept2Name)) // testName이 dept2Name과 같은 요소만 필터링
-//	                       .map(TestRequest::toDto) // TestRequest 객체를 TestRequestDto 객체로 변환
-//	                       .collect(Collectors.toList()); // 변환된 객체들을 리스트로 수집
-		
-//		private Long testRequestNum;
-//		private Long patNum;
-//		private String patName;
-//		private String patJumin;
-//		private String patGender;
-//		private Long docNum;
-//		private String docName;
-//		private String patBloodType;
-//		private String testName;  // 검사 종류 (CT, MRI, X-Ray) 
-//		private String testRequestAcpt;  // 검사 승인 여부
-//		private String testPart;  // 검사 부위
-//		private String departmentName; //요청과명
-//		private Long docDiagnosisNum; //진료번호	
 
 	    List<TestRequest> testRequestList = testRequestRepository.findByTestRequestAcptAndTestName("request",dept2Name);
 	    
