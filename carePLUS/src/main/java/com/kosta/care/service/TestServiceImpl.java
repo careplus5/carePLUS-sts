@@ -74,10 +74,7 @@ public class TestServiceImpl implements TestService {
                 directory.mkdirs();
             }
 
-            // Save the file locally
-            String filePath = uploadPath + File.separator + file.getOriginalFilename();
-            File dest = new File(filePath);
-            file.transferTo(dest);
+            
 
             // Retrieve the Test entity by testNum
             Optional<Test> optionalTest = testRepository.findById(testNum);
@@ -88,13 +85,25 @@ public class TestServiceImpl implements TestService {
                 TestFile testFile = TestFile.builder()
                                             .test(test)
                                             .testFileType(file.getContentType())
+<<<<<<< Updated upstream
                                             .testFilePath(filePath)
                                             .testFileSize(file.getSize())
+=======
+                                            .testFilePath(uploadPath)
+                                            .testFileSize(String.valueOf(file.getSize()))
+>>>>>>> Stashed changes
                                             .testFileUploadDate(new Date(System.currentTimeMillis()))
                                             .testMetNum(metNum)
                                             .build();
 
                 testFileRepository.save(testFile);
+                
+             // Save the file locally
+                String filePath = uploadPath + testFile.getTestFileNum();
+                System.out.println(filePath);
+                File dest = new File(filePath);
+                file.transferTo(dest);
+                
             } else {
                 throw new EntityNotFoundException("Test with testNum " + testNum + " not found");
             }
