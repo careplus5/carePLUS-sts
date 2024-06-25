@@ -11,5 +11,7 @@ public interface TestRequestRepository extends JpaRepository<TestRequest, Long>{
 	
 	 @Query("SELECT tr FROM TestRequest tr JOIN FETCH tr.patient WHERE tr.testRequestAcpt IN ('검사요청', '보류')")
 	    List<TestRequest> findPendingTestRequests();
+	 
+	 List<TestRequest> findByTestRequestAcptAndTestName(String testRequestAcpt,String testName);
 
 }

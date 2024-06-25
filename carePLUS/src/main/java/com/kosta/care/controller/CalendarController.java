@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.care.dto.CalendarDto;
 import com.kosta.care.dto.EmployeeDto;
-import com.kosta.care.service.CalendarService;
 import com.kosta.care.service.EmployeeSerivce;
+import com.kosta.care.service.TestService;
 
 @RestController
 public class CalendarController {
 	@Autowired
-	private CalendarService calendarService;
+	private TestService testService;
 	@Autowired
 	private EmployeeSerivce employeeSerivce;
 
@@ -35,7 +35,7 @@ public class CalendarController {
 	}
 
 	@GetMapping("/schedules")
-	public ResponseEntity<List<CalendarDto>> getAllSchedules(
+	public ResponseEntity<List<Test>> getAllSchedules(
 			@RequestParam(name = "userId", required = false) Long userId) {
 		try {
 			// calendarService.getAllSchedules(userId) 호출 결과를 반환합니다.
