@@ -1,12 +1,12 @@
 package com.kosta.care.service;
 
-<<<<<<< Updated upstream
+
 import java.io.File;
 import java.sql.Date;
-=======
-import java.util.ArrayList;
+
+
 import java.util.HashMap;
->>>>>>> Stashed changes
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,24 +21,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kosta.care.dto.CalendarDto;
-import com.kosta.care.dto.DiagnosisDueDto;
+
 import com.kosta.care.dto.SurgeryRequestDto;
 import com.kosta.care.dto.TestDto;
 import com.kosta.care.entity.DiagnosisDue;
 import com.kosta.care.entity.Patient;
-import com.kosta.care.entity.SurgeryRequest;
 import com.kosta.care.entity.Test;
 import com.kosta.care.entity.TestFile;
-<<<<<<< Updated upstream
-=======
+
 import com.kosta.care.repository.TestRepository;
 import com.kosta.care.repository.DiagnosisDueRepository;
 import com.kosta.care.repository.PatientRepository;
 import com.kosta.care.repository.SurgeryRequestRepository;
->>>>>>> Stashed changes
+
 import com.kosta.care.repository.TestFileRepository;
-import com.kosta.care.repository.TestRepository;
 
 @Service
 public class TestServiceImpl implements TestService {
@@ -210,10 +206,6 @@ public class TestServiceImpl implements TestService {
 
 		String jobString = userId+"".substring(0, 2);
 		
-
-		
-//		List<SurgeryRequestDto> surSchedules = new ArrayList<>();
-		 
 
 
 		
