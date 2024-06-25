@@ -9,7 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import com.google.api.client.util.DateTime;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@DynamicInsert  //save할 때 null값은 포함하지 않음
 public class Surgery {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,7 +65,8 @@ public class Surgery {
 	private String surgeryBloodPackCnt;
 	@Column
 	private String surgeryResult;
-	@Column  // 여기에다 대기중 기본값으로 
+	@Column(nullable = false)  // 여기에다 대기중 기본값으로 
+	@ColumnDefault("'wait'")
 	private String surgeryState;
 	@Column
 	private String surgeryEtc;

@@ -19,8 +19,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.util.Value;
 import com.kosta.care.dto.AdmissionRequestDto;
+import com.google.auth.oauth2.IdTokenProvider.Option;
 import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.dto.SurgeryRequestDto;
+import com.kosta.care.dto.TestDto;
 import com.kosta.care.dto.TestRequestDto;
 import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.AdmissionRequest;
@@ -278,78 +280,6 @@ public class AdmServiceImpl implements AdmService {
 		return testRequestDslRepository.findTestRequestList(patNum);
 	}
 
-	@Override
-	public List<Time> getTestList(String testName, Date testDate) throws Exception {
-
-		return testDslRepository.findByTestTimeByTestNameAndTestDate(testName, testDate);
-	}
-
-	@Override
-	public Boolean testReserve(Test test, MultipartFile testFile) throws Exception {
-		if(testFile!=null && !testFile.isEmpty()) {
-			TestFile tFile = TestFile.builder()
-					.testFileName(testFile.getOriginalFilename())
-					.testFileSize(testFile.getSize())
-					.testFileType(testFile.getContentType())
-					.build();
-			testFileRepository.save(tFile);
-
-			File upFile = new File(uploadPath,tFile.getTestFileNum()+"");
-			testFile.transferTo(upFile); //file upload
-
-			test.setTestFileNum(tFile.getTestFileNum());
-			test.setTestOutInspectRecord(testFile.getOriginalFilename());
-
-		}
-		testRepository.save(test);
-		Optional<TestRequest> otestRequest = testRequestRepository.findById(test.getTestRequestNum());
-		if(otestRequest.isPresent()) {
-			TestRequest testRequest = otestRequest.get();
-			testRequest.setTestRequestAcpt("reserve");
-			testRequestRepository.save(testRequest);
-		}
-		return true;
-	}
-
-	@Override
-	public SurgeryRequestDto getSurgeryRequest(Long patNum) throws Exception {
-		return surgeryDslRespository.findSurgeryRequest(patNum);
-	}
-
-	@Override
-	public Map<String, Object> operationRoomUse(Date useDate) throws Exception {
-		Map<String,Object> res = new HashMap<>();
-		List<Long> opRoomList = operationRoomRepository.findAll().stream()
-				.map((or)->or.getOperationRoomNum())
-				.collect(Collectors.toList());
-		res.put("opRoomList", opRoomList);
-
-		List<OperationUseCheck> opUseCheckList = operationUseCheckRepository.findByUseDate(useDate);
-		res.put("opUseCheckList", opUseCheckList);
-		return res;
-	}
-
-	@Override
-	public Map<String, Object> sureryNurList(Long departmentNum, Date surDate) throws Exception {
-		System.out.println(departmentNum);
-		System.out.println(surDate);
-		Map<String, Object> res = new HashMap<>();
-		List<Nurse> nurseList =  nurseRepository.findByNurPositionAndDepartmentNum("3", departmentNum);
-		res.put("nurseList", nurseList);
-		List<Map<String,Object>> surNurList = surgeryDslRespository.findBySurNurseByOpDate(departmentNum, surDate);
-		res.put("surNurList", surNurList);
-		return res;
-	}
-
-	@Override
-	public Boolean reserveSurgery(Surgery surgery) throws Exception {
-		surgeryRespository.save(surgery);
-		//수술요청 테이블 상태 변경 : wait->reserved
-		SurgeryRequest surgeryRequest = surgeryRequestRepository.findById(surgery.getSurgeryRequestNum()).get();
-		surgeryRequest.setSurgeryRequestAcpt("reserved");
-		surgeryRequestRepository.save(surgeryRequest);
-		return true;
-	}
 
 
 	@Override
@@ -479,4 +409,79 @@ public class AdmServiceImpl implements AdmService {
 			admissionRequestRepository.save(admissionRequest);
 		}
 	}
+		
+		@Override
+		public List<Time> getTestList(String testName, Date testDate) throws Exception {
+
+			return testDslRepository.findByTestTimeByTestNameAndTestDate(testName, testDate);
+		}
+
+		@Override
+		public Boolean testReserve(Test test, MultipartFile testFile) throws Exception {
+			if(testFile!=null && !testFile.isEmpty()) {
+				TestFile tFile = TestFile.builder()
+									.testFileName(testFile.getOriginalFilename())
+									.testFileSize(testFile.getSize())
+									.testFileType(testFile.getContentType())
+									.build();
+				testFileRepository.save(tFile);
+				
+				File upFile = new File(uploadPath,tFile.getTestFileNum()+"");
+				testFile.transferTo(upFile); //file upload
+				
+				test.setTestFileNum(tFile.getTestFileNum());
+				test.setTestOutInspectRecord(testFile.getOriginalFilename());
+				
+			}
+			testRepository.save(test);
+			Optional<TestRequest> otestRequest = testRequestRepository.findById(test.getTestRequestNum());
+			if(otestRequest.isPresent()) {
+				TestRequest testRequest = otestRequest.get();
+				testRequest.setTestRequestAcpt("reserve");
+				testRequestRepository.save(testRequest);
+			}
+			return true;
+		}
+
+		
+		@Override
+		public SurgeryRequestDto getSurgeryRequest(Long patNum) throws Exception {
+			return surgeryDslRespository.findSurgeryRequest(patNum);
+		}
+		
+		@Override
+		public Map<String, Object> operationRoomUse(Date useDate) throws Exception {
+			Map<String,Object> res = new HashMap<>();
+			List<Long> opRoomList = operationRoomRepository.findAll().stream()
+					.map((or)->or.getOperationRoomNum())
+					.collect(Collectors.toList());
+			res.put("opRoomList", opRoomList);
+			
+			List<OperationUseCheck> opUseCheckList = operationUseCheckRepository.findByUseDate(useDate);
+			res.put("opUseCheckList", opUseCheckList);
+			return res;
+		}
+
+		@Override
+		public Map<String, Object> sureryNurList(Long departmentNum, Date surDate) throws Exception {
+			System.out.println(departmentNum);
+			System.out.println(surDate);
+			Map<String, Object> res = new HashMap<>();
+			List<Nurse> nurseList =  nurseRepository.findByNurPositionAndDepartmentNum("3", departmentNum);
+			res.put("nurseList", nurseList);
+			List<Map<String,Object>> surNurList = surgeryDslRespository.findBySurNurseByOpDate(departmentNum, surDate);
+			res.put("surNurList", surNurList);
+			return res;
+		}
+
+		@Override
+		public Boolean reserveSurgery(Surgery surgery) throws Exception {
+			surgeryRespository.save(surgery);
+			//수술요청 테이블 상태 변경 : wait->reserved
+			SurgeryRequest surgeryRequest = surgeryRequestRepository.findById(surgery.getSurgeryRequestNum()).get();
+			surgeryRequest.setSurgeryRequestAcpt("reserved");
+			surgeryRequestRepository.save(surgeryRequest);
+			return true;
+		}
+
 }

@@ -1,12 +1,8 @@
 package com.kosta.care.service;
 
-<<<<<<< Updated upstream
 import java.io.File;
 import java.sql.Date;
-=======
-import java.util.ArrayList;
 import java.util.HashMap;
->>>>>>> Stashed changes
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,22 +17,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kosta.care.dto.CalendarDto;
-import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.dto.SurgeryRequestDto;
 import com.kosta.care.dto.TestDto;
 import com.kosta.care.entity.DiagnosisDue;
 import com.kosta.care.entity.Patient;
-import com.kosta.care.entity.SurgeryRequest;
 import com.kosta.care.entity.Test;
 import com.kosta.care.entity.TestFile;
-<<<<<<< Updated upstream
-=======
-import com.kosta.care.repository.TestRepository;
 import com.kosta.care.repository.DiagnosisDueRepository;
 import com.kosta.care.repository.PatientRepository;
 import com.kosta.care.repository.SurgeryRequestRepository;
->>>>>>> Stashed changes
 import com.kosta.care.repository.TestFileRepository;
 import com.kosta.care.repository.TestRepository;
 
@@ -105,7 +94,7 @@ public class TestServiceImpl implements TestService {
 	}
     @Override
     public List<TestDto> getPatientAllTestList(String dept2Name,  Long patNum) throws Exception {
-        List<Test> tests = testRepository.findByTestNameAndTestStatusAndPatient_PatNum(dept2Name,"complete",patNum);
+        List<Test> tests = testRepository.findByTestNameAndTestStatusAndPatNum(dept2Name,"complete",patNum);
         System.out.println(tests);
         return tests.stream()
 	            .map(t->{
@@ -185,20 +174,22 @@ public class TestServiceImpl implements TestService {
         
         return testFiles;
     }
+    
     @Override
-	public void uploadTestNotice(Long testNum, Long metNum, String testNotice) throws Exception {
-	    Optional<Test> optionalTest = testRepository.findById(testNum);
-	    if (optionalTest.isPresent()) {
-	        Test test = optionalTest.get();
-	        // 상태를 업데이트
-	        test.setTestNotice(testNotice);
-	        test.setMetNum(metNum);
-	        // 변경된 엔티티를 데이터베이스에 저장
-	        testRepository.save(test);
-	    } else {
-	        throw new EntityNotFoundException("Test request not found with id: " + testNum);
-	    }
-	}
+   	public void uploadTestNotice(Long testNum, Long metNum, String testNotice) throws Exception {
+   	    Optional<Test> optionalTest = testRepository.findById(testNum);
+   	    if (optionalTest.isPresent()) {
+   	        Test test = optionalTest.get();
+   	        // 상태를 업데이트
+   	        test.setTestNotice(testNotice);
+   	        test.setMetNum(metNum);
+   	        // 변경된 엔티티를 데이터베이스에 저장
+   	        testRepository.save(test);
+   	    } else {
+   	        throw new EntityNotFoundException("Test request not found with id: " + testNum);
+   	    }
+   	}
+    
     @Override
     public Map<String,Object> getAllTestTimeList(Long userId) throws Exception {
     	if (userId == null) {
@@ -210,10 +201,6 @@ public class TestServiceImpl implements TestService {
 
 		String jobString = userId+"".substring(0, 2);
 		
-
-		
-//		List<SurgeryRequestDto> surSchedules = new ArrayList<>();
-		 
 
 
 		
@@ -274,4 +261,5 @@ public class TestServiceImpl implements TestService {
 		}
 		return res;
     }
+    
 }

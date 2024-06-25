@@ -98,16 +98,18 @@ public class AdmMainController {
 	}
 	
 	@GetMapping("/doctorDueList")
-	public ResponseEntity<List<List<DiagnosisDueDto>>> doctorDueList(@RequestParam("departmentNum") Long departmentNum,
+	public ResponseEntity<Map<String, Object>> doctorDueList(@RequestParam("departmentNum") Long departmentNum,
 			@RequestParam("diagnosisDueDate") String date) {
 		try {
-			List<List<DiagnosisDueDto>> doctorDueList = diagnosisDueService.doctorDiagnosisDueList(departmentNum, Date.valueOf(date));
-			return new ResponseEntity<List<List<DiagnosisDueDto>>>(doctorDueList, HttpStatus.OK);
+			Map<String, Object> res = diagnosisDueService.doctorDiagnosisDueList(departmentNum, Date.valueOf(date));
+			System.out.println(res);
+			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<List<List<DiagnosisDueDto>>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
+
 	
 	@GetMapping("/diagSearchAll")
 	public ResponseEntity<List<DiagnosisDue>> diagSearchAll() {
