@@ -50,4 +50,7 @@ public interface AdmService {
 
 	Boolean reserveSurgery(Surgery surgery) throws Exception;
 
+	void getPatientAdmissionRegist(Long docNum, String admissionRequestReason, Long patNum, Long admissionRequestPeriod,
+			Long bedsDept, Long bedsWard, Long bedsRoom, Long bedsBed)throws Exception;
+
 }

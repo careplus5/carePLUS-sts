@@ -64,6 +64,8 @@ public class AlarmServiceImpl implements AlarmService {
 				.alarmContent(alarmContent).build();
 
 		alarmRepository.save(alarm);
+		
+		Message message = null;
 
 		Notification notification = null;
 		if (findJob.equals("11")) {
@@ -71,25 +73,62 @@ public class AlarmServiceImpl implements AlarmService {
 			System.out.println(employee);
 			if (alarmCategory.equals("공지사항") && employee.get().getIsNoticeAlarmOk().equals(true)) {
 
-				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
-						.setBody("("+alarmCategory+")"+alarmContent).build();
+				notification = Notification.builder()
+			            .setTitle("알림 제목")
+			            .setBody("(" + alarmCategory + ")" + alarmContent)
+			            .build();
+				
+				message = Message.builder()
+						.setToken(FcmToken)
+						.setNotification(notification)
+						.putData("alarmNum", alarm.getAlarmNum().toString())
+			            .putData("alarmCategory", alarmCategory)
+			            .putData("alarmSendFlag", "true")
+						.build();
 
 			} else if (alarmCategory.equals("진료") && employee.get().getIsDiagnosAlarmOk().equals(true)) {
 
-				System.out.println(employee.get().getIsDiagnosAlarmOk());
-
-				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
-						.setBody("("+alarmCategory+")"+alarmContent).build();
+				notification = Notification.builder()
+			            .setTitle("알림 제목")
+			            .setBody("(" + alarmCategory + ")" + alarmContent)
+			            .build();
+				
+				 message = Message.builder()
+						.setToken(FcmToken)
+						.setNotification(notification)
+						.putData("alarmNum", alarm.getAlarmNum().toString())
+			            .putData("alarmCategory", alarmCategory)
+			            .putData("alarmSendFlag", "true")
+						.build();
 
 			} else if (alarmCategory.equals("수술") && employee.get().getIsSurgeryAlarmOk().equals(true)) {
 
-				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
-						.setBody("("+alarmCategory+")"+alarmContent).build();
+				notification = Notification.builder()
+			            .setTitle("알림 제목")
+			            .setBody("(" + alarmCategory + ")" + alarmContent)
+			            .build();
+				
+				 message = Message.builder()
+						.setToken(FcmToken)
+						.setNotification(notification)
+						.putData("alarmNum", alarm.getAlarmNum().toString())
+			            .putData("alarmCategory", alarmCategory)
+			            .putData("alarmSendFlag", "true")
+						.build();
 
 			} else {
 
 				notification = Notification.builder()
-						.setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "false").setBody("("+alarmCategory+")"+alarmContent)
+			            .setTitle("알림 제목")
+			            .setBody("(" + alarmCategory + ")" + alarmContent)
+			            .build();
+				
+				 message = Message.builder()
+						.setToken(FcmToken)
+						.setNotification(notification)
+						.putData("alarmNum", alarm.getAlarmNum().toString())
+			            .putData("alarmCategory", alarmCategory)
+			            .putData("alarmSendFlag", "false")
 						.build();
 
 			}
@@ -97,28 +136,77 @@ public class AlarmServiceImpl implements AlarmService {
 			Optional<Nurse> employee = nurseRepository.findById(empNum);
 			if (alarmCategory.equals("공지사항") && employee.get().getIsNoticeAlarmOk().equals(true)) {
 
-				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
-						.setBody("("+alarmCategory+")"+alarmContent).build();
+				notification = Notification.builder()
+			            .setTitle("알림 제목")
+			            .setBody("(" + alarmCategory + ")" + alarmContent)
+			            .build();
+				
+				 message = Message.builder()
+						.setToken(FcmToken)
+						.setNotification(notification)
+						.putData("alarmNum", alarm.getAlarmNum().toString())
+			            .putData("alarmCategory", alarmCategory)
+			            .putData("alarmSendFlag", "true")
+						.build();
 
 			} else if (alarmCategory.equals("수술") && employee.get().getIsSurgeryAlarmOk().equals(true)) {
 
-				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
-						.setBody("("+alarmCategory+")"+alarmContent).build();
+				notification = Notification.builder()
+			            .setTitle("알림 제목")
+			            .setBody("(" + alarmCategory + ")" + alarmContent)
+			            .build();
+				
+				 message = Message.builder()
+						.setToken(FcmToken)
+						.setNotification(notification)
+						.putData("alarmNum", alarm.getAlarmNum().toString())
+			            .putData("alarmCategory", alarmCategory)
+			            .putData("alarmSendFlag", "true")
+						.build();
 
 			} else if (alarmCategory.equals("입원") && employee.get().getIsAdmissionAlarmOk().equals(true)) {
 
-				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
-						.setBody("("+alarmCategory+")"+alarmContent).build();
+				notification = Notification.builder()
+			            .setTitle("알림 제목")
+			            .setBody("(" + alarmCategory + ")" + alarmContent)
+			            .build();
+				
+				 message = Message.builder()
+						.setToken(FcmToken)
+						.setNotification(notification)
+						.putData("alarmNum", alarm.getAlarmNum().toString())
+			            .putData("alarmCategory", alarmCategory)
+			            .putData("alarmSendFlag", "true")
+						.build();
 
 			} else if (alarmCategory.equals("요청사항") && employee.get().getIsRequestAlarmOk().equals(true)) {
 
-				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
-						.setBody("("+alarmCategory+")"+alarmContent).build();
+				notification = Notification.builder()
+			            .setTitle("알림 제목")
+			            .setBody("(" + alarmCategory + ")" + alarmContent)
+			            .build();
+				
+				 message = Message.builder()
+						.setToken(FcmToken)
+						.setNotification(notification)
+						.putData("alarmNum", alarm.getAlarmNum().toString())
+			            .putData("alarmCategory", alarmCategory)
+			            .putData("alarmSendFlag", "true")
+						.build();
 
 			} else {
 
 				notification = Notification.builder()
-						.setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "false").setBody("("+alarmCategory+")"+alarmContent)
+			            .setTitle("알림 제목")
+			            .setBody("(" + alarmCategory + ")" + alarmContent)
+			            .build();
+				
+				 message = Message.builder()
+						.setToken(FcmToken)
+						.setNotification(notification)
+						.putData("alarmNum", alarm.getAlarmNum().toString())
+			            .putData("alarmCategory", alarmCategory)
+			            .putData("alarmSendFlag", "false")
 						.build();
 
 			}
@@ -126,23 +214,61 @@ public class AlarmServiceImpl implements AlarmService {
 			Optional<AdminHospital> employee = adminHospitalRepository.findById(empNum);
 			if (alarmCategory.equals("공지사항") && employee.get().getIsNoticeAlarmOk().equals(true)) {
 
-				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
-						.setBody("("+alarmCategory+")"+alarmContent).build();
+				notification = Notification.builder()
+			            .setTitle("알림 제목")
+			            .setBody("(" + alarmCategory + ")" + alarmContent)
+			            .build();
+				
+				 message = Message.builder()
+						.setToken(FcmToken)
+						.setNotification(notification)
+						.putData("alarmNum", alarm.getAlarmNum().toString())
+			            .putData("alarmCategory", alarmCategory)
+			            .putData("alarmSendFlag", "true")
+						.build();
 
 			} else if (alarmCategory.equals("처방") && employee.get().getIsPrescriptionAlarmOk().equals(true)) {
 
-				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
-						.setBody("("+alarmCategory+")"+alarmContent).build();
-
+				notification = Notification.builder()
+			            .setTitle("알림 제목")
+			            .setBody("(" + alarmCategory + ")" + alarmContent)
+			            .build();
+				
+				 message = Message.builder()
+						.setToken(FcmToken)
+						.setNotification(notification)
+						.putData("alarmNum", alarm.getAlarmNum().toString())
+			            .putData("alarmCategory", alarmCategory)
+			            .putData("alarmSendFlag", "true")
+						.build();
 			} else if (alarmCategory.equals("퇴원") && employee.get().getIsDischargeAlarmOk().equals(true)) {
 
-				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
-						.setBody("("+alarmCategory+")"+alarmContent).build();
+				notification = Notification.builder()
+			            .setTitle("알림 제목")
+			            .setBody("(" + alarmCategory + ")" + alarmContent)
+			            .build();
+				
+				 message = Message.builder()
+						.setToken(FcmToken)
+						.setNotification(notification)
+						.putData("alarmNum", alarm.getAlarmNum().toString())
+			            .putData("alarmCategory", alarmCategory)
+			            .putData("alarmSendFlag", "true")
+						.build();
 
 			} else {
 
 				notification = Notification.builder()
-						.setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "false").setBody("("+alarmCategory+")"+alarmContent)
+			            .setTitle("알림 제목")
+			            .setBody("(" + alarmCategory + ")" + alarmContent)
+			            .build();
+				
+				 message = Message.builder()
+						.setToken(FcmToken)
+						.setNotification(notification)
+						.putData("alarmNum", alarm.getAlarmNum().toString())
+			            .putData("alarmCategory", alarmCategory)
+			            .putData("alarmSendFlag", "false")
 						.build();
 
 			}
@@ -150,23 +276,37 @@ public class AlarmServiceImpl implements AlarmService {
 			Optional<MedicalTechnician> employee = medicalTechnicianRepository.findById(empNum);
 			if (alarmCategory.equals("공지사항") && employee.get().getIsNoticeAlarmOk().equals(true)) {
 
-				notification = Notification.builder().setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "true")
-						.setBody("("+alarmCategory+")"+alarmContent).build();
+				notification = Notification.builder()
+			            .setTitle("알림 제목")
+			            .setBody("(" + alarmCategory + ")" + alarmContent)
+			            .build();
+				
+				 message = Message.builder()
+						.setToken(FcmToken)
+						.setNotification(notification)
+						.putData("alarmNum", alarm.getAlarmNum().toString())
+			            .putData("alarmCategory", alarmCategory)
+			            .putData("alarmSendFlag", "true")
+						.build();
 
 			} else {
 
 				notification = Notification.builder()
-						.setTitle(alarm.getAlarmNum() + "," + alarmCategory + "," + "false").setBody("("+alarmCategory+")"+alarmContent)
+			            .setTitle("알림 제목")
+			            .setBody("(" + alarmCategory + ")" + alarmContent)
+			            .build();
+				
+				 message = Message.builder()
+						.setToken(FcmToken)
+						.setNotification(notification)
+						.putData("alarmNum", alarm.getAlarmNum().toString())
+			            .putData("alarmCategory", alarmCategory)
+			            .putData("alarmSendFlag", "false")
 						.build();
 
 			}
 		}
 		try {
-			Message message = Message.builder()
-					.setToken(FcmToken)
-					.setNotification(notification)
-					.build();
-			
 			firebaseMessaging.send(message);
 			alarm.setAlarmDelivery(true);
 		}catch (Exception e) {

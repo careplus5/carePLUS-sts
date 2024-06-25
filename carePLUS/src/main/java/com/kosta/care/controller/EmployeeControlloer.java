@@ -69,6 +69,7 @@ public class EmployeeControlloer {
 			@RequestParam(name = "word", required = false) String word) {
 		System.out.println(jobName);
 		Map<String, Object> res = new HashMap<>();
+		System.out.println(page);
 		try {
 			PageInfo pageInfo = PageInfo.builder().curPage(page).build();
 			List<EmployeeDto> employeeList = employeeSerivce.employeeListByPage(jobName, pageInfo, type, word);

@@ -3,6 +3,8 @@ package com.kosta.care.service;
 import java.io.File;
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +26,8 @@ import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.dto.SurgeryRequestDto;
 import com.kosta.care.dto.TestRequestDto;
 import com.kosta.care.entity.Admission;
+import com.kosta.care.entity.AdmissionRequest;
+import com.kosta.care.entity.Beds;
 import com.kosta.care.entity.DiagnosisDue;
 import com.kosta.care.entity.DocDiagnosis;
 import com.kosta.care.entity.Nurse;
@@ -38,6 +42,7 @@ import com.kosta.care.entity.TestFile;
 import com.kosta.care.entity.TestRequest;
 import com.kosta.care.repository.AdmDslRepository;
 import com.kosta.care.repository.AdmissionRepository;
+import com.kosta.care.repository.AdmissionRequestRepository;
 import com.kosta.care.repository.BedsRepository;
 import com.kosta.care.repository.DiagnosisDueRepository;
 import com.kosta.care.repository.DocDiagnosisRepository;
@@ -79,6 +84,8 @@ public class AdmServiceImpl implements AdmService {
 	private final NurseRepository nurseRepository; 
 	private final BedsRepository bedsRepository; 
 
+	@Autowired
+	private AdmissionRequestRepository admissionRequestRepository;
 	
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -362,5 +369,51 @@ public class AdmServiceImpl implements AdmService {
 			return true;
 		}
 
+
+		@Override
+		public void getPatientAdmissionRegist(Long docNum, String admissionRequestReason, Long patNum, Long admissionRequestPeriod,
+				Long bedsDept, Long bedsWard, Long bedsRoom, Long bedsBed) throws Exception {
+
+			// 1. bedsNum 계산
+	        String bedsNumStr = bedsDept.toString()+bedsWard.toString()+bedsRoom.toString()+bedsBed.toString();
+	        Long bedsNum = Long.parseLong(bedsNumStr);
+
+	        // 2. 예약된 침대의 사용유무 업데이트
+	        Optional<Beds> oBeds = bedsRepository.findById(bedsNum);
+	        if (oBeds.isPresent()) {
+	            Beds beds = oBeds.get();
+	            beds.setBedsIsUse(true); // 사용중으로 설정
+	            bedsRepository.save(beds); // 변경 사항 저장
+	        } else {
+	            throw new Exception("해당 침대를 찾을 수 없습니다: " + bedsNum);
+	        }
+	        // 3.오늘 날짜 생성
+	        LocalDate today = LocalDate.now();
+	        // 4.퇴원 예정일 생성
+	        LocalDate admissionDischargeDueDate = today.plusDays(admissionRequestPeriod);
+	        
+	        Date admissionDate = (Date) Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
+	        Date dischargeDueDate = (Date) Date.from(admissionDischargeDueDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+	        
+	        // 5. 입원 테이블에 데이터 추가
+	        Admission admission = Admission.builder()
+	        		.docNum(docNum)
+	        		.admissionReason(admissionRequestReason)
+	                .patNum(patNum)
+	                .bedsNum(bedsNum)
+	                .admissionDate(admissionDate)
+	                .admissionDischargeDueDate(dischargeDueDate)
+	                .bedsNum(bedsNum)
+	                .build();
+
+	        admissionRepository.save(admission); // 입원 정보 저장
+	        
+	        // 6. 입원예약 상태 변경 및 저장
+	        AdmissionRequest admissionRequest = admissionRequestRepository.findByPatNumAndAdmissionRequestAcpt(patNum, "wait");
+	        admissionRequest.setAdmissionRequestAcpt("end");
+	        
+	        admissionRequestRepository.save(admissionRequest);
+	    }
 
 }

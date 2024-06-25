@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kosta.care.entity.QAdmission;
 import com.kosta.care.entity.QAdmissionRecord;
+import com.kosta.care.entity.QAdmissionRequest;
 import com.kosta.care.entity.QDepartment;
 import com.kosta.care.entity.QDisease;
 import com.kosta.care.entity.QDocDiagnosis;
@@ -134,6 +135,24 @@ public class AdmDslRepository {
 						.join(disease).on(docDiagnosis.diseaseNum.eq(disease.diseaseNum))
 						.where(admissionRecord.admissionNum.eq(admNum))
 						.fetch();
+		}
+		
+		// 입원 내역 조회 (내역이 wait인 환자 조회)
+		public Tuple findAdmissionRequestByPatNum(Long patNum) {
+			System.out.println("Test");
+			QAdmissionRequest admissionRequest = QAdmissionRequest.admissionRequest;
+			QDocDiagnosis docDiagnosis = QDocDiagnosis.docDiagnosis;
+			QDoctor doctor = QDoctor.doctor;
+
+			return jpaQueryFactory.select(doctor.departmentName, doctor.docName, admissionRequest.admissionRequestReason,
+							admissionRequest.admissionRequestPeriod, doctor.departmentNum)
+									.from(admissionRequest)
+									.join(docDiagnosis)
+									.on(admissionRequest.diagnosisNum.eq(docDiagnosis.docDiagnosisNum))
+									.join(doctor)
+									.on(admissionRequest.docNum.eq(doctor.docNum))
+									.where(admissionRequest.patNum.eq(patNum).and(admissionRequest.admissionRequestAcpt.eq("wait")))
+									.fetchOne();
 		}
 		
 }
