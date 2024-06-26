@@ -75,20 +75,7 @@ public class AdmissionController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-//	@GetMapping("/nurPatientInfo")
-//	public ResponseEntity<List<Map<String, Object>>> admPatientDoctorRecordList(@RequestParam("admissionNum") Long admissionNum) {
-//		System.out.println("doctor record 리스트 가져오기 준비");
-//		try {
-//			System.out.println("리스트 가져오기 시작");
-//			List<Map<String, Object>> doctorRecord = admService.admPatientDoctorRecordList(admissionNum);
-//			System.out.println("결과:"+doctorRecord.toString());
-//			return new ResponseEntity<List<Map<String, Object>>>(doctorRecord, HttpStatus.OK);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return new ResponseEntity<List<Map<String, Object>>>(HttpStatus.BAD_REQUEST);
-//		}
-//	}
-	
+
 	@GetMapping("/nurPatientInfo")
 	public ResponseEntity<Map<String, List<Map<String, Object>>>> getPatientRecords(@RequestParam("admissionNum") Long admissionNum) {
 	    System.out.println("doctor and nurse records 리스트 가져오기 준비");

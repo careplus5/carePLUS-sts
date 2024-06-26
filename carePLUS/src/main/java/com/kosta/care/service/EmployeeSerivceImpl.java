@@ -19,13 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kosta.care.dto.EmployeeDto;
 import com.kosta.care.entity.AdminHospital;
 import com.kosta.care.entity.Doctor;
-import com.kosta.care.entity.Employee;
 import com.kosta.care.entity.MedicalTechnician;
 import com.kosta.care.entity.Nurse;
 import com.kosta.care.entity.Profile;
 import com.kosta.care.repository.AdminHospitalRepository;
 import com.kosta.care.repository.DoctorRepository;
-import com.kosta.care.repository.EmployeeRepository;
 import com.kosta.care.repository.MedicalTechnicianRepository;
 import com.kosta.care.repository.NurseRepository;
 import com.kosta.care.repository.ProfileRepository;
@@ -46,7 +44,6 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 	private final MedicalTechnicianRepository medicalTechnicianRepository;
 	private final AdminHospitalRepository adminHospitalRepository;
 	private final ProfileRepository profileRepository;
-	private final EmployeeRepository empRepository;
 	private final SequenceService sequenceService;
 	@Autowired
 	EmployeeUtil employeeUtil;

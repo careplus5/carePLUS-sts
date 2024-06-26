@@ -85,9 +85,6 @@ public class AdmissionServiceImpl implements AdmissionService {
 			String docName = tuple.get(2,String.class);
 			String patName = tuple.get(3,String.class);
 			String jumin= tuple.get(4,String.class);
-			System.out.println(jumin);
-			System.out.println("부서는"+docDepartment);
-			System.out.println("이름은"+docName);
 			Map<String, Object> map = new HashMap<>();
 			map.put("admission", admission);
 			map.put("docDepartment", docDepartment);
@@ -115,8 +112,6 @@ public class AdmissionServiceImpl implements AdmissionService {
 			AdmissionRecord record = tuple.get(0,AdmissionRecord.class);
 			Long docNum = tuple.get(1,Long.class);
 			String docName = tuple.get(2,String.class);
-			System.out.println("의사 진단 결과: "+docNum);
-			//			System.out.println("이름은"+docName);
 			Map<String, Object> map = new HashMap<>();
 			map.put("record", record);
 			map.put("docNum", docNum);
@@ -131,7 +126,6 @@ public class AdmissionServiceImpl implements AdmissionService {
 	@Override
 	public List<Map<String, Object>> admPatientNurseRecordList(Long admissionNum) {
 		// admission내역
-		System.out.println(admissionNum+"또 찾아보자이");
 
 		List<Tuple> tuples = admRepository.findAdmPatientNurseRecordByAdmissionNum(admissionNum);
 		System.out.println(tuples.toString());
@@ -180,21 +174,12 @@ public class AdmissionServiceImpl implements AdmissionService {
 			// prescription , 버튼 수
 			PrescriptionDiary diary = new PrescriptionDiary();
 			diary.setNurNum(Long.parseLong(nurNum));
-			System.out.println(nurNum+": 이상 무");
 			diary.setPatNum(Long.parseLong(patNum));
-			System.out.println(patNum+": 이상 무");
-			System.out.println(diaryTime+": 이상 무");
-			//			diary.setPrescriptionNum(prescriptionNum);
 			System.out.println(prescriptionNum+": 이상 무");
 			String prescriptionDiaryFre1 = diaryTime.toString()+", "+diaryStatus;
-			System.out.println(prescriptionDiaryFre1+": 이상 무");
-
-			System.out.println(buttonNum+"번째 버튼입니다.");
 
 			System.out.println(prescriptionDiaryFre1);
 			if(buttonNum.equals("1")) {
-				System.out.println(buttonNum+": 이상 무");
-				System.out.println(prescriptionDiaryFre1.toString());
 				diaryRepository.updateDiary1(prescriptionNum, prescriptionDiaryFre1);
 			} else if(buttonNum.equals("2")) {
 				diary.setPrescriptionDiaryFre2(diaryTime+", "+diaryStatus);
@@ -293,10 +278,6 @@ public class AdmissionServiceImpl implements AdmissionService {
 		List<Tuple> tuples = admRepository.findDailyPrescriptionListByPatNum(patNum);
 		System.out.println("해당 환자의 처방 리스트입니다: "+tuples.toString());
 
-		//		Admission admission = tuple.get(0, Admission.class);
-		//		Patient patient = tuple.get(1, Patient.class);
-		//		AdmissionRequest admRequest = tuple.get(2, AdmissionRequest.class);
-		//		
 		List<Map<String, Object>> dailyPrescList = new ArrayList<>();
 
 		for(Tuple tuple : tuples) {

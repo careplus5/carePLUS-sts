@@ -36,7 +36,6 @@ public class AlarmServiceImpl implements AlarmService {
 	private final AdminHospitalRepository adminHospitalRepository;
 	private final MedicalTechnicianRepository medicalTechnicianRepository;
 	private final AlarmRepository alarmRepository;
-	private final EmployeeAlarmRepository employeeAlarmRepository;
 
 	@Override
 	public void sendAlarmByEmpNum(Long empNum, String alarmCategory, String alarmContent) throws Exception {

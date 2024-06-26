@@ -4,17 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.kosta.care.dto.CalendarDto;
 import com.kosta.care.entity.DocSchedule;
 import com.kosta.care.entity.MetSchedule;
-import com.kosta.care.entity.NurseSchedule;
 import com.kosta.care.repository.DocScheduleRepository;
 import com.kosta.care.repository.MetScheduleRepository;
-import com.kosta.care.repository.NurseScheduleRepository;
 
 @Service
 public class CalendarServiceImpl implements CalendarService {

@@ -324,73 +324,7 @@ public class AdmMainController {
 		}
 	}
 
-//	@PostMapping("/patientAdmissionRegist")
-//	public ResponseEntity<> patientAdmissionRegist(@RequestBody Map<String, Long> param) {
-//		try {
-//            Long patNum = Long.valueOf(param.get("patNum").toString());
-//            Long bedsNum = Long.valueOf(param.get("bedsNum").toString());
-//            Long docNum = Long.valueOf(param.get("docNum").toString());
-//            Long admissionRequestNum = Long.valueOf(param.get("admissionRequestNum").toString());
-//            String admissionDate = (Date) param.get("admissionDate");
-//            Date admissionDueDate = (Date) param.get("admissionDueDate");
-//            Date admissionDischargeDueDate = (Date) param.get("admissionDischargeDueDate");
-//            String admissionReason = (String) param.get("admissionReason");
-//
-//            Map<String, Object> res = admissionService.registerPatientAdmission(patNum, bedsNum, docNum,
-//                    admissionRequestNum, admissionDate, admissionDueDate, admissionDischargeDueDate, admissionReason);
-//
-//        } catch (NumberFormatException | ClassCastException | NullPointerException e) {
-//            // 클라이언트에게 전달할 예외 메시지를 설정하여 반환
-//            String errorMessage = "Invalid request parameters: " + e.getMessage();
-//            return new ResponseEntity<Map<String, Object>>(HttpStatus.OK);
-//        } catch (Exception e) {
-//            e.printStackTrace(); // 예외 발생 시 서버 측 로그 출력
-//            return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
-//                                 
-//        }
-//    }
-	
-//	@PostMapping("/patientAdmissionRegist")
-//    public ResponseEntity<AdmissionRequestDto> patientAdmissionRegist(@RequestBody Map<String, Object> param) {
-//		try {
-//	        // Map에서 필요한 데이터 추출
-//	        Long patNum = Long.parseLong(param.get("patNum").toString());
-//	        Long docNum = Long.parseLong(param.get("docNum").toString());
-//	        Long bedsNum = Long.parseLong(param.get("bedsNum").toString());
-//	        Long admissionRequestNum = Long.parseLong(param.get("admissionRequestNum").toString());
-//	        String admissionReason = (String) param.get("admissionReason");
-//	        Date admissionDate = (Date) param.get("admissionDate"); // 예제에서는 Date로 가정
-//	        Date admissionDischargeDate = (Date) param.get("admissionDischargeDate"); // 예제에서는 Date로 가정
-//
-//	        // AdmissionRequestDto 생성
-//	        AdmissionRequestDto admissionRequestDto = new AdmissionRequestDto();
-//	        admissionRequestDto.setPatNum(patNum);
-//	        admissionRequestDto.setDocNum(docNum);
-//	        admissionRequestDto.setBedsNum(bedsNum);
-//	        admissionRequestDto.setAdmissionRequestNum(admissionRequestNum);
-//	        admissionRequestDto.setAdmissionReason(admissionReason);
-//	        admissionRequestDto.setAdmissionDate(admissionDate);
-//	        admissionRequestDto.setAdmissionDischargeDate(admissionDischargeDate);
-//
-//	        // 서비스 메서드 호출
-//	        admService.getPatientAdmissionRegist(
-//	                patNum,
-//	                docNum,
-//	                bedsNum,
-//	                admissionRequestNum,
-//	                admissionReason,
-//	                admissionDate,
-//	                admissionDischargeDate
-//	        );
-//
-//	        // 성공적인 응답 반환
-//	        return new ResponseEntity<>(admissionRequestDto, HttpStatus.OK);
-//	    } catch (Exception e) {
-//	        // 예외 발생 시 에러 응답 반환
-//	        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//	    }
-//    }
-	
+
 	// 현재 작업 중 
 	@PostMapping("/patientAdmissionRegist")
 	public ResponseEntity<String> patientAdmissionRegist(@RequestBody AdmissionRequestDto admissionRequestDto) {

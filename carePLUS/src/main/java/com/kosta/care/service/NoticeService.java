@@ -2,10 +2,7 @@ package com.kosta.care.service;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.kosta.care.dto.NoticesDto;
-import com.kosta.care.entity.Notices;
 import com.kosta.care.util.PageInfo;
 
 public interface NoticeService{

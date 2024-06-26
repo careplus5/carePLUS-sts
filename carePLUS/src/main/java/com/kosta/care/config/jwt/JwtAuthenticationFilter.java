@@ -80,28 +80,5 @@ response.setContentType("application/json; charset=utf-8");
 
 	}
 
-//	@Override
-//	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-//			throws AuthenticationException {
-//		 String id = request.getParameter("username");
-//		 String username = obtainUsername(request);
-//		 System.out.println(username);
-//         String password = request.getParameter("password");
-//         System.out.println(password);
-//		try {
-////			Long id = Long.parseLong(request.getParameter("username"));
-////			String password = request.getParameter("password");
-//            
-////			Employee emp = empRepository.identifyJob(id);
-//			
-//            UsernamePasswordAuthenticationToken authenticationToken =
-//                    new UsernamePasswordAuthenticationToken(username, password);
-//            System.out.println(String.valueOf(authenticationToken));
-//            return authenticationManager.authenticate(authenticationToken);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//		
-//	}
 }
 

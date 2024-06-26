@@ -9,9 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.care.dto.SurRecordDto;
-import com.kosta.care.entity.Department;
 import com.kosta.care.entity.Doctor;
-import com.kosta.care.entity.Nurse;
 import com.kosta.care.entity.Patient;
 import com.kosta.care.entity.Surgery;
 import com.kosta.care.entity.SurgeryRequest;

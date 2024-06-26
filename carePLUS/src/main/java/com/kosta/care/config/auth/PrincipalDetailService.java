@@ -39,21 +39,7 @@ private EmployeeUtil empUtil;
 		 System.out.println("loadUserByUsername에서의 identity"+identify);
 			System.out.println("loadUserByUsername에서의 username"+Long.parseLong(username));
 			Employee emp = empRepository.identifyJob(username);
-//		return new PrincipalDetails(emp);
-		
-//		 return new org.springframework.security.core.userdetails.User(Long.toString(emp.getId()), emp.getPassword(), null);
-//		User user = identifyJob(username);
-//	        User user = Repository.findById(username);
-//	        System.out.println(user);
-//	        if (user == null) {
-//	            throw new UsernameNotFoundException("User not found with id: " + username);
-//	        }
-//// 사용자의 롤을 SimpleGrantedAuthority로 생성
-//	        List<GrantedAuthority> authorities = new ArrayList<>();
-//	        authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN")); // 예시로 ADMIN 권한을 부여
-////	        
-////	        
-////	        
+       
 //	        return new org.springframework.security.core.userdetails.UserDetails(emp.getId(), emp.getPassword(),authorities);
 	 return new PrincipalDetails(emp); 
 	 }

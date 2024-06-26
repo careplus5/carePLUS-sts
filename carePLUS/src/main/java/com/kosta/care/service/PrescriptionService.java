@@ -2,7 +2,6 @@ package com.kosta.care.service;
 
 import java.util.List;
 import java.util.Optional;
-import com.kosta.care.dto.PrescriptionDto;
 import com.kosta.care.entity.Prescription;
 
 public interface PrescriptionService {

@@ -293,56 +293,12 @@ public class AdmServiceImpl implements AdmService {
 			Long admissionRequestPeriod = tuple.get(3, Long.class);
 			Long department = tuple.get(4,Long.class);
 			AdmissionRequestDto admissionRequestDto =new AdmissionRequestDto(departmentName,docName,admissionRequestReason,admissionRequestPeriod, department);
-			System.out.println("AA");
-			System.out.println(admissionRequestDto); // 부서번호
 			return admissionRequestDto;
 		} else {
 			throw new Exception("조회오류");
 		}
 
 	}
-
-	//		@Override
-	//		public Map<String, Object> registerPatientAdmission(Long patNum, Long bedsNum, Long docNum, Long admissionRequestNum,
-	//				Date admissionDate, Date admissionDueDate, Date admissionDischargeDueDate, String admissionReason)
-	//				throws Exception {
-	//			
-	//			Map<String, Object> result = new HashMap<>();
-	//
-	//	        try {
-	//	            // 1. 입원 정보 등록
-	//	            Admission admission = new Admission();
-	//	            admission.setPatNum(patNum);
-	//	            admission.setAdmissionDate(admissionDate);
-	//	            admission.setAdmissionDueDate(admissionDueDate);
-	//	            admission.setAdmissionDischargeDueDate(admissionDischargeDueDate);
-	//	            admission.setAdmissionReason(admissionReason);
-	//	            admission.setBedsNum(bedsNum);
-	//	            admission.setDocNum(docNum);
-	//	            admission.setAdmissionRequestNum(admissionRequestNum);
-	//	            admissionRepository.save(admission);
-	//
-	//	            // 2. 침대 테이블에서 사용 유무 변경
-	//	            Beds bed = bedsRepository.findById(bedsNum)
-	//	                                   .orElseThrow(() -> new Exception("Bed not found"));
-	//	            bed.setBedsIsUse(true); // assuming setBedsIsUse method exists
-	//	            bedsRepository.save(bed);
-	//
-	//	            // 3. 입원 요청 테이블에서 요청 상태 변경 (wait -> end)
-	//	            AdmissionRequest admissionRequest = admissionRequestRepository.findById(admissionRequestNum)
-	//	                                                                           .orElseThrow(() -> new Exception("Admission request not found"));
-	//	            admissionRequest.setAdmissionRequestAcpt("end"); // assuming setAdmissionRequestAcpt method exists
-	//	            admissionRequestRepository.save(admissionRequest);
-	//
-	//	            result.put("success", true);
-	//	            result.put("message", "Patient admission registered successfully");
-	//	        } catch (Exception e) {
-	//	            // 롤백을 위해 예외 발생 시 트랜잭션 롤백
-	//	            throw new Exception("Failed to register patient admission: " + e.getMessage());
-	//	        }
-	//
-	//	        return result;
-	//	    }
 
 	@Override
 	public List<DocDiagnosis> getConfirmDianosis(Long patNum) throws Exception {
@@ -356,12 +312,6 @@ public class AdmServiceImpl implements AdmService {
 		return null;
 	}
 
-//	@Override
-//	public void getPatientAdmissionRegist(Long docNum, String admissionRequestReason, Long patNum,
-//			Long admissionRequestPeriod, Long bedsDept, Long bedsWard, Long bedsRoom, Long bedsBed) throws Exception {
-//		// TODO Auto-generated method stub
-//		
-//	}
 	
 	@Override
 	public void getPatientAdmissionRegist(AdmissionRequestDto admissionRequestDto) throws Exception {

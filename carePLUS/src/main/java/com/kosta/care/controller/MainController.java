@@ -50,50 +50,6 @@ public class MainController {
 	
   
 
-
-//    
-//    @PostMapping("/login")
-//    @ResponseBody
-//    public ResponseEntity<?> loginEmployee(@RequestBody Employee emp, JwtToken jwtTokenProvider, AuthenticationManager authenticationManager) {
-//
-//        try {
-//            Authentication authentication = authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(
-//                    		emp.getId(),
-//                    		emp.getPassword()
-//                    )
-//                  
-//            );
-//            
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//
-//            String jwt = jwtTokenProvider.makeAccessToken(Long.toString(emp.getId()));
-////            String result = jwtTokenProvider.makeAccessToken(jwt);
-//            
-//            return ResponseEntity.ok().header("Authorization", "Bearer " + jwt).build();
-//        } catch (AuthenticationException e) {
-//        	logger.error("에러임"+emp.getId());
-//        	return ResponseEntity.badRequest().body("로그인 실패");
-//        }
-//    }
-//    
-//    @Autowired
-//	private AdmissionService admService;
-//
-//	
-//	@GetMapping("/wardPatientList")
-//	public ResponseEntity<List<Map<String, Object>>> admPatientList(@RequestParam("nurNum") Long nurNum) {
-//		System.out.println("리스트 가져오기 준비");
-//		try {
-//			System.out.println("리스트 가져오기 시작");
-//			List<Map<String, Object>> admission = admService.admPatientList(nurNum);
-//			return new ResponseEntity<List<Map<String, Object>>>(admission, HttpStatus.OK);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return new ResponseEntity<List<Map<String, Object>>>(HttpStatus.BAD_REQUEST);
-//		}
-//	}
-//	
 //	
 	@GetMapping("/")  // 두 개 이상의 매핑은 { }로 감싼다
 	@ResponseBody
@@ -168,9 +124,6 @@ public ResponseEntity<?> login(@RequestBody Employee emp, JwtToken jwtToken, Aut
 	// 시큐리티는 반드시 밀번호가 암호화해서 들어감 
 		String rawPassword = emp.getPassword();
 	String encodePassword = bCryptPasswordEncoder.encode(rawPassword);
-		// BCryptPasswordEncoder 이것을 만들어 주었음 config 패키에다
-		// Using generated security password: a13ff4b5-9ffb-46a8-8f7f-120b3534f961
-		// 콘솔에서 보면 위와 같은 것이 있음 이것이 암호화 한 것
 	emp.setPassword(encodePassword);
 	admRepository.save(emp);
 		return "redirect:/";
@@ -179,12 +132,9 @@ public ResponseEntity<?> login(@RequestBody Employee emp, JwtToken jwtToken, Aut
 	@PostMapping("/joinNurProc")
 	public String joinNurProc(Nurse emp) {
 		System.out.println("회원가입 진행 : " + emp);
-	// 시큐리티는 반드시 밀번호가 암호화해서 들어감 
 		String rawPassword = emp.getPassword();
 	String encodePassword = bCryptPasswordEncoder.encode(rawPassword);
-		// BCryptPasswordEncoder 이것을 만들어 주었음 config 패키에다
-		// Using generated security password: a13ff4b5-9ffb-46a8-8f7f-120b3534f961
-		// 콘솔에서 보면 위와 같은 것이 있음 이것이 암호화 한 것
+
 	emp.setPassword(encodePassword);
 		nurRepository.save(emp);
 		return "redirect:/";
