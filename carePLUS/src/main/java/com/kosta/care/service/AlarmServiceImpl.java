@@ -76,7 +76,7 @@ public class AlarmServiceImpl implements AlarmService {
 			            .setTitle("알림 제목")
 			            .setBody("(" + alarmCategory + ")" + alarmContent)
 			            .build();
-				
+				if(FcmToken!=null) {
 				message = Message.builder()
 						.setToken(FcmToken)
 						.setNotification(notification)
@@ -84,7 +84,7 @@ public class AlarmServiceImpl implements AlarmService {
 			            .putData("alarmCategory", alarmCategory)
 			            .putData("alarmSendFlag", "true")
 						.build();
-
+				}
 			} else if (alarmCategory.equals("진료") && employee.get().getIsDiagnosAlarmOk().equals(true)) {
 
 				notification = Notification.builder()
@@ -92,14 +92,15 @@ public class AlarmServiceImpl implements AlarmService {
 			            .setBody("(" + alarmCategory + ")" + alarmContent)
 			            .build();
 				
-				 message = Message.builder()
+				if(FcmToken!=null) {
+				message = Message.builder()
 						.setToken(FcmToken)
 						.setNotification(notification)
 						.putData("alarmNum", alarm.getAlarmNum().toString())
 			            .putData("alarmCategory", alarmCategory)
 			            .putData("alarmSendFlag", "true")
 						.build();
-
+				}
 			} else if (alarmCategory.equals("수술") && employee.get().getIsSurgeryAlarmOk().equals(true)) {
 
 				notification = Notification.builder()
@@ -107,13 +108,15 @@ public class AlarmServiceImpl implements AlarmService {
 			            .setBody("(" + alarmCategory + ")" + alarmContent)
 			            .build();
 				
-				 message = Message.builder()
+				if(FcmToken!=null) {
+				message = Message.builder()
 						.setToken(FcmToken)
 						.setNotification(notification)
 						.putData("alarmNum", alarm.getAlarmNum().toString())
 			            .putData("alarmCategory", alarmCategory)
 			            .putData("alarmSendFlag", "true")
 						.build();
+				}
 
 			} else {
 
@@ -122,13 +125,15 @@ public class AlarmServiceImpl implements AlarmService {
 			            .setBody("(" + alarmCategory + ")" + alarmContent)
 			            .build();
 				
-				 message = Message.builder()
+				if(FcmToken!=null) {
+				message = Message.builder()
 						.setToken(FcmToken)
 						.setNotification(notification)
 						.putData("alarmNum", alarm.getAlarmNum().toString())
 			            .putData("alarmCategory", alarmCategory)
 			            .putData("alarmSendFlag", "false")
 						.build();
+				}
 
 			}
 		} else if (findJob.equals("12")) {
@@ -140,13 +145,15 @@ public class AlarmServiceImpl implements AlarmService {
 			            .setBody("(" + alarmCategory + ")" + alarmContent)
 			            .build();
 				
-				 message = Message.builder()
+				if(FcmToken!=null) {
+				message = Message.builder()
 						.setToken(FcmToken)
 						.setNotification(notification)
 						.putData("alarmNum", alarm.getAlarmNum().toString())
 			            .putData("alarmCategory", alarmCategory)
 			            .putData("alarmSendFlag", "true")
 						.build();
+				}
 
 			} else if (alarmCategory.equals("수술") && employee.get().getIsSurgeryAlarmOk().equals(true)) {
 
@@ -155,13 +162,15 @@ public class AlarmServiceImpl implements AlarmService {
 			            .setBody("(" + alarmCategory + ")" + alarmContent)
 			            .build();
 				
-				 message = Message.builder()
+				if(FcmToken!=null) {
+				message = Message.builder()
 						.setToken(FcmToken)
 						.setNotification(notification)
 						.putData("alarmNum", alarm.getAlarmNum().toString())
 			            .putData("alarmCategory", alarmCategory)
 			            .putData("alarmSendFlag", "true")
 						.build();
+				}
 
 			} else if (alarmCategory.equals("입원") && employee.get().getIsAdmissionAlarmOk().equals(true)) {
 
@@ -170,13 +179,15 @@ public class AlarmServiceImpl implements AlarmService {
 			            .setBody("(" + alarmCategory + ")" + alarmContent)
 			            .build();
 				
-				 message = Message.builder()
+				if(FcmToken!=null) {
+				message = Message.builder()
 						.setToken(FcmToken)
 						.setNotification(notification)
 						.putData("alarmNum", alarm.getAlarmNum().toString())
 			            .putData("alarmCategory", alarmCategory)
 			            .putData("alarmSendFlag", "true")
 						.build();
+				}
 
 			} else if (alarmCategory.equals("요청사항") && employee.get().getIsRequestAlarmOk().equals(true)) {
 
@@ -185,13 +196,15 @@ public class AlarmServiceImpl implements AlarmService {
 			            .setBody("(" + alarmCategory + ")" + alarmContent)
 			            .build();
 				
-				 message = Message.builder()
+				if(FcmToken!=null) {
+				message = Message.builder()
 						.setToken(FcmToken)
 						.setNotification(notification)
 						.putData("alarmNum", alarm.getAlarmNum().toString())
 			            .putData("alarmCategory", alarmCategory)
 			            .putData("alarmSendFlag", "true")
 						.build();
+				}
 
 			} else {
 
@@ -200,13 +213,15 @@ public class AlarmServiceImpl implements AlarmService {
 			            .setBody("(" + alarmCategory + ")" + alarmContent)
 			            .build();
 				
-				 message = Message.builder()
+				if(FcmToken!=null) {
+				message = Message.builder()
 						.setToken(FcmToken)
 						.setNotification(notification)
 						.putData("alarmNum", alarm.getAlarmNum().toString())
 			            .putData("alarmCategory", alarmCategory)
 			            .putData("alarmSendFlag", "false")
 						.build();
+				}
 
 			}
 		} else if (findJob.equals("13")) {
@@ -218,13 +233,15 @@ public class AlarmServiceImpl implements AlarmService {
 			            .setBody("(" + alarmCategory + ")" + alarmContent)
 			            .build();
 				
-				 message = Message.builder()
+				if(FcmToken!=null) {
+				message = Message.builder()
 						.setToken(FcmToken)
 						.setNotification(notification)
 						.putData("alarmNum", alarm.getAlarmNum().toString())
 			            .putData("alarmCategory", alarmCategory)
 			            .putData("alarmSendFlag", "true")
 						.build();
+				}
 
 			} else if (alarmCategory.equals("처방") && employee.get().getIsPrescriptionAlarmOk().equals(true)) {
 
@@ -233,13 +250,15 @@ public class AlarmServiceImpl implements AlarmService {
 			            .setBody("(" + alarmCategory + ")" + alarmContent)
 			            .build();
 				
-				 message = Message.builder()
+				if(FcmToken!=null) {
+				message = Message.builder()
 						.setToken(FcmToken)
 						.setNotification(notification)
 						.putData("alarmNum", alarm.getAlarmNum().toString())
 			            .putData("alarmCategory", alarmCategory)
 			            .putData("alarmSendFlag", "true")
 						.build();
+				}
 			} else if (alarmCategory.equals("퇴원") && employee.get().getIsDischargeAlarmOk().equals(true)) {
 
 				notification = Notification.builder()
@@ -247,13 +266,15 @@ public class AlarmServiceImpl implements AlarmService {
 			            .setBody("(" + alarmCategory + ")" + alarmContent)
 			            .build();
 				
-				 message = Message.builder()
+				if(FcmToken!=null) {
+				message = Message.builder()
 						.setToken(FcmToken)
 						.setNotification(notification)
 						.putData("alarmNum", alarm.getAlarmNum().toString())
 			            .putData("alarmCategory", alarmCategory)
 			            .putData("alarmSendFlag", "true")
 						.build();
+				}
 
 			} else {
 
@@ -262,13 +283,15 @@ public class AlarmServiceImpl implements AlarmService {
 			            .setBody("(" + alarmCategory + ")" + alarmContent)
 			            .build();
 				
-				 message = Message.builder()
+				if(FcmToken!=null) {
+				message = Message.builder()
 						.setToken(FcmToken)
 						.setNotification(notification)
 						.putData("alarmNum", alarm.getAlarmNum().toString())
 			            .putData("alarmCategory", alarmCategory)
 			            .putData("alarmSendFlag", "false")
 						.build();
+				}
 
 			}
 		} else if (findJob.equals("14")) {
@@ -280,13 +303,15 @@ public class AlarmServiceImpl implements AlarmService {
 			            .setBody("(" + alarmCategory + ")" + alarmContent)
 			            .build();
 				
-				 message = Message.builder()
+				if(FcmToken!=null) {
+				message = Message.builder()
 						.setToken(FcmToken)
 						.setNotification(notification)
 						.putData("alarmNum", alarm.getAlarmNum().toString())
 			            .putData("alarmCategory", alarmCategory)
 			            .putData("alarmSendFlag", "true")
 						.build();
+				}
 
 			} else {
 
@@ -295,13 +320,15 @@ public class AlarmServiceImpl implements AlarmService {
 			            .setBody("(" + alarmCategory + ")" + alarmContent)
 			            .build();
 				
-				 message = Message.builder()
+				if(FcmToken!=null) {
+				message = Message.builder()
 						.setToken(FcmToken)
 						.setNotification(notification)
 						.putData("alarmNum", alarm.getAlarmNum().toString())
 			            .putData("alarmCategory", alarmCategory)
 			            .putData("alarmSendFlag", "false")
 						.build();
+				}
 
 			}
 		}
