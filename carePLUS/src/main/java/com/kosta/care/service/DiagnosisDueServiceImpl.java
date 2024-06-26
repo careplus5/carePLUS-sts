@@ -431,6 +431,8 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 								    	.docNum(diagnosisDueDto.getDocNum())
 								    	.patNum(diagnosisDueDto.getPatNum())
 								    	.docDiagnosisState("wait")
+								    	.docDiagnosisDate(diagnosisDue.getDiagnosisDueDate())
+								    	.diagnosisDueNum(diagnosisDue.getDiagnosisDueNum())
 								    	.build();
 
 	    docDiagnosisRepository.save(docDiagnosis);

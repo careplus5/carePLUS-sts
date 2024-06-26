@@ -181,15 +181,15 @@ public class AdmServiceImpl implements AdmService {
 				.diagnosisDueState(diagnosisDueDto.getDiagnosisDueState())
 				.diagnosisDueEtc(diagnosisDueDto.getDiagnosisDueEtc())
 				.build();
-
 		diagnosisDueRepository.save(diagnosisDue);
 
 		// DocDiagnosis 정보 설정
 		DocDiagnosis docDiagnosis = diagnosisDueDto.toDocDiagnosis();
-		docDiagnosis.setDocDiagnosisDate(diagnosisDueDto.getDiagnosisDueDate());
+		docDiagnosis.setDocDiagnosisDate(diagnosisDue.getDiagnosisDueDate());
 		docDiagnosis.setPatNum(diagnosisDueDto.getPatNum());
 		docDiagnosis.setDocNum(diagnosisDueDto.getDocNum());
 		docDiagnosis.setDocDiagnosisState("wait");  // 진료상태
+		docDiagnosis.setDiagnosisDueNum(diagnosisDue.getDiagnosisDueNum());
 
 		docDiagnosisRepository.save(docDiagnosis);
 	}

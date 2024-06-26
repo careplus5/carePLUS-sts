@@ -126,9 +126,7 @@ public class AdmMainController {
 		@PostMapping("/patientDiagnosisDueRegist")
 		public ResponseEntity<String> patientDiagnosisDueRegist (@RequestBody DiagnosisDueDto diagnosisDueDto) {
 		    try {
-		    	System.out.println(diagnosisDueDto);
 		        diagnosisDueService.diagnosisRegister(diagnosisDueDto);
-		        System.out.println(diagnosisDueDto);
 		        return new ResponseEntity<String>("진료예약 성공", HttpStatus.OK);
 		    } catch (Exception e) {
 		        e.printStackTrace();

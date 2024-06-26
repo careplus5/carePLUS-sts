@@ -49,4 +49,6 @@ public class DocDiagnosis {
 	private Date docDiagnosisDate;
 	@Column
 	private String docDiagnosisKind;
+	@Column
+	private Long diagnosisDueNum;
 }

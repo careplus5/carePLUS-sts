@@ -76,10 +76,8 @@ public class DiagnosisDslRepository {
 		return jpaQueryFactory.select(diagnosisDue, patient, docDiagnosis)
 				.from(diagnosisDue)
 				.join(patient).on(diagnosisDue.patNum.eq(patient.patNum))
-				.join(docDiagnosis).on(diagnosisDue.patNum.eq(docDiagnosis.patNum))
+				.join(docDiagnosis).on(diagnosisDue.diagnosisDueNum.eq(docDiagnosis.diagnosisDueNum))
 				.where(docDiagnosis.docDiagnosisNum.eq(docDiagNum))
-				.orderBy(diagnosisDue.diagnosisDueDate.desc())
-	            .limit(1)
 				.fetchOne();
 	}
 	
