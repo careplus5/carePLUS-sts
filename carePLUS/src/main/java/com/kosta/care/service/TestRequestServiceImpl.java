@@ -37,6 +37,7 @@ public class TestRequestServiceImpl implements TestRequestService {
 	
 	@Override
 	public void updateRequestStatus(Long testRequestNum, String testRequestAcpt) throws Exception {
+		System.out.println("AA"+testRequestAcpt);
 	    Optional<TestRequest> optionalTestRequest = testRequestRepository.findById(testRequestNum);
 	    if (optionalTestRequest.isPresent()) {
 	        TestRequest testRequest = optionalTestRequest.get();
@@ -55,10 +56,13 @@ public class TestRequestServiceImpl implements TestRequestService {
 	    List<TestRequest> testRequestList = testRequestRepository.findByTestRequestAcptAndTestName("request",dept2Name);
 	    
 	    return testRequestList.stream().map(tr->{
-	    	TestRequestDto testRequestDto = TestRequestDto.builder().build();
+	    	TestRequestDto testRequestDto = TestRequestDto.builder()
+	    			.patNum(tr.getPatNum())
+	    			.testRequestNum(tr.getTestRequestNum()).build();
 	    	Optional<Patient> opatient = patientRepository.findById(tr.getPatNum());
 	    	if(opatient.isPresent()) {
 	    		Patient patient = opatient.get();
+	    		testRequestDto.setPatNum(patient.getPatNum());
 	    		testRequestDto.setPatName(patient.getPatName());
 	    		testRequestDto.setPatJumin(patient.getPatJumin());
 	    		testRequestDto.setPatGender(patient.getPatGender());

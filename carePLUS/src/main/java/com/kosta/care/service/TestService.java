@@ -17,5 +17,5 @@ public interface TestService {
 	void uploadTestFile(MultipartFile file, Long testNum, Long metNum) throws Exception;
 	List<TestFile> getTestFile(Long testNum) throws Exception;
 	void uploadTestNotice(Long testNum, Long metNum, String testNotice) throws Exception;
-	 public Map<String,Object> getAllTestTimeList(Long userId) throws Exception;
+	
 }

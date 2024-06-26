@@ -1,9 +1,10 @@
 package com.kosta.care.service;
 
-import java.util.List;
 
-import com.kosta.care.dto.CalendarDto;
+import java.util.Map;
+
 
 public interface CalendarService {
-	List<CalendarDto> getAllSchedules(Long empNum) throws Exception;
+//	List<CalendarDto> getAllSchedules(Long empNum) throws Exception;
+	Map<String,Object> getAllTestTimeList(Long userId) throws Exception;
 }

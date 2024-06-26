@@ -2,9 +2,7 @@ package com.kosta.care.service;
 
 import java.io.File;
 import java.sql.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -12,20 +10,15 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kosta.care.dto.SurgeryRequestDto;
 import com.kosta.care.dto.TestDto;
-import com.kosta.care.entity.DiagnosisDue;
 import com.kosta.care.entity.Patient;
 import com.kosta.care.entity.Test;
 import com.kosta.care.entity.TestFile;
-import com.kosta.care.repository.DiagnosisDueRepository;
 import com.kosta.care.repository.PatientRepository;
-import com.kosta.care.repository.SurgeryRequestRepository;
 import com.kosta.care.repository.TestFileRepository;
 import com.kosta.care.repository.TestRepository;
 
@@ -39,10 +32,6 @@ public class TestServiceImpl implements TestService {
     private TestRepository testRepository;
     @Autowired
     private TestFileRepository testFileRepository;
-    @Autowired
-    private SurgeryRequestRepository surgeryRequestRepository;
-    @Autowired
-    private DiagnosisDueRepository diagnosisDueRepository;
     @Autowired
     private PatientRepository patientRepository;
 
@@ -99,14 +88,14 @@ public class TestServiceImpl implements TestService {
         return tests.stream()
 	            .map(t->{
 	            	TestDto testDto = TestDto.builder().build();
-	            	Optional<Patient> opatient = patientRepository.findById(t.getPatNum());
-	            	if(opatient.isPresent()) {
-	            		Patient patient = opatient.get();
-	    	    		testDto.setPatName(patient.getPatName());
-	    	    		testDto.setPatJumin(patient.getPatJumin());
-	    	    		testDto.setPatGender(patient.getPatGender());
-	    	    		testDto.setPatBloodType(patient.getPatBloodType());
-	            	}
+//	            	Optional<Patient> opatient = patientRepository.findById(t.getPatNum());
+//	            	if(opatient.isPresent()) {
+//	            		Patient patient = opatient.get();
+//	    	    		testDto.setPatName(patient.getPatName());
+//	    	    		testDto.setPatJumin(patient.getPatJumin());
+//	    	    		testDto.setPatGender(patient.getPatGender());
+//	    	    		testDto.setPatBloodType(patient.getPatBloodType());
+//	            	}
 	            	testDto.setTestNum(t.getTestNum());
 	            	testDto.setDocDiagnosisNum(t.getDocDiagnosisNum());
 	            	testDto.setTestRequestNum(t.getTestRequestNum());
@@ -125,6 +114,7 @@ public class TestServiceImpl implements TestService {
 	            	return testDto;
 	            })
 	            .collect(Collectors.toList());
+
     }
     @Override
     @Transactional
@@ -190,76 +180,6 @@ public class TestServiceImpl implements TestService {
    	    }
    	}
     
-    @Override
-    public Map<String,Object> getAllTestTimeList(Long userId) throws Exception {
-    	if (userId == null) {
-			throw new UsernameNotFoundException("empNum이 Null 찍히는데요?");
-		}
-    	
-    	Map<String, Object> res = new HashMap<>();
-
-
-		String jobString = userId+"".substring(0, 2);
-		
-
-
-		
-		switch (jobString) {
-		case "11":
-			List<SurgeryRequestDto> surSchedules= surgeryRequestRepository.findByDocNum(userId).stream()
-				.map(sr-> SurgeryRequestDto.builder()
-							.surgeryRequestNum(sr.getSurgeryRequestNum())
-							.patNum(sr.getPatNum())
-							.surPeriod(sr.getSurPeriod())
-							.surReason(sr.getSurReason())
-							.surDate(sr.getSurDate())
-							.departmentNum(sr.getDepartmentNum())
-							.docNum(sr.getDocNum())
-							.build()).collect(Collectors.toList());
-			
-			res.put("surSchedules", surSchedules);
-			
-			List<DiagnosisDue> digSchedules = diagnosisDueRepository.findByDocNum(userId);
-			res.put("digSchedules", digSchedules);
-			break;
-		case "14":
-			List<Test> testList = testRepository.findByMetNum(userId);
-			List<TestDto> schedules = testList.stream()
-				            .map(t->{
-				            	TestDto testDto = TestDto.builder().build();
-				            	Optional<Patient> opatient = patientRepository.findById(t.getPatNum());
-				            	if(opatient.isPresent()) {
-				            		Patient patient = opatient.get();
-				    	    		testDto.setPatName(patient.getPatName());
-				    	    		testDto.setPatJumin(patient.getPatJumin());
-				    	    		testDto.setPatGender(patient.getPatGender());
-				    	    		testDto.setPatBloodType(patient.getPatBloodType());
-				            	}
-				            	testDto.setTestNum(t.getTestNum());
-				            	testDto.setDocDiagnosisNum(t.getDocDiagnosisNum());
-				            	testDto.setTestRequestNum(t.getTestRequestNum());
-				            	testDto.setDocNum(t.getDocNum());
-				            	testDto.setMetNum(t.getMetNum());
-				            	testDto.setPatNum(t.getPatNum());
-				            	testDto.setTestName(t.getTestName());
-				            	testDto.setTestStatus(t.getTestStatus());
-				            	testDto.setTestPart(t.getTestPart());
-				            	testDto.setTestAppointmentDate(t.getTestAppointmentDate());
-				            	testDto.setTestAppointmentTime(t.getTestAppointmentTime());
-				            	testDto.setTestOutInspectRecord(t.getTestOutInspectRecord());
-				            	testDto.setTestDate(t.getTestDate());
-				            	testDto.setTestResult(t.getTestResult());
-				            	testDto.setTestNotice(t.getTestNotice());
-				            	return testDto;
-				            })
-				            .collect(Collectors.toList());
-			
-			res.put("schedules", schedules);
-			break;
-		default:
-			throw new Exception("Unexpected value: " + jobString);
-		}
-		return res;
-    }
+    
     
 }
