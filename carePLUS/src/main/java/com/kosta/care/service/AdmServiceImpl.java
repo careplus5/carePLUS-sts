@@ -186,6 +186,7 @@ public class AdmServiceImpl implements AdmService {
 
 		// DocDiagnosis 정보 설정
 		DocDiagnosis docDiagnosis = diagnosisDueDto.toDocDiagnosis();
+		docDiagnosis.setDocDiagnosisDate(diagnosisDueDto.getDiagnosisDueDate());
 		docDiagnosis.setPatNum(diagnosisDueDto.getPatNum());
 		docDiagnosis.setDocNum(diagnosisDueDto.getDocNum());
 		docDiagnosis.setDocDiagnosisState("wait");  // 진료상태
@@ -421,6 +422,10 @@ public class AdmServiceImpl implements AdmService {
 			SurgeryRequest surgeryRequest = surgeryRequestRepository.findById(surgery.getSurgeryRequestNum()).get();
 			surgeryRequest.setSurgeryRequestAcpt("reserved");
 			surgeryRequestRepository.save(surgeryRequest);
+			OperationUseCheck operationUseCheck = OperationUseCheck.builder().surgeryNum(surgery.getOperationRoomNum())
+				.useDate(surgery.getSurgeryDueDate())
+				.time(surgery.getSurgeryDueStartTime()).build();
+			operationUseCheckRepository.save(operationUseCheck);
 			return true;
 		}
 		
