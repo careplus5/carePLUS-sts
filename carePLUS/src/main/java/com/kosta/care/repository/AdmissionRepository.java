@@ -9,9 +9,13 @@ import com.kosta.care.entity.Admission;
 
 @Repository
 public interface AdmissionRepository extends JpaRepository<Admission, Long> {
-	
+
 	Admission findByBedsNum(Long bedsNum);
+
+	// 환자 번호로 리스트 조회
+	List<Admission> findByPatNum(Long patNum) throws Exception;
 	
-	List<Admission> findByPatNumOrderByAdmissionNumDesc(Long patNum);
-		
+	// 입원 환자 조회 최신순으로
+	List<Admission> findByPatNumOrderByAdmissionNumDesc(Long patNum) throws Exception;
+
 }

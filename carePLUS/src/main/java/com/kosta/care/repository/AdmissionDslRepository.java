@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.kosta.care.dto.AdmissionRequestDto;
 import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.QAdmission;
 import com.kosta.care.entity.QAdmissionRecord;
@@ -22,6 +23,7 @@ import com.kosta.care.entity.QPatient;
 import com.kosta.care.entity.QPrescription;
 import com.kosta.care.entity.QPrescriptionDiary;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -239,5 +241,32 @@ public class AdmissionDslRepository {
 					.fetchOne();
 	}
 
+	public AdmissionRequestDto findAdmissionRequestByPatNum(Long patNum) {	
+		QAdmissionRequest admissionRequest = QAdmissionRequest.admissionRequest;
+		QPatient patient = QPatient.patient;
+		QDoctor doctor = QDoctor.doctor;
+		
+		return jpaQueryFactory.select(
+				Projections.bean(AdmissionRequestDto.class, 
+						admissionRequest.admissionRequestNum,
+						admissionRequest.patNum,
+						admissionRequest.diagnosisNum,
+						admissionRequest.docNum,
+						doctor.docName,
+						admissionRequest.jobNum,
+						doctor.departmentNum,
+						doctor.departmentName,
+						admissionRequest.admissionRequestPeriod,
+						admissionRequest.admissionRequestReason))
+					.from(admissionRequest)
+					.join(patient)
+					.on(admissionRequest.patNum.eq(patient.patNum))
+					.join(doctor)
+					.on(admissionRequest.docNum.eq(doctor.docNum))
+					.where(admissionRequest.patNum.eq(patNum).and(
+							admissionRequest.admissionRequestAcpt.eq("wait")))
+					.orderBy(admissionRequest.admissionRequestNum.desc())
+					.fetchFirst();
+	}	
 
 }

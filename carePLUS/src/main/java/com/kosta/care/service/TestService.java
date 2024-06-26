@@ -1,6 +1,7 @@
 package com.kosta.care.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,4 +17,5 @@ public interface TestService {
 	void uploadTestFile(MultipartFile file, Long testNum, Long metNum) throws Exception;
 	List<TestFile> getTestFile(Long testNum) throws Exception;
 	void uploadTestNotice(Long testNum, Long metNum, String testNotice) throws Exception;
+	 public Map<String,Object> getAllTestTimeList(Long userId) throws Exception;
 }

@@ -1,5 +1,9 @@
 package com.kosta.care.dto;
 
+import java.util.List;
+
+import com.kosta.care.entity.Admission;
+import com.kosta.care.entity.DocDiagnosis;
 import com.kosta.care.entity.Patient;
 
 import lombok.AllArgsConstructor;
@@ -22,6 +26,10 @@ public class PatientDto {
 	private String patWeight;
 	private String patBloodType;
 	private String patHistory;
+	
+	// 필요해서 추가 했음 - 김동횬 
+	private List<Admission> admissionList; // 입원 정보 리스트
+    private List<DocDiagnosis> docDiagnosisList; // 진료 일정 리스트
 	
 	public Patient patientEntity() {
 		return Patient.builder()

@@ -35,20 +35,16 @@ public class Test{
 	private Long docDiagnosisNum;
 	@Column
 	private Long metNum;
-	@ManyToOne
-    @JoinColumn(name = "patNum", referencedColumnName = "patNum", insertable = false, updatable = false)
-	private Patient patient;
-	@ManyToOne
-    @JoinColumn(name = "testRequestNum", referencedColumnName = "testRequestNum", insertable = false, updatable = false)
-	private TestRequest testRequest;
+	@Column
+	private Long patNum;
+	@Column
+	private Long testRequestNum;
 	@Column
 	private Long docNum;
 	@Column
 	private Long testFileNum;
 	@Column
 	private String testName;
-	@Column
-	private Long testRequestNum;
 	@Column
 	private String testPart;
 	@Column
@@ -65,33 +61,7 @@ public class Test{
 	private String testOutInspectRecord;
 	@Column
 	private Time testAppointmentTime;
-	
-//	@OneToMany(mappedBy="test", fetch=FetchType.LAZY)
-//	private List<TestFile> testFileList = new ArrayList<>();
-	
-	 public TestDto toDto() {
-	        return TestDto.builder()
-	            .testNum(this.testNum)
-	            .docDiagnosisNum(this.docDiagnosisNum)
-	            .metNum(this.metNum)
-	            .patNum(this.patient != null ? this.patient.getPatNum() : null)
-	            .testRequestNum(this.testRequest != null ? this.testRequest.getTestRequestNum() : null)
-	            .docNum(this.testRequest != null ? this.testRequest.getDocNum() : null)
-	            .testName(this.testRequest != null ? this.testRequest.getTestName() : null)
-	            .testPart(this.testRequest != null ? this.testRequest.getTestPart() : null)
-	            .testResult(this.testResult)
-	            .testDate(this.testDate)
-	            .testNotice(this.testNotice)
-	            .testStatus(this.testStatus)
-	            .testAppointmentDate(this.testAppointmentDate)
-	            .testOutInspectRecord(this.testOutInspectRecord)
-	            .testAppointmentTime(this.testAppointmentTime)
-	            .patName(this.patient != null ? this.patient.getPatName() : null)
-	            .patGender(this.patient != null ? this.patient.getPatGender() : null)
-	            .patJumin(this.patient != null ? this.patient.getPatJumin() : null)
-	            .patBloodType(this.patient != null ? this.patient.getPatBloodType() : null)
-	            .build();
-	    }
+
 
 	
 }

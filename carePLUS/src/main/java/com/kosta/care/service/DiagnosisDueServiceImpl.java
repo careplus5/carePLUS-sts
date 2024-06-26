@@ -2,10 +2,10 @@ package com.kosta.care.service;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -201,7 +201,7 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 			testRequest.setTestPart(docDiagDto.getTestRequest());
 			testRequest.setDocNum(docDiagDto.getDocNum());
 			testRequest.setPatNum(docDiagDto.getPatNum());
-			testRequest.setTestRequestAcpt("검사요청");
+			testRequest.setTestRequestAcpt("request");
 			testRequest.setDocDiagnosisNum(docDiagDto.getDocDiagnosisNum());
 			testRequestRepository.save(testRequest);
 			docDiagnosis.setTestRequestNum(testRequest.getTestRequestNum());
@@ -287,24 +287,34 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 
 	// 모달로 의사 스케줄 조회 (진료예약) 
 	@Override
-	public List<List<DiagnosisDueDto>> doctorDiagnosisDueList(Long departmentNum,Date date) throws Exception {
+	public Map<String, Object> doctorDiagnosisDueList(Long departmentNum,Date date) throws Exception {
 		System.out.println(date);
+		
+		Map<String, Object> res = new HashMap<>();
+		
 		List<Doctor> doctors = doctorRepository.findByDepartmentNum(departmentNum);
 		
-		List<List<DiagnosisDueDto>> doctorDiagnosisDueList = new ArrayList<List<DiagnosisDueDto>>();
+		res.put("doctors", doctors);
+		List<DiagnosisDueDto> diagnosisDueDtoList = new ArrayList<DiagnosisDueDto>();
 		for(Doctor doctor : doctors) {
 			List<DiagnosisDue> diagnosisDueList = diagnosisDueRepository.findByDocNumAndDiagnosisDueDate(doctor.getDocNum(), date);
-			
-			List<DiagnosisDueDto> diagnosisDueDtoList = diagnosisDueList.stream().map(due->DiagnosisDueDto.builder()
-												.diagnosisDueDate(due.getDiagnosisDueDate())
-												.diagnosisDueTime(due.getDiagnosisDueTime())
-												.docNum(due.getDocNum())
-												.docName(doctor.getName()).build()).collect(Collectors.toList());
-												
-			doctorDiagnosisDueList.add(diagnosisDueDtoList);
+			if(diagnosisDueList.size() == 0) {
+				continue;
+			} else {
+				for(DiagnosisDue due : diagnosisDueList) {
+					diagnosisDueDtoList.add(DiagnosisDueDto.builder()
+											.diagnosisDueNum(due.getDiagnosisDueNum())
+											.diagnosisDueDate(due.getDiagnosisDueDate())
+											.diagnosisDueTime(due.getDiagnosisDueTime())
+											.docNum(due.getDocNum())
+											.docName(doctor.getName()).build());
+				}
+			}
 		}
-		return doctorDiagnosisDueList;
+		res.put("diagnosisDueDtoList", diagnosisDueDtoList);
+		return res;
 	}
+
 
 	@Override
 	public List<Map<String, Object>> docPatListByDocNum(Long docNum, String searchType, String searchKeyword) {
@@ -417,10 +427,11 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 	    diagnosisDueRepository.save(diagnosisDue);
 
 	    // DocDiagnosis 정보 설정
-	    DocDiagnosis docDiagnosis = diagnosisDueDto.toDocDiagnosis();
-	    docDiagnosis.setPatNum(diagnosisDueDto.getPatNum());
-	    docDiagnosis.setDocNum(diagnosisDueDto.getDocNum());
-	    docDiagnosis.setDocDiagnosisState("wait");  // 진료상태
+	    DocDiagnosis docDiagnosis = DocDiagnosis.builder().docNum(diagnosisDueDto.getDocNum())
+								    	.docNum(diagnosisDueDto.getDocNum())
+								    	.patNum(diagnosisDueDto.getPatNum())
+								    	.docDiagnosisState("wait")
+								    	.build();
 
 	    docDiagnosisRepository.save(docDiagnosis);
 	}

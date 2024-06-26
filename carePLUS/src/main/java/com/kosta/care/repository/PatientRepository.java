@@ -13,9 +13,12 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 	
 	// 환자 검색 관련 ( 환자번호, 환자이름, 환자 주민 )
 	List<Patient> findByPatNum(Long patNum);
+
 	List<Patient> findByPatNumContains(Long patNum);
+
 	List<Patient> findByPatNameContains(String patName);
 	List<Patient> findByPatJuminContains(String patJumin);
 	
+	Optional<Patient> findByPatNumOrPatJumin(Long patNum, String patJumin) throws Exception;
 
 }

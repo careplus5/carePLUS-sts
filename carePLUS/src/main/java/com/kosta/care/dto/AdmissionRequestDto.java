@@ -32,10 +32,13 @@ public class AdmissionRequestDto {
     
 	private Date admissionDate;
     private Date admissionDueDate;
+    private Long bedsNum;
+    private Long departmentNum;
     private Long bedsDept;
     private Long bedsWard;
     private Long bedsRoom;
     private Long bedsBed;
+    private Date admissionDischargeDueDate;
 	
 	public AdmissionRequestDto(String departmentName, String docName, String admissionRequestReason, Long admissionRequestPeriod, Long department) {
 		this.departmentName=departmentName;

@@ -3,16 +3,12 @@ package com.kosta.care.service;
 import java.io.File;
 import java.sql.Date;
 import java.sql.Time;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-
 
 import javax.transaction.Transactional;
 
@@ -22,8 +18,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.util.Value;
+import com.kosta.care.dto.AdmissionRequestDto;
+import com.google.auth.oauth2.IdTokenProvider.Option;
 import com.kosta.care.dto.DiagnosisDueDto;
 import com.kosta.care.dto.SurgeryRequestDto;
+import com.kosta.care.dto.TestDto;
 import com.kosta.care.dto.TestRequestDto;
 import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.AdmissionRequest;
@@ -32,16 +31,16 @@ import com.kosta.care.entity.DiagnosisDue;
 import com.kosta.care.entity.DocDiagnosis;
 import com.kosta.care.entity.Nurse;
 import com.kosta.care.entity.OperationUseCheck;
-//github.com/careplus5/carePLUS-sts.git
 import com.kosta.care.entity.Patient;
-import com.kosta.care.entity.Prescription;
 import com.kosta.care.entity.Surgery;
 import com.kosta.care.entity.SurgeryRequest;
 import com.kosta.care.entity.Test;
 import com.kosta.care.entity.TestFile;
 import com.kosta.care.entity.TestRequest;
 import com.kosta.care.repository.AdmDslRepository;
+import com.kosta.care.repository.AdmissionDslRepository;
 import com.kosta.care.repository.AdmissionRepository;
+import com.kosta.care.repository.AdmissionRequestDslRepository;
 import com.kosta.care.repository.AdmissionRequestRepository;
 import com.kosta.care.repository.BedsRepository;
 import com.kosta.care.repository.DiagnosisDueRepository;
@@ -65,7 +64,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AdmServiceImpl implements AdmService {
-	
+
 	private final DocDiagnosisRepository docDiagnosisRepository;
 	private final PatientRepository patientRepository;
 	private final DiagnosisDueRepository diagnosisDueRepository;
@@ -82,14 +81,14 @@ public class AdmServiceImpl implements AdmService {
 	private final OperationRoomRepository operationRoomRepository; 
 	private final OperationUseCheckRepository operationUseCheckRepository;
 	private final NurseRepository nurseRepository; 
-	private final BedsRepository bedsRepository; 
+	private final BedsRepository bedsRepository;
+	private final AdmissionDslRepository admissionDslRepository;
+	private final AdmissionRequestRepository admissionRequestRepository;
+	private final AdmissionRequestDslRepository admissionRequestDslRepository;
 
 	@Autowired
-	private AdmissionRequestRepository admissionRequestRepository;
-	
-	@Autowired
 	private ObjectMapper objectMapper;
-	
+
 	@Value("${upload.path}")
 	private String uploadPath;
 
@@ -105,12 +104,12 @@ public class AdmServiceImpl implements AdmService {
 			String docName = tuple.get(2, String.class);
 			String departmentName = tuple.get(3, String.class);
 			String testName = tuple.get(4, String.class);
-			
+
 			Date thisDate = docDiagnosis.getDocDiagnosisDate();
 			//map에 존재하는 날짜를 thisDate와 비교해 더 작은 값을 반환 (초기 진단 날짜)
 			firstDiagDateMap.merge(patNum, thisDate, (existingDate, newDate) -> 
-	            existingDate.before(newDate) ? existingDate : newDate);
-			
+			existingDate.before(newDate) ? existingDate : newDate);
+
 			Map<String, Object> map = objectMapper.convertValue(docDiagnosis, Map.class);
 			map.put("patName", patName);
 			map.put("docName", docName);
@@ -119,14 +118,14 @@ public class AdmServiceImpl implements AdmService {
 			patDiagCheckList.add(map);
 		}
 		for (Map<String, Object> map : patDiagCheckList) {
-	        map.put("firstDiagDate", firstDiagDateMap.get(patNum));
-	    }
-		
+			map.put("firstDiagDate", firstDiagDateMap.get(patNum));
+		}
+
 		if(patDiagCheckList.isEmpty()) return null;
-		
+
 		return patDiagCheckList;
 	}
-	
+
 	@Override
 	public List<Map<String, Object>> patAdmCheckListByPatNum(Long patNum) {
 		List<Tuple> tuples = admDslRepository.findPatAdmCheckListByPatNum(patNum);
@@ -138,7 +137,7 @@ public class AdmServiceImpl implements AdmService {
 			String docName = tuple.get(2, String.class);
 			String departmentName = tuple.get(3, String.class);
 			String nurName = tuple.get(4, String.class);
-			
+
 			Map<String, Object> map = objectMapper.convertValue(admission, Map.class);
 			map.put("patName", patName);
 			map.put("docName", docName);
@@ -146,155 +145,260 @@ public class AdmServiceImpl implements AdmService {
 			map.put("nurName", nurName);
 			patAdmCheckList.add(map);
 		}
-		
+
 		if(patAdmCheckList.isEmpty()) return null;
-		
+
 		return patAdmCheckList;
 	}
 
 	// 진료예약 및 환자등록 및 의사테이블 저장
-		@Override
-		@Transactional
-		public void diagnosisRegister(DiagnosisDueDto diagnosisDueDto) throws Exception {
-		    // 환자 등록
-			if(diagnosisDueDto.getPatNum()==null) {
-				Patient patient = Patient.builder()
-									.patName(diagnosisDueDto.getPatName())
-									.patJumin(diagnosisDueDto.getPatJumin())
-									.patGender(diagnosisDueDto.getPatGender())
-									.patTel(diagnosisDueDto.getPatTel())
-									.patHeight(diagnosisDueDto.getPatHeight())
-									.patWeight(diagnosisDueDto.getPatWeight())
-									.patAddress(diagnosisDueDto.getPatAddress())
-									.patHistory(diagnosisDueDto.getPatHistory())
-									.patBloodType(diagnosisDueDto.getPatBloodType())
-									.build();
-				patientRepository.save(patient);
-				diagnosisDueDto.setPatNum(patient.getPatNum());
-			}
-
-		    // 진료예약 정보 설정
-		    DiagnosisDue diagnosisDue = DiagnosisDue.builder()
-		    		.patNum(diagnosisDueDto.getPatNum())
-		    		.docNum(diagnosisDueDto.getDocNum())
-		    		.diagnosisDueDate(diagnosisDueDto.getDiagnosisDueDate())
-		    		.diagnosisDueTime(diagnosisDueDto.getDiagnosisDueTime())
-		    		.diagnosisDueState(diagnosisDueDto.getDiagnosisDueState())
-		    		.diagnosisDueEtc(diagnosisDueDto.getDiagnosisDueEtc())
-		    		.build();
-
-		    diagnosisDueRepository.save(diagnosisDue);
-
-		    // DocDiagnosis 정보 설정
-		    DocDiagnosis docDiagnosis = diagnosisDueDto.toDocDiagnosis();
-		    docDiagnosis.setPatNum(diagnosisDueDto.getPatNum());
-		    docDiagnosis.setDocNum(diagnosisDueDto.getDocNum());
-		    docDiagnosis.setDocDiagnosisState("wait");  // 진료상태
-
-		    docDiagnosisRepository.save(docDiagnosis);
+	@Override
+	@Transactional
+	public void diagnosisRegister(DiagnosisDueDto diagnosisDueDto) throws Exception {
+		// 환자 등록
+		if(diagnosisDueDto.getPatNum()==null) {
+			Patient patient = Patient.builder()
+					.patName(diagnosisDueDto.getPatName())
+					.patJumin(diagnosisDueDto.getPatJumin())
+					.patGender(diagnosisDueDto.getPatGender())
+					.patTel(diagnosisDueDto.getPatTel())
+					.patHeight(diagnosisDueDto.getPatHeight())
+					.patWeight(diagnosisDueDto.getPatWeight())
+					.patAddress(diagnosisDueDto.getPatAddress())
+					.patHistory(diagnosisDueDto.getPatHistory())
+					.patBloodType(diagnosisDueDto.getPatBloodType())
+					.build();
+			patientRepository.save(patient);
+			diagnosisDueDto.setPatNum(patient.getPatNum());
 		}
 
-		@Override
-		public List<Map<String, Object>> getPrescriptionList(Long patNum) throws Exception {
-			List<Tuple> tuples = admDslRepository.findPatPrescListByPatNum(patNum);
-			List<Map<String, Object>> patPrescList = new ArrayList<>();
-			
-			for(Tuple tuple : tuples) {
-				Prescription prescription = tuple.get(0, Prescription.class);
-				String patName = tuple.get(1, String.class);
-				Map<String, Object> map = objectMapper.convertValue(prescription, Map.class);
-				map.put("prescription", tuple.get(0, Prescription.class));
-//				
-				map.put("patName", tuple.get(1, String.class));
-			
-				patPrescList.add(map);
-			}
-			
-			return patPrescList;}
+		// 진료예약 정보 설정
+		DiagnosisDue diagnosisDue = DiagnosisDue.builder()
+				.patNum(diagnosisDueDto.getPatNum())
+				.docNum(diagnosisDueDto.getDocNum())
+				.diagnosisDueDate(diagnosisDueDto.getDiagnosisDueDate())
+				.diagnosisDueTime(diagnosisDueDto.getDiagnosisDueTime())
+				.diagnosisDueState(diagnosisDueDto.getDiagnosisDueState())
+				.diagnosisDueEtc(diagnosisDueDto.getDiagnosisDueEtc())
+				.build();
 
-		public Map<String, Object> patDiagCheckInfoByDocDiagNum(Long docDiagNum) {
-			Tuple tuple = admDslRepository.findPatDiagCheckInfoByDocDiagNum(docDiagNum);
-			
-			DocDiagnosis docDiag = tuple.get(0, DocDiagnosis.class);
-			Patient patient = tuple.get(1, Patient.class);
-			String docName = tuple.get(2, String.class);
+		diagnosisDueRepository.save(diagnosisDue);
+
+		// DocDiagnosis 정보 설정
+		DocDiagnosis docDiagnosis = diagnosisDueDto.toDocDiagnosis();
+		docDiagnosis.setPatNum(diagnosisDueDto.getPatNum());
+		docDiagnosis.setDocNum(diagnosisDueDto.getDocNum());
+		docDiagnosis.setDocDiagnosisState("wait");  // 진료상태
+
+		docDiagnosisRepository.save(docDiagnosis);
+	}
+
+	@Override
+	public List<Map<String, Object>> getPrescriptionList(Long patNum) throws Exception {
+
+		return null;}
+
+	public Map<String, Object> patDiagCheckInfoByDocDiagNum(Long docDiagNum) {
+		Tuple tuple = admDslRepository.findPatDiagCheckInfoByDocDiagNum(docDiagNum);
+
+		DocDiagnosis docDiag = tuple.get(0, DocDiagnosis.class);
+		Patient patient = tuple.get(1, Patient.class);
+		String docName = tuple.get(2, String.class);
+		String deptName = tuple.get(3, String.class);
+		String diseaseName = tuple.get(4, String.class);
+		String admDiagContent = tuple.get(5, String.class);
+
+		Map<String, Object> map = objectMapper.convertValue(docDiag, Map.class);
+		map.put("patName", patient.getPatName());
+		map.put("patGender", patient.getPatGender());
+		map.put("patJumin", patient.getPatJumin());
+		map.put("patTel", patient.getPatTel());
+		map.put("patHistory", patient.getPatHistory());
+		map.put("patAddress", patient.getPatAddress());
+		map.put("docName", docName);
+		map.put("deptName", deptName);
+		map.put("diseaseName", diseaseName);
+		if(docDiag.getDocDiagnosisContent() == null) {
+			map.put("docDiagnosisContent", admDiagContent);
+		}
+
+		return map;
+	}
+
+	@Override
+	public Map<String, Object> patAdmCheckInfoByAdmNum(Long admNum) {
+		Tuple tuple = admDslRepository.findPatAdmCheckInfoByAdmNum(admNum);
+
+		Admission admission = tuple.get(0, Admission.class);
+		Patient patient = tuple.get(1, Patient.class);
+		String docName = tuple.get(2, String.class);
+
+		//입원 기간 계산
+		Date admissionDate = admission.getAdmissionDate();
+		Date dischargeDate = admission.getAdmissionDischargeDate();
+		long diffMillies = dischargeDate.getTime() - admissionDate.getTime();
+		long admPeriod = diffMillies / (1000 * 60 * 60 * 24);
+
+		Map<String, Object> map = objectMapper.convertValue(admission, Map.class);
+		map.put("patName", patient.getPatName());
+		map.put("patGender", patient.getPatGender());
+		map.put("patJumin", patient.getPatJumin());
+		map.put("patTel", patient.getPatTel());
+		map.put("patAddress", patient.getPatAddress());
+		map.put("docName", docName);
+		map.put("admPeriod", admPeriod);
+
+		return map;
+	}
+
+	@Override
+	public List<Map<String, Object>> patAdmDiagListByAdmNum(Long admNum) {
+		List<Tuple> tupes = admDslRepository.findPatAdmDiagInfoByAdmNum(admNum);
+		List<Map<String, Object>> admDiagList = new ArrayList<>();
+
+		for(Tuple tuple : tupes) {
+			Long admRecordNum = tuple.get(0, Long.class);
+			String admRecord = tuple.get(1, String.class);
+			Date diagDate = tuple.get(2, Date.class);
 			String deptName = tuple.get(3, String.class);
 			String diseaseName = tuple.get(4, String.class);
-			String admDiagContent = tuple.get(5, String.class);
-			
-			Map<String, Object> map = objectMapper.convertValue(docDiag, Map.class);
-			map.put("patName", patient.getPatName());
-			map.put("patGender", patient.getPatGender());
-			map.put("patJumin", patient.getPatJumin());
-			map.put("patTel", patient.getPatTel());
-			map.put("patHistory", patient.getPatHistory());
-			map.put("patAddress", patient.getPatAddress());
-			map.put("docName", docName);
+
+			Map<String, Object> map = new HashMap<>();
+			map.put("admRecordNum", admRecordNum);
+			map.put("admRecord", admRecord);
+			map.put("diagDate", diagDate);
 			map.put("deptName", deptName);
 			map.put("diseaseName", diseaseName);
-			if(docDiag.getDocDiagnosisContent() == null) {
-				map.put("docDiagnosisContent", admDiagContent);
-			}
-			
-			return map;
+			admDiagList.add(map);
 		}
 
-		@Override
-		public Map<String, Object> patAdmCheckInfoByAdmNum(Long admNum) {
-			Tuple tuple = admDslRepository.findPatAdmCheckInfoByAdmNum(admNum);
-			
-			Admission admission = tuple.get(0, Admission.class);
-			Patient patient = tuple.get(1, Patient.class);
-			String docName = tuple.get(2, String.class);
-			
-			 //입원 기간 계산
-		    Date admissionDate = admission.getAdmissionDate();
-		    Date dischargeDate = admission.getAdmissionDischargeDate();
-		    long diffMillies = dischargeDate.getTime() - admissionDate.getTime();
-		    long admPeriod = diffMillies / (1000 * 60 * 60 * 24);
-			
-			Map<String, Object> map = objectMapper.convertValue(admission, Map.class);
-			map.put("patName", patient.getPatName());
-			map.put("patGender", patient.getPatGender());
-			map.put("patJumin", patient.getPatJumin());
-			map.put("patTel", patient.getPatTel());
-			map.put("patAddress", patient.getPatAddress());
-			map.put("docName", docName);
-			map.put("admPeriod", admPeriod);
-			
-			return map;
+		if(admDiagList.isEmpty()) return null;
+
+		return admDiagList;
+	}
+
+	@Override
+	public List<TestRequestDto> getTestRequestListByPatNum(Long patNum) throws Exception {
+		return testRequestDslRepository.findTestRequestList(patNum);
+	}
+
+	@Override
+	public AdmissionRequestDto getSearchAdmissionRequestPatient(Long patNum) throws Exception {
+		Tuple tuple = admDslRepository.findAdmissionRequestByPatNum(patNum);
+		System.out.println("확인" + tuple);
+		if (tuple != null ) {
+			String departmentName = tuple.get(0, String.class);
+			String docName = tuple.get(1, String.class);
+			String admissionRequestReason = tuple.get(2, String.class);
+			Long admissionRequestPeriod = tuple.get(3, Long.class);
+			Long department = tuple.get(4,Long.class);
+			AdmissionRequestDto admissionRequestDto =new AdmissionRequestDto(departmentName,docName,admissionRequestReason,admissionRequestPeriod, department);
+			System.out.println("AA");
+			System.out.println(admissionRequestDto); // 부서번호
+			return admissionRequestDto;
+		} else {
+			throw new Exception("조회오류");
 		}
 
-		@Override
-		public List<Map<String, Object>> patAdmDiagListByAdmNum(Long admNum) {
-			List<Tuple> tupes = admDslRepository.findPatAdmDiagInfoByAdmNum(admNum);
-			List<Map<String, Object>> admDiagList = new ArrayList<>();
-			
-			for(Tuple tuple : tupes) {
-				Long admRecordNum = tuple.get(0, Long.class);
-				String admRecord = tuple.get(1, String.class);
-				Date diagDate = tuple.get(2, Date.class);
-				String deptName = tuple.get(3, String.class);
-				String diseaseName = tuple.get(4, String.class);
-				
-				Map<String, Object> map = new HashMap<>();
-				map.put("admRecordNum", admRecordNum);
-				map.put("admRecord", admRecord);
-				map.put("diagDate", diagDate);
-				map.put("deptName", deptName);
-				map.put("diseaseName", diseaseName);
-				admDiagList.add(map);
-			}
-			
-			if(admDiagList.isEmpty()) return null;
-			
-			return admDiagList;
+	}
+
+	//		@Override
+	//		public Map<String, Object> registerPatientAdmission(Long patNum, Long bedsNum, Long docNum, Long admissionRequestNum,
+	//				Date admissionDate, Date admissionDueDate, Date admissionDischargeDueDate, String admissionReason)
+	//				throws Exception {
+	//			
+	//			Map<String, Object> result = new HashMap<>();
+	//
+	//	        try {
+	//	            // 1. 입원 정보 등록
+	//	            Admission admission = new Admission();
+	//	            admission.setPatNum(patNum);
+	//	            admission.setAdmissionDate(admissionDate);
+	//	            admission.setAdmissionDueDate(admissionDueDate);
+	//	            admission.setAdmissionDischargeDueDate(admissionDischargeDueDate);
+	//	            admission.setAdmissionReason(admissionReason);
+	//	            admission.setBedsNum(bedsNum);
+	//	            admission.setDocNum(docNum);
+	//	            admission.setAdmissionRequestNum(admissionRequestNum);
+	//	            admissionRepository.save(admission);
+	//
+	//	            // 2. 침대 테이블에서 사용 유무 변경
+	//	            Beds bed = bedsRepository.findById(bedsNum)
+	//	                                   .orElseThrow(() -> new Exception("Bed not found"));
+	//	            bed.setBedsIsUse(true); // assuming setBedsIsUse method exists
+	//	            bedsRepository.save(bed);
+	//
+	//	            // 3. 입원 요청 테이블에서 요청 상태 변경 (wait -> end)
+	//	            AdmissionRequest admissionRequest = admissionRequestRepository.findById(admissionRequestNum)
+	//	                                                                           .orElseThrow(() -> new Exception("Admission request not found"));
+	//	            admissionRequest.setAdmissionRequestAcpt("end"); // assuming setAdmissionRequestAcpt method exists
+	//	            admissionRequestRepository.save(admissionRequest);
+	//
+	//	            result.put("success", true);
+	//	            result.put("message", "Patient admission registered successfully");
+	//	        } catch (Exception e) {
+	//	            // 롤백을 위해 예외 발생 시 트랜잭션 롤백
+	//	            throw new Exception("Failed to register patient admission: " + e.getMessage());
+	//	        }
+	//
+	//	        return result;
+	//	    }
+
+	@Override
+	public List<DocDiagnosis> getConfirmDianosis(Long patNum) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Admission> getConfirmAdmission(Long patNum) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+//	@Override
+//	public void getPatientAdmissionRegist(Long docNum, String admissionRequestReason, Long patNum,
+//			Long admissionRequestPeriod, Long bedsDept, Long bedsWard, Long bedsRoom, Long bedsBed) throws Exception {
+//		// TODO Auto-generated method stub
+//		
+//	}
+	
+	@Override
+	public void getPatientAdmissionRegist(AdmissionRequestDto admissionRequestDto) throws Exception {
+
+		// 1. 예약된 침대의 사용유무 업데이트
+		Optional<Beds> oBeds = bedsRepository.findById(admissionRequestDto.getBedsNum());
+		if (oBeds.isPresent()) {
+			Beds beds = oBeds.get();
+			beds.setBedsIsUse(true); // 사용중으로 설정
+			bedsRepository.save(beds); // 변경 사항 저장
+		} else {
+			throw new Exception("해당 침대를 찾을 수 없습니다: " + admissionRequestDto.getBedsNum());
 		}
+
+		// 3. 입원 테이블에 데이터 추가
+		Admission admission = Admission.builder()
+				.patNum(admissionRequestDto.getPatNum())
+				.docNum(admissionRequestDto.getDocNum())
+				.bedsNum(admissionRequestDto.getBedsNum())
+				.admissionRequestNum(admissionRequestDto.getAdmissionRequestNum())
+				.admissionReason(admissionRequestDto.getAdmissionRequestReason())
+				.admissionDate(admissionRequestDto.getAdmissionDate())
+				.admissionDueDate(admissionRequestDto.getAdmissionDueDate())
+				.admissionDischargeDueDate(admissionRequestDto.getAdmissionDischargeDueDate())
+				// 다른 필드들도 필요에 따라 설정
+				.build();
+
+		admissionRepository.save(admission); // 입원 정보 저장
 		
-		@Override
-		public List<TestRequestDto> getTestRequestListByPatNum(Long patNum) throws Exception {
-			return testRequestDslRepository.findTestRequestList(patNum);
+		// 입원요청 환자 처리 
+		Optional<AdmissionRequest> oAdmissionRequest = admissionRequestRepository.findById(admissionRequestDto.getAdmissionRequestNum());
+		if (oAdmissionRequest.isPresent()) {
+			AdmissionRequest admissionRequest = oAdmissionRequest.get();
+			admissionRequest.setAdmissionRequestAcpt("end");
+			admissionRequestRepository.save(admissionRequest);
 		}
+	}
 		
 		@Override
 		public List<Time> getTestList(String testName, Date testDate) throws Exception {
@@ -328,6 +432,7 @@ public class AdmServiceImpl implements AdmService {
 			}
 			return true;
 		}
+
 		
 		@Override
 		public SurgeryRequestDto getSurgeryRequest(Long patNum) throws Exception {
@@ -368,52 +473,32 @@ public class AdmServiceImpl implements AdmService {
 			surgeryRequestRepository.save(surgeryRequest);
 			return true;
 		}
-
+		
+		@Override
+		public AdmissionRequestDto admissionRequest(Long patNum) throws Exception {
+			return admissionRequestDslRepository.findAdmissionRequestByPatNum(patNum);	
+		}
 
 		@Override
-		public void getPatientAdmissionRegist(Long docNum, String admissionRequestReason, Long patNum, Long admissionRequestPeriod,
-				Long bedsDept, Long bedsWard, Long bedsRoom, Long bedsBed) throws Exception {
+		public List<Beds> findByBedsListByDeptnum(Long departmentNum) throws Exception {
+			return bedsRepository.findByBedsDeptOrderByBedsWardAscBedsRoomAscBedsNum(departmentNum);
+		}
 
-			// 1. bedsNum 계산
-	        String bedsNumStr = bedsDept.toString()+bedsWard.toString()+bedsRoom.toString()+bedsBed.toString();
-	        Long bedsNum = Long.parseLong(bedsNumStr);
+		@Override
+		public Boolean procAdmission(Admission admission) throws Exception {
+			admission.setAdmissionDiagState("wait");
+			Optional<Beds> obeds = bedsRepository.findById(admission.getBedsNum());
+			if(obeds.isPresent()) {
+				Beds beds = obeds.get();
+				beds.setBedsIsUse(true);
+				bedsRepository.save(beds);
+			}
+			admissionRepository.save(admission);
+			AdmissionRequest admissionRequest = admissionRequestRepository.findById(admission.getAdmissionRequestNum()).get();
+			admissionRequest.setAdmissionRequestAcpt("reserved");
+			admissionRequestRepository.save(admissionRequest);
+			return true;
+		}	
 
-	        // 2. 예약된 침대의 사용유무 업데이트
-	        Optional<Beds> oBeds = bedsRepository.findById(bedsNum);
-	        if (oBeds.isPresent()) {
-	            Beds beds = oBeds.get();
-	            beds.setBedsIsUse(true); // 사용중으로 설정
-	            bedsRepository.save(beds); // 변경 사항 저장
-	        } else {
-	            throw new Exception("해당 침대를 찾을 수 없습니다: " + bedsNum);
-	        }
-	        // 3.오늘 날짜 생성
-	        LocalDate today = LocalDate.now();
-	        // 4.퇴원 예정일 생성
-	        LocalDate admissionDischargeDueDate = today.plusDays(admissionRequestPeriod);
-	        
-	        Date admissionDate = (Date) Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
-	        Date dischargeDueDate = (Date) Date.from(admissionDischargeDueDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-	        
-	        // 5. 입원 테이블에 데이터 추가
-	        Admission admission = Admission.builder()
-	        		.docNum(docNum)
-	        		.admissionReason(admissionRequestReason)
-	                .patNum(patNum)
-	                .bedsNum(bedsNum)
-	                .admissionDate(admissionDate)
-	                .admissionDischargeDueDate(dischargeDueDate)
-	                .bedsNum(bedsNum)
-	                .build();
-
-	        admissionRepository.save(admission); // 입원 정보 저장
-	        
-	        // 6. 입원예약 상태 변경 및 저장
-	        AdmissionRequest admissionRequest = admissionRequestRepository.findByPatNumAndAdmissionRequestAcpt(patNum, "wait");
-	        admissionRequest.setAdmissionRequestAcpt("end");
-	        
-	        admissionRequestRepository.save(admissionRequest);
-	    }
 
 }

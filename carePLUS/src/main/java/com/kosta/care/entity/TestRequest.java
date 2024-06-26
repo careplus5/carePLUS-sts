@@ -24,9 +24,6 @@ public class TestRequest {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long testRequestNum;  // 검사요청 고유 번호
-	@ManyToOne
-    @JoinColumn(name = "patNum", referencedColumnName = "patNum", insertable = false, updatable = false)
-    private Patient patient;  // 환자
 	@Column
 	private Long patNum;  // 환자 번호
 	@Column
@@ -40,18 +37,4 @@ public class TestRequest {
 	@Column
 	private Long docDiagnosisNum;  //의사 진료 번호
 	
-	public TestRequestDto toDto() {
-        return TestRequestDto.builder()
-            .testRequestNum(this.testRequestNum)
-            .patNum(this.patNum)
-            .patName(this.patient != null ? this.patient.getPatName() : null)
-            .patJumin(this.patient != null ? this.patient.getPatJumin() : null)
-            .patGender(this.patient != null ? this.patient.getPatGender() : null)
-            .patBloodType(this.patient != null ? this.patient.getPatBloodType() : null)
-            .docNum(this.docNum)
-            .testName(this.testName)
-            .testRequestAcpt(this.testRequestAcpt)
-            .testPart(this.testPart)
-            .build();
-    }
 }

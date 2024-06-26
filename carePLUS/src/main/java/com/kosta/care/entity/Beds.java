@@ -21,14 +21,15 @@ public class Beds {
 	@Id
 	private Long bedsNum;
 	@Column
-	private Integer bedsDept;
+	private Long bedsDept;
 	@Column
-	private Integer bedsWard;
+	private String bedsWard; //병동
 	@Column
-	private Integer bedsRoom;
+	private Integer bedsRoom; //병실
 	@Column
-	private Integer bedsBed;
-	
+	private Integer bedsBed; //침대번호
 	@Column
 	private Boolean bedsIsUse;
+	@Column
+	private String bedsCode;
 }
