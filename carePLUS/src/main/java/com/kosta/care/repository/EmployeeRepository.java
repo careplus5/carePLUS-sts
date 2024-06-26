@@ -44,13 +44,11 @@ public Employee identifyJob(String username) {
 	if(identify.equals("11")) {
 		System.out.println(identify);
 		Employee emp = docRepository.findByDocNum(id);
-		System.out.println(emp.getPassword());
 		return docRepository.findByDocNum(id);
 		
 	} else if(identify.equals("12")) {
 		System.out.println(identify);
 		Employee emp = nurRepository.findByNurNum(id);
-		System.out.println(emp.getPassword());
 		return nurRepository.findByNurNum(id);
 
 	} else if(identify.equals("13")) {

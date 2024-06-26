@@ -45,8 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.formLogin().disable() //로그인 폼 비활성화
 			.httpBasic().disable() // httpBasicdms header에 username, password를 암호화하지 않은 상태로 주고받는다. 이를 사용하지 않겠다는 의미
 		.addFilterAt(new JwtAuthenticationFilter(authenticationManager()),UsernamePasswordAuthenticationFilter.class);
-		
-		//token
+//		
+//		//token
 		http
 			.addFilter(new JwtAuthorizationFilter(authenticationManager(),empRepository))
 			.authorizeRequests()
