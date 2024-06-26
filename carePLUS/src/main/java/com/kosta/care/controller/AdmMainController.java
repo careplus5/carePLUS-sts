@@ -155,12 +155,10 @@ public class AdmMainController {
 		}
 		
 		// 처방천 뽑기전 처방 테이블에 해당 환자 조회
-		@GetMapping("/patNumPrescriptionList")
-		public ResponseEntity<List<Prescription>> patNumPrescriptionList(@RequestParam("patNum") Long patNum) {
+		@PostMapping("/patNumPrescriptionList")
+		public ResponseEntity<List<Prescription>> patNumPrescriptionList(@RequestBody Map<String,Long> param) {
 			try {
-//				Long patNum = Long.parseLong((String)patNum);
-//				System.out.println(patNum.TYPE);
-				List<Prescription> prescriptionList = prescriptionService.patientPrescriptionList(patNum);
+				List<Prescription> prescriptionList = prescriptionService.patientPrescriptionList(param.get("patNum"));
 				return new ResponseEntity<List<Prescription>>(prescriptionList, HttpStatus.OK);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -171,7 +169,6 @@ public class AdmMainController {
 		
 		@PostMapping("/testRequestList")
 		public ResponseEntity<List<TestRequestDto>> getTestRequestList(@RequestBody Map<String,Long> param) {
-			System.out.println(param);
 			try {
 				List<TestRequestDto> testRequestdto = admService.getTestRequestListByPatNum(param.get("patNum"));
 				if (testRequestdto != null) {

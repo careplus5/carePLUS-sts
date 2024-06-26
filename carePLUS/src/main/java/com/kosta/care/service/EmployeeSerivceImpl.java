@@ -79,6 +79,7 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 		} else if (findJob.equals("12")) {
 			empNumStr = employeeDto.getJobNum() + "" + employeeDto.getDepartmentNum() + "" + year + ""
 					+ sequenceService.getNextSequence("sq_nur");
+			employeeDto.setDepartmentName("원무과");
 		} else if (findJob.equals("13")) {
 			employeeDto.setDepartmentNum(99L);
 			empNumStr = employeeDto.getJobNum() + "" + employeeDto.getDepartmentNum() + "" + year + ""

@@ -139,21 +139,14 @@ public class DiagnosisDslRepository {
 		QAdmission admission = QAdmission.admission;
 		QSurgery surgery = QSurgery.surgery;
 		
-		QDocDiagnosis subDocDiagnosis = new QDocDiagnosis("subDocDiagnosis");
-		
-		JPAQuery<Tuple> query = jpaQueryFactory.select(docDiagnosis, patient, disease.diseaseName, admission.admissionStatus, surgery.surgeryState)
+		JPAQuery<Tuple> query = jpaQueryFactory.select(docDiagnosis, patient, disease.diseaseName, admission.admissionStatus, surgery.surgeryState, docDiagnosis.docDiagnosisDate.max())
 					.from(docDiagnosis)
 					.join(patient).on(docDiagnosis.patNum.eq(patient.patNum))
 					.join(disease).on(docDiagnosis.diseaseNum.eq(disease.diseaseNum))
 					.leftJoin(admission).on(docDiagnosis.patNum.eq(admission.patNum))
 					.leftJoin(surgery).on(docDiagnosis.patNum.eq(surgery.patNum))
-					.where(docDiagnosis.docNum.eq(docNum)
-							.and(docDiagnosis.docDiagnosisDate.eq(
-									JPAExpressions.select(subDocDiagnosis.docDiagnosisDate.max())
-									.from(subDocDiagnosis)
-									.where(subDocDiagnosis.patNum.eq(docDiagnosis.patNum)
-											.and(subDocDiagnosis.docNum.eq(docNum)))
-									)));
+					.where(docDiagnosis.docNum.eq(docNum))
+					.groupBy(patient.patNum);
 		
 		if("patNum".equals(searchType) && searchKeyword != null && !searchKeyword.isEmpty()) {
 			query.where(patient.patNum.like("%" + searchKeyword + "%"));
