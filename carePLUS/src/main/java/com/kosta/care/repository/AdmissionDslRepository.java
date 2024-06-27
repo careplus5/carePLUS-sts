@@ -72,6 +72,12 @@ public class AdmissionDslRepository {
                 .join(patient).on(admission.patNum.eq(patient.patNum))
                 .join(doctor).on(admission.docNum.eq(doctor.docNum))
                 .where(admission.jobNum.eq(nurDept))
+                .orderBy(
+                    new CaseBuilder()
+                        .when(admission.admissionStatus.eq("ing")).then(0)
+                        .otherwise(1).asc(),
+                        admission.admissionDate.asc()
+                 )
                 .fetch();
 		
 	}
