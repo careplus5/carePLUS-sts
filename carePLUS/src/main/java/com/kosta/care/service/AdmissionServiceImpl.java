@@ -75,7 +75,7 @@ public class AdmissionServiceImpl implements AdmissionService {
 
 
 		List<Tuple> tuples = admRepository.findAdmPatientByNurNum(nurNum);
-		System.out.println(tuples.toString());
+		System.out.println("patient list:"+tuples.toString());
 		List<Map<String, Object>> admList = new ArrayList<>();
 
 		for(Tuple tuple : tuples) {

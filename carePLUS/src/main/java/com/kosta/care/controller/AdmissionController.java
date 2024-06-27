@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.care.dto.AdmDiagnosisDto;
 import com.kosta.care.entity.AdmissionRecord;
+import com.kosta.care.entity.Patient;
 import com.kosta.care.entity.Prescription;
 import com.kosta.care.repository.NurseRepository;
 import com.kosta.care.service.AdmissionService;
+import com.kosta.care.service.PatientService;
 import com.kosta.care.service.PrescriptionService;
 
 @RestController
@@ -33,6 +35,8 @@ public class AdmissionController {
 	private NurseRepository nurRepository;
 	@Autowired
 	private PrescriptionService prescService;
+	@Autowired
+	private PatientService patService;
 	
 	@GetMapping("/wardPatientList")
 	public ResponseEntity<List<Map<String, Object>>> admPatientList(@RequestParam("nurNum") Long nurNum) {
@@ -77,7 +81,7 @@ public class AdmissionController {
     }
 
 	@GetMapping("/nurPatientInfo")
-	public ResponseEntity<Map<String, List<Map<String, Object>>>> getPatientRecords(@RequestParam("admissionNum") Long admissionNum) {
+	public ResponseEntity< Map<String, Object>> getPatientRecords(@RequestParam("admissionNum") Long admissionNum, @RequestParam("patNum") Long patNum) {
 	    System.out.println("doctor and nurse records 리스트 가져오기 준비");
 	    try {
 	        System.out.println("리스트 가져오기 시작");
@@ -87,10 +91,16 @@ public class AdmissionController {
 	        List<Map<String, Object>> nurseRecord = admService.admPatientNurseRecordList(admissionNum);
 	        System.out.println("nurseRecord 결과:" + nurseRecord.toString());
 	        
+	        Patient patient = patService.getPatientById(patNum).get();
+	        System.out.println("patient 결과:" + patient.toString());
+
+	        
+	        
 	        // 두 리스트를 하나의 맵에 담기
-	        Map<String, List<Map<String, Object>>> combinedRecords = new HashMap<>();
+	        Map<String, Object> combinedRecords = new HashMap<>();
 	        combinedRecords.put("doctorRecord", doctorRecord);
 	        combinedRecords.put("nurseRecord", nurseRecord);
+	        combinedRecords.put("patient", patient);
 
 	        return new ResponseEntity<>(combinedRecords, HttpStatus.OK);
 	    } catch (Exception e) {
@@ -137,7 +147,7 @@ public class AdmissionController {
             savedRecord.setAdmissionNum(Long.parseLong(admissionNum));
             
             AdmissionRecord record = admService.saveNurseAdmissionRecord(savedRecord);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(true);
+            return ResponseEntity.status(HttpStatus.OK).body(true);
 		} catch(Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);

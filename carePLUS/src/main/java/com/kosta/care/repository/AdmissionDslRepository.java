@@ -25,6 +25,8 @@ import com.kosta.care.entity.QPrescriptionDiary;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @Repository
@@ -53,13 +55,23 @@ public class AdmissionDslRepository {
 		QAdmission admission = QAdmission.admission;
 			System.out.println("해당 리스트는 "+nurNum+"의 리스트입니다.");
 		
-		
+	Long nurDept = Long.parseLong(nurNum.toString().substring(2, 4));
+//		System.out.println(nurDept);
+			
+			 String nurNumSubstring = nurNum.toString().substring(2, 4);
+			    System.out.println(nurNumSubstring);
+			    
+			    String docNum =admission.docNum.toString();
+			    System.out.println(docNum);
+
+			    // Substring 표현식
+			    StringExpression docNumSubstring = Expressions.stringTemplate("substring({0}, {1}, {2})", doctor.docNum, 3, 2); // 1-based index for SQL substring
+			    
 		return jpaQueryFactory.select(admission, doctor.departmentName, doctor.docName, patient.patName, patient.patJumin)
 				.from(admission)
                 .join(patient).on(admission.patNum.eq(patient.patNum))
                 .join(doctor).on(admission.docNum.eq(doctor.docNum))
-                .join(nurse).on(admission.nurNum.eq(nurse.nurNum))
-                .where(admission.nurNum.eq(nurNum))
+                .where(admission.jobNum.eq(nurDept))
                 .fetch();
 		
 	}
