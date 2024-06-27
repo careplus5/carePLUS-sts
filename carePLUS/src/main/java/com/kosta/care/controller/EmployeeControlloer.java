@@ -34,8 +34,10 @@ public class EmployeeControlloer {
 	@Autowired
 	private EmployeeSerivce employeeSerivce;
 
-	@Value("${upload.path}")
-	private String uploadPath;
+	@Value("${upload.profile}")
+	private String uploadProfile;
+	@Value("${upload.file}")
+	private String uploadFile;
 
 	@PostMapping("/employeeAdd")
 	public ResponseEntity<String> employeeAdd(@ModelAttribute EmployeeDto employeeDto,
@@ -102,16 +104,26 @@ public class EmployeeControlloer {
 		return authentication.getName();
 	}
 
-	@GetMapping("/image/{num}")
-	public void imageView(@PathVariable Long num, HttpServletResponse response) {
+	@GetMapping("/profile/{num}")
+	public void profileView(@PathVariable Long num, HttpServletResponse response) {
 		try {
-			FileInputStream fis = new FileInputStream(uploadPath + num);
+			FileInputStream fis = new FileInputStream(uploadProfile + num);
 			OutputStream out = response.getOutputStream();
 			FileCopyUtils.copy(fis, out);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+	}
+	
+	@GetMapping("/file/{num}")
+	public void fileView(@PathVariable Long num, HttpServletResponse response) {
+		try {
+			FileInputStream fis = new FileInputStream(uploadFile + num);
+			OutputStream out = response.getOutputStream();
+			FileCopyUtils.copy(fis, out);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@PostMapping("/employeeModify")

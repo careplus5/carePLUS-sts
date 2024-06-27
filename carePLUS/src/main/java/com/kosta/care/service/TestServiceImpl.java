@@ -25,8 +25,8 @@ import com.kosta.care.repository.TestRepository;
 @Service
 public class TestServiceImpl implements TestService {
 	
-	@Value("${upload.path}")
-	private String uploadPath;
+	@Value("${upload.file}")
+	private String uploadFile;
 
     @Autowired
     private TestRepository testRepository;
@@ -120,7 +120,7 @@ public class TestServiceImpl implements TestService {
     @Transactional
     public void uploadTestFile(MultipartFile file, Long testNum, Long metNum) throws Exception {
     	if (file != null && !file.isEmpty()) {
-            File directory = new File(uploadPath);
+            File directory = new File(uploadFile);
             if (!directory.exists()) {
                 directory.mkdirs();
             }
@@ -136,7 +136,7 @@ public class TestServiceImpl implements TestService {
                 TestFile testFile = TestFile.builder()
                                             .test(test)
                                             .testFileType(file.getContentType())
-                                            .testFilePath(uploadPath)
+                                            .testFilePath(uploadFile)
                                             .testFileSize(file.getSize())
                                             .testFileUploadDate(new Date(System.currentTimeMillis()))
                                             .testMetNum(metNum)
@@ -145,7 +145,7 @@ public class TestServiceImpl implements TestService {
                 testFileRepository.save(testFile);
                 
              // Save the file locally
-                String filePath = uploadPath + testFile.getTestFileNum();
+                String filePath = uploadFile + testFile.getTestFileNum();
                 System.out.println(filePath);
                 File dest = new File(filePath);
                 file.transferTo(dest);
