@@ -27,14 +27,10 @@ public class EmployeeRepository{
 	private AdminHospitalRepository admHospitalRepository;
 	@Autowired
 	private NurseRepository nurRepository;
-	
 	@Autowired
 	private MedicalTechnicianRepository metRepository;
-	
 	@Autowired
 	private AdministorRepository adminRepository;
-	@Autowired
-	private AdminHospitalRepository admRepository;
 	@Autowired
 	private EntityManager entityManager;
 	@Autowired
@@ -43,12 +39,10 @@ public class EmployeeRepository{
 	
 	
 public Employee identifyJob(String username) {
-	System.out.println("jdentifyJob");
 	char firstChar = username.charAt(0);
 	char secondChar = username.charAt(1);
 
 	String identify = "" + firstChar + secondChar;
-	System.out.println(identify+" in repository");
 	Long id = Long.parseLong(username);
 
 	Map<String, Function<Long, Employee>> repositoryMap = new HashMap<>();

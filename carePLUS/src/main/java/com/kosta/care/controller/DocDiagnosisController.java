@@ -10,6 +10,7 @@ import com.kosta.care.entity.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +23,7 @@ import com.kosta.care.entity.Medicine;
 import com.kosta.care.repository.DoctorRepository;
 import com.kosta.care.service.DiagnosisDueService;
 
+@PreAuthorize("hasRole('ROLE_DOCTOR')")
 @RestController
 public class DocDiagnosisController {
 	

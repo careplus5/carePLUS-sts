@@ -4,6 +4,8 @@ public enum Role {
 
     DOCTOR("11","DOCTOR"),
     NURSE("12","NURSE"),
+    ADMIN_HOSPITAL("13","ADMIN_HOSPITAL"),
+    TECHNICIAN("14","TECHNICIAN"),
     ADMIN("99","ADMIN");
 
     private String identity;

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ import com.kosta.care.dto.TestDto;
 import com.kosta.care.service.TestRequestService;
 import com.kosta.care.service.TestService;
 
+@PreAuthorize("hasRole('ROLE_TECHNICIAN')")
 @RestController
 public class MetMainController {
 

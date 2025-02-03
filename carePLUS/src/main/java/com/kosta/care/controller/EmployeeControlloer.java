@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.FileCopyUtils;
@@ -28,6 +29,7 @@ import com.kosta.care.dto.EmployeeDto;
 import com.kosta.care.service.EmployeeSerivce;
 import com.kosta.care.util.PageInfo;
 
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 @RestController
 public class EmployeeControlloer {
 

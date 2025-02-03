@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +24,7 @@ import com.kosta.care.service.AdmissionService;
 import com.kosta.care.service.PatientService;
 import com.kosta.care.service.PrescriptionService;
 
+@PreAuthorize("hasRole('ROLE_NURSE')")
 @RestController
 public class AdmissionController {
 	
@@ -31,8 +33,6 @@ public class AdmissionController {
 //	
 	@Autowired
 	private AdmissionService admService;
-	@Autowired 
-	private NurseRepository nurRepository;
 	@Autowired
 	private PrescriptionService prescService;
 	@Autowired
