@@ -1,26 +1,17 @@
 package com.kosta.care.controller;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.kosta.care.config.jwt.JwtProperties;
+import com.kosta.care.dto.LoginEmployeeDto;
+import com.kosta.care.service.AuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.kosta.care.config.auth.PrincipalDetails;
-import com.kosta.care.config.jwt.JwtToken;
+import org.springframework.web.bind.annotation.*;
+
 import com.kosta.care.entity.AdminHospital;
 import com.kosta.care.entity.Doctor;
 import com.kosta.care.entity.Employee;
@@ -32,9 +23,10 @@ import com.kosta.care.repository.EmployeeRepository;
 import com.kosta.care.repository.MedicalTechnicianRepository;
 import com.kosta.care.repository.NurseRepository;
 
-@Controller
+@RestController
+@RequiredArgsConstructor
 public class MainController {
-	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
+
 	@Autowired
 	private AdminHospitalRepository admRepository;
 	@Autowired
@@ -47,35 +39,22 @@ public class MainController {
 	private MedicalTechnicianRepository metRepository;
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-	
-  
 
-//	
-	@GetMapping("/")  // 두 개 이상의 매핑은 { }로 감싼다
-	@ResponseBody
-	public String index() {
-		return "index";
+
+	private final AuthService authService;
+
+
+
+	@PostMapping("/custom-login")
+	public ResponseEntity<?> login(@RequestBody LoginEmployeeDto loginDto) {
+		System.out.println("login controller");
+		String jwt = authService.authenticateAndGenerateToken(loginDto);
+		return ResponseEntity.ok(JwtProperties.TOKEN_PREFIX+jwt);
 	}
 
 
-	
 
-@PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody Employee emp, JwtToken jwtToken, AuthenticationManager authenticationManager){
-	System.out.println("로그인 과정 시작~");
-	try {
-		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(emp.getId(),emp.getPassword()));
-	SecurityContextHolder.getContext().setAuthentication(authentication);
-	
-	String jwt = jwtToken.makeAccessToken(Long.toString(emp.getId()));
-	return ResponseEntity.ok().header("Authorization", "Bearer "+jwt).build();
-	} catch(AuthenticationException e) {
-		e.printStackTrace();
-		return ResponseEntity.badRequest().body("로그인 실패");
-	}
-}
 
-	
 	@PostMapping("/joinProc")
 	public String joinProc(Employee emp) {
 		System.out.println("회원가입 진행 : " + emp);
@@ -139,13 +118,7 @@ public ResponseEntity<?> login(@RequestBody Employee emp, JwtToken jwtToken, Aut
 		nurRepository.save(emp);
 		return "redirect:/";
 	}
- 	
-	@GetMapping("/emp")
-	@ResponseBody
-	public String user(@AuthenticationPrincipal PrincipalDetails principal) {  // 시큐리티 코어 어노테이
-		System.out.println(principal.getEmp());
-		return "유저입니다.";
-	}
+
 	
 	@Secured("ROLE_MANAGER")  // 권한이 매니저인 사람들만 특정 몇명 없을 경우에 쓰면 좋음 
 //	@PreAuthorize("hasRole('Role_MANAGER')") secured는 or를 쓸 수 없지만 PreAuthorize 는 or를 쓸 수 있음
@@ -155,7 +128,7 @@ public ResponseEntity<?> login(@RequestBody Employee emp, JwtToken jwtToken, Aut
 		return "매니저입니다.";
 	}
 	
-	@PreAuthorize("hasRole('Role_MANAGER') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_NURSE')")
 	@GetMapping("/admin")
 	@ResponseBody
 	public String admin() {

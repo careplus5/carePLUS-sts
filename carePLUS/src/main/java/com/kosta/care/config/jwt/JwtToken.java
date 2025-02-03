@@ -15,10 +15,12 @@ import io.jsonwebtoken.Jwts;
 public class JwtToken {
 	
 	public String makeAccessToken(String id) {
+		String identity = id.substring(0,2);
 		return JWT.create()
 				.withSubject(id)
-				.withIssuedAt(new Date(System.currentTimeMillis()))
-				//.withExpiresAt(new Date(System.currentTimeMillis()+JwtProperties.ACCESS_EXPIRATION_TIME))
+				.withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESS_EXPIRATION_TIME))
+				.withClaim("id", id)
+				.withClaim("identity", identity)
 				.sign(Algorithm.HMAC512(JwtProperties.SECRET));
 		
 	}
@@ -31,6 +33,7 @@ public class JwtToken {
 
 
 	    public String generateToken(Authentication authentication) {
+			System.out.println("generateToken 생성");
 	        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 	        System.out.println(principalDetails.getUsername()+"님의 토큰 생성 완료.");
 

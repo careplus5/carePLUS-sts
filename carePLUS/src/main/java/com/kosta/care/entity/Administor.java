@@ -38,6 +38,12 @@ public class Administor implements Employee {
 		// TODO Auto-generated method stub
 		return manPassword;
 	}
+
+	@Override
+	public int getJobTitle() {
+		return 99;
+	}
+
 	@Override
 	public void setPassword(String encodePassword) {
 		this.manPassword=encodePassword;

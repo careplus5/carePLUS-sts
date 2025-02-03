@@ -7,16 +7,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.care.dto.AdmDiagnosisDto;
 import com.kosta.care.dto.PrescriptionDto;
-import com.kosta.care.dto.AdmissionDto;
 import com.kosta.care.entity.Admission;
 import com.kosta.care.entity.AdmissionRecord;
 import com.kosta.care.entity.AdmissionRequest;
+import com.kosta.care.entity.Beds;
 import com.kosta.care.entity.DocDiagnosis;
 import com.kosta.care.entity.Doctor;
 import com.kosta.care.entity.Nurse;
@@ -28,6 +30,7 @@ import com.kosta.care.entity.TestRequest;
 import com.kosta.care.repository.AdmissionDslRepository;
 import com.kosta.care.repository.AdmissionRecordRepository;
 import com.kosta.care.repository.AdmissionRepository;
+import com.kosta.care.repository.BedsRepository;
 import com.kosta.care.repository.DiagnosisDslRepository;
 //github.com/careplus5/carePLUS-sts.git
 import com.kosta.care.repository.DiagnosisDueRepository;
@@ -65,6 +68,7 @@ public class AdmissionServiceImpl implements AdmissionService {
 	private final SurgeryRequestRepository surgeryRequestRepository;
 	private final PrescriptionRepository prescriptionRepository;
 	private final AdmissionRecordRepository admissionRecordRepository;
+	private final BedsRepository bedsRepository;
 
 	private final ObjectMapper objectMapper;
 
@@ -149,6 +153,13 @@ public class AdmissionServiceImpl implements AdmissionService {
 	public Boolean updateAdmissionDischarge(Long admissionNum,String admissionDischargeOpinion, Date admissionDischargeDate) {
 		try {
 			Admission admission = admRepository.findByAdmissionNum(admissionNum);
+			
+			// 퇴원시 Beds 상태 false로 변경
+			Long bedsNum = admission.getBedsNum();
+			Optional<Beds> obed = bedsRepository.findById(bedsNum);
+			Beds bed = obed.get();
+			bed.setBedsIsUse(false);
+			bedsRepository.save(bed);
 
 			if("ing".equals(admission.getAdmissionStatus())) {
 				admission.setAdmissionDischargeDate(admissionDischargeDate);

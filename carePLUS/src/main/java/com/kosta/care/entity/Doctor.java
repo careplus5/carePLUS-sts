@@ -76,7 +76,6 @@ public class Doctor implements Employee{
 
 	@Override
 	public Long getId() {
-		// TODO Auto-generated method stub
 		return docNum;
 	}
 
@@ -92,6 +91,10 @@ public class Doctor implements Employee{
 		return docPassword;
 	}
 
+	@Override
+	public int getJobTitle() {
+		return 11;
+	}
 	@Override
 	public void setPassword(String encodePassword) {
 		this.docPassword=encodePassword;

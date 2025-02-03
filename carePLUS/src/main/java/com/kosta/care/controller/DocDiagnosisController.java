@@ -3,6 +3,10 @@ package com.kosta.care.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.kosta.care.config.auth.AuthEmployee;
+import com.kosta.care.config.auth.AuthException;
+import com.kosta.care.dto.EmployeeAuthDto;
+import com.kosta.care.entity.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +27,14 @@ public class DocDiagnosisController {
 	
 	@Autowired
 	private DiagnosisDueService diagnosisDueService;
-	
-	@Autowired 
-	private DoctorRepository doctorRepository;
+
+
 	
 	@GetMapping("/diagPatientList")
-	public ResponseEntity<List<Map<String, Object>>> diagPatientList(@RequestParam("docNum") Long docNum) {
+	public ResponseEntity<List<Map<String, Object>>> diagPatientList(@AuthEmployee EmployeeAuthDto employee) {
+		AuthException.invalidDoctorAccess(employee.getIdentity());
 		try {
-			List<Map<String, Object>> diagDueList = diagnosisDueService.diagDueListByDocNum(docNum);
+			List<Map<String, Object>> diagDueList = diagnosisDueService.diagDueListByDocNum(employee.getId());
 			return new ResponseEntity<List<Map<String, Object>>>(diagDueList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -39,7 +43,8 @@ public class DocDiagnosisController {
 	}
 	
 	@GetMapping("/diagPatientInfo")
-	public ResponseEntity<Map<String, Object>> diagPatientInfo(@RequestParam("docDiagNum") Long docDiagNum) {
+	public ResponseEntity<Map<String, Object>> diagPatientInfo(@AuthEmployee EmployeeAuthDto employee, @RequestParam("docDiagNum") Long docDiagNum) {
+		AuthException.invalidDoctorAccess(employee.getIdentity());
 		String newState = "ing";
 		try {
 			diagnosisDueService.updateDocDiagnosisState(docDiagNum, newState);
@@ -52,9 +57,10 @@ public class DocDiagnosisController {
 	}
 
 	@GetMapping("/diseaseList")
-	public ResponseEntity<List<Map<String, Object>>> diseaseList(@RequestParam("docNum") Long docNum) {
+	public ResponseEntity<List<Map<String, Object>>> diseaseList(@AuthEmployee EmployeeAuthDto employee) {
+		AuthException.invalidDoctorAccess(employee.getIdentity());
 		try {
-			List<Map<String, Object>> diseaseList = diagnosisDueService.diseaseListByDeptNum(docNum);
+			List<Map<String, Object>> diseaseList = diagnosisDueService.diseaseListByDeptNum(employee.getId());
 			return new ResponseEntity<List<Map<String, Object>>>(diseaseList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -75,9 +81,10 @@ public class DocDiagnosisController {
 	}
 	
 	@GetMapping("/favMedicineList")
-	public ResponseEntity<List<Map<String, Object>>> favMedicineList(@RequestParam("docNum") Long docNum) {
+	public ResponseEntity<List<Map<String, Object>>> favMedicineList(@RequestBody EmployeeAuthDto employee) {
+		AuthException.invalidDoctorAccess(employee.getIdentity());
 		try {
-			List<Map<String, Object>> favMedicineList = diagnosisDueService.favMedicineList(docNum);
+			List<Map<String, Object>> favMedicineList = diagnosisDueService.favMedicineList(employee.getId());
 			return new ResponseEntity<List<Map<String,Object>>>(favMedicineList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -113,11 +120,12 @@ public class DocDiagnosisController {
 	}
 	
 	@GetMapping("/docDiagPatList")
-	public ResponseEntity<List<Map<String, Object>>> docDiagPatList(@RequestParam("docNum") Long docNum,
+	public ResponseEntity<List<Map<String, Object>>> docDiagPatList(@RequestBody EmployeeAuthDto employee,
 										@RequestParam(name="searchType", required = false) String searchType, 
 										@RequestParam(name="searchKeyword", required = false) String searchKeyword) {
+
 		try {
-			List<Map<String, Object>> docPatList = diagnosisDueService.docPatListByDocNum(docNum, searchType, searchKeyword);
+			List<Map<String, Object>> docPatList = diagnosisDueService.docPatListByDocNum(employee.getId(), searchType, searchKeyword);
 			return new ResponseEntity<List<Map<String,Object>>>(docPatList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

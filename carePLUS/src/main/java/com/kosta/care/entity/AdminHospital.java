@@ -79,6 +79,11 @@ public class AdminHospital implements Employee {
 	}
 
 	@Override
+	public int getJobTitle() {
+		return 13;
+	}
+
+	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
 		return admName;

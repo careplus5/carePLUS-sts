@@ -1,12 +1,17 @@
 package com.kosta.care.config.auth;
 
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import com.kosta.care.entity.Role;
+import com.kosta.care.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -23,51 +28,63 @@ import lombok.Data;
 // https://www.elancer.co.kr/blog/view?seq=235     관련 주소
 @Data
 public class PrincipalDetails implements UserDetails, OAuth2User {
-	
-	private Employee emp;  //User를 UserDetails 의 자식으로 만들어줘도 됨
-	
-	private BCryptPasswordEncoder passwordEncoder;
+	private String id;
+	private String identity;
+	private Employee employee;
+
+
 	public PrincipalDetails(Employee emp) {
-		this.emp = emp;
+		employee = emp;
+		id = Long.toString(emp.getId());
+		identity = id.substring(0,2);
 	}
-	
+
+	public String getUsername() {
+		return id;
+	}
+
+
 	private Map<String, Object> attributes;
 
 	@Override
 	public Map<String, Object> getAttributes(){
 		return attributes;
 	}
-	
-	public PrincipalDetails(Employee emp, Map<String,Object> attributes) {
-		super();
-		this.emp =emp;
-		this.attributes = attributes;
-	}
-	
+
+
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-//		Collection<GrantedAuthority> collect = new ArrayList<>();
-//		collect.add(()->user.getRoles());  // user 라서 manager 주소를 입력하면403 나옴 읽어오지 못하는 상황 
-//		return collect;
-//		// 유저의 권한을 collec로 만들어서 넣어줌, 스프링 시큐리티가 이렇게 만들어서 넣어줌
-		return null;
+		Collection<GrantedAuthority> authorities = new ArrayList<>();
+		String role = Role.getRoleByIdentity(identity);
+		authorities.add(new SimpleGrantedAuthority("ROLE_USER")); // 기본 권한 설정
+		if (identity != null) {
+			authorities.add(new SimpleGrantedAuthority("ROLE_"+role)); // 기본 권한 설정
+		}
+		return authorities;
+//		return null;
 	}
 
 	@Override
 	public String getPassword() {
-		return emp.getPassword();
+		return employee.getPassword();
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return emp.getName();
+		return null;
+	}
+
+	public String getIdentity() {
+		return identity;
 	}
 
 	@Override
 	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
@@ -85,18 +102,12 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
 	@Override
 	public boolean isEnabled() {
-		// 우리 사이트에서 1년동안 로그인을 안하면 휴먼계정으로 변환하기로 했다면
-		// 현재 시간 - 마지막 로그인 시간을 계산하여 1년 초과하면 return false
-		// 테이블에 마지막 로그인 시간이 있어야 한다 (DB)
 		return true;
 	}
-	
-	public String getUsername() {
-		return Long.toString(emp.getId());
-	}
 
-	
-	
+	public Employee getEmployee() {
+		return employee;
+	}
 
 	
 

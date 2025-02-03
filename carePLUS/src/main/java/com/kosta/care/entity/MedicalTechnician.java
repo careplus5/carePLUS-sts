@@ -82,6 +82,11 @@ public class MedicalTechnician implements Employee{
 	}
 
 	@Override
+	public int getJobTitle() {
+		return 14;
+	}
+
+	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
 		return metName;

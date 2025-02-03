@@ -15,6 +15,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+
 @Repository
 public class EmployeeRepository{
 	@Autowired
@@ -39,29 +43,23 @@ public class EmployeeRepository{
 	
 	
 public Employee identifyJob(String username) {
-	String identify = username.substring(0,2);
+	System.out.println("jdentifyJob");
+	char firstChar = username.charAt(0);
+	char secondChar = username.charAt(1);
+
+	String identify = "" + firstChar + secondChar;
+	System.out.println(identify+" in repository");
 	Long id = Long.parseLong(username);
-	if(identify.equals("11")) {
-		System.out.println(identify);
-		Employee emp = docRepository.findByDocNum(id);
-		return docRepository.findByDocNum(id);
-		
-	} else if(identify.equals("12")) {
-		System.out.println(identify);
-		Employee emp = nurRepository.findByNurNum(id);
-		return nurRepository.findByNurNum(id);
 
-	} else if(identify.equals("13")) {
-	return admHospitalRepository.findByAdmNum(id);
-	}
-	else if(identify.equals("14")){
-	
-		return metRepository.findByMetNum(id);
-	} else if(identify.equals("13")){
-		return admRepository.findByAdmNum(id);
+	Map<String, Function<Long, Employee>> repositoryMap = new HashMap<>();
+	repositoryMap.put("11", docRepository::findByDocNum);
+	repositoryMap.put("12", nurRepository::findByNurNum);
+	repositoryMap.put("13", admHospitalRepository::findByAdmNum);
+	repositoryMap.put("14", metRepository::findByMetNum);
+	repositoryMap.put("99", adminRepository::findByManNum);
 
-	} else if(identify.equals("99")){
-	return adminRepository.findByManNum(id);
+	if (repositoryMap.containsKey(identify)) {
+		return repositoryMap.get(identify).apply(id);
 	}
 		 else throw new UsernameNotFoundException("User not found with id:"+username);
 	
@@ -80,8 +78,8 @@ public Employee identifyJob(String username) {
 
 
 	public void save(Employee emp) {
-		
+
 	}
-	
+
 
 }

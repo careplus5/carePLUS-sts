@@ -82,8 +82,12 @@ public class Nurse implements Employee {
 
 	@Override
 	public Long getId() {
-		// TODO Auto-generated method stub
 		return nurNum;
+	}
+
+	@Override
+	public int getJobTitle() {
+		return 12;
 	}
 
 	@Override

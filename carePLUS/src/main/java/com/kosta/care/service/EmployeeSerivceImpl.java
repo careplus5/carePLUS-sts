@@ -36,8 +36,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EmployeeSerivceImpl implements EmployeeSerivce {
 
-	@Value("${upload.path}")
-	private String uploadPath;
+	@Value("${upload.profile}")
+	private String uploadProfile;
 
 	private final NurseRepository nurseRepository;
 	private final DoctorRepository doctorRepository;
@@ -54,10 +54,10 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 	public Long join(EmployeeDto employeeDto, MultipartFile file) throws Exception {
 		Long profNum = null;
 		if (file != null && !file.isEmpty()) {
-			Profile pfile = Profile.builder().profileType(file.getContentType()).profileDirectory(uploadPath)
+			Profile pfile = Profile.builder().profileType(file.getContentType()).profileDirectory(uploadProfile)
 					.profileSize(file.getSize()).build();
 			profileRepository.save(pfile);
-			File upFile = new File(uploadPath, pfile.getProfileNum() + "");
+			File upFile = new File(uploadProfile, pfile.getProfileNum() + "");
 			file.transferTo(upFile);
 			profNum = pfile.getProfileNum();
 			employeeDto.setProfNum(profNum);
@@ -189,10 +189,10 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 
 		// 프로필 저장
 		if (file != null && !file.isEmpty()) {
-			Profile pFile = Profile.builder().profileType(file.getContentType()).profileDirectory(uploadPath)
+			Profile pFile = Profile.builder().profileType(file.getContentType()).profileDirectory(uploadProfile)
 					.profileSize(file.getSize()).build();
 			profileRepository.save(pFile); // file table에 파일정보 삽입
-			File upFile = new File(uploadPath, pFile.getProfileNum() + "");
+			File upFile = new File(uploadProfile, pFile.getProfileNum() + "");
 			file.transferTo(upFile); // file upload
 			employeeDto.setProfNum(pFile.getProfileNum());
 		} else {
@@ -245,7 +245,7 @@ public class EmployeeSerivceImpl implements EmployeeSerivce {
 		// 기존 프로필 사진 삭제
 		if (file != null && !file.isEmpty() && beforeEmployeeDto.getProfNum() != null) {// 기존에 파일이 있는 조건
 			profileRepository.deleteById(beforeEmployeeDto.getProfNum());
-			File beforeFile = new File(uploadPath, beforeEmployeeDto.getProfNum() + "");
+			File beforeFile = new File(uploadProfile, beforeEmployeeDto.getProfNum() + "");
 			beforeFile.delete();
 		}
 		return employeeDto;

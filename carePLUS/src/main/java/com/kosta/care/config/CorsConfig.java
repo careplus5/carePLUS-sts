@@ -25,6 +25,7 @@ public class CorsConfig implements WebMvcConfigurer{
 
 	@Bean
 	public CorsFilter corsFilter() {
+		System.out.println("cors");
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowCredentials(true);

@@ -61,7 +61,10 @@ public class DiagnosisDueServiceImpl implements DiagnosisDueService {
 	
 	@Override
 	public List<Map<String, Object>> diagDueListByDocNum(Long docNum) {
+		System.out.println(docNum+"조호 ㅣ시작스");
 		List<Tuple> tuples = diagnosisRepository.findDiagDueListByDocNumAndDiagDueDate(docNum);
+
+		System.out.println(tuples+"tuple");
 		List<Map<String, Object>> diagDueList = new ArrayList<>();
 		
 		for(Tuple tuple : tuples) {
